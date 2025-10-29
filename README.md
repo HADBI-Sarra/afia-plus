@@ -63,8 +63,6 @@ Make sure you have the following installed on your computer:
 - **Android Emulator** or a physical Android device
 - **Internet connection** (for Firebase and Google Meet integration)
 
----
-
 ### Steps to Run
 
 1. **Clone the Repository**
@@ -94,7 +92,7 @@ Make sure you have the following installed on your computer:
 
 ---
 
-### Contributers
+## Contributers
 
 | Firstname | Lastname  | Group | Email                                                                                   | Role   |
 |------------|------------|--------|-----------------------------------------------------------------------------------------|--------|
@@ -104,6 +102,6 @@ Make sure you have the following installed on your computer:
 
 ---
 
-### License
+## License
 
 This project is developed for **academic purposes**.
