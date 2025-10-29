@@ -92,6 +92,8 @@ Make sure you have the following installed on your computer:
     flutter build apk --release
     ```
 
+---
+
 ### Contributers
 
 | Firstname | Lastname  | Group | Email                                                                                   | Role   |
@@ -99,6 +101,8 @@ Make sure you have the following installed on your computer:
 | Sarra      | Hadbi      | G4     | [sarra.hadbi@ensia.edu.dz](mailto:sarra.hadbi@ensia.edu.dz)                             | Leader |
 | Anfel      | Sakri      | G4     | [anfel.sakri@ensia.edu.dz](mailto:anfel.sakri@ensia.edu.dz)                             | Member |
 | Besmala    | Boukenouche| G4     | [besmala.boukenouche@ensia.edu.dz](mailto:besmala.boukenouche@ensia.edu.dz)             | Member |
+
+---
 
 ### License
 
