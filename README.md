@@ -94,11 +94,11 @@ Make sure you have the following installed on your computer:
 
 ### Contributers
 
-| Firstname | Last Name | Group | Email | Role |
-|-----------|-----------|-------|------|
-| Sarra | Hadbi | G4 | [sarra.hadbi@ensia.edu.dz](mailto:sarra.hadbi@ensia.edu.dz) | Leader |
-| Anfel | Sakri | G4 | [anfel.sakri@ensia.edu.dz](mailto:anfel.sakri@ensia.edu.dz) | Member |
-| Besmala | Boukenouche | G4 | [besmala.boukenouche@ensia.edu.dz](mailto:besmala.boukenouche@ensia.edu.dz) | Member |
+| Firstname | Lastname  | Group | Email                                                                                   | Role   |
+|------------|------------|--------|-----------------------------------------------------------------------------------------|--------|
+| Sarra      | Hadbi      | G4     | [sarra.hadbi@ensia.edu.dz](mailto:sarra.hadbi@ensia.edu.dz)                             | Leader |
+| Anfel      | Sakri      | G4     | [anfel.sakri@ensia.edu.dz](mailto:anfel.sakri@ensia.edu.dz)                             | Member |
+| Besmala    | Boukenouche| G4     | [besmala.boukenouche@ensia.edu.dz](mailto:besmala.boukenouche@ensia.edu.dz)             | Member |
 
 ### License
 
