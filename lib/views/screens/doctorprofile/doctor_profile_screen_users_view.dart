@@ -9,6 +9,7 @@ class DoctorProfileScreen extends StatefulWidget {
   final doctorName = "Yousfi Slimane";
   final doctorSpeciality = "Gynecologist";
   final rating = "4.9";
+  static const routename = "/userViewDoctorProfile";
   const DoctorProfileScreen({super.key});
 
   @override

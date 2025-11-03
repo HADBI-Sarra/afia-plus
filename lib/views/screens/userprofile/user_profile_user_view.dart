@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
+import 'package:afia_plus_app/views/widgets/footer_user.dart';
 
 class UserProfileScreen extends StatefulWidget {
+  static const routename = "/UserViewUserProfile";
   const UserProfileScreen({super.key});
 
   @override
@@ -13,7 +15,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: gradientBackgroundDecoration, // gradient background
+      decoration: gradientBackgroundDecoration, 
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
@@ -34,7 +36,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             children: [
               const SizedBox(height: 20),
 
-              // Top card with profile info using Row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Container(
@@ -46,7 +47,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Bigger profile picture closer to left
+
                       Container(
                         width: 100,
                         height: 100,
@@ -59,7 +60,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Name and subtitle
+
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +95,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
               const SizedBox(height: 20),
 
-              // Menu items
+              
               Expanded(
                 child: ListView(
                   children: [
@@ -104,15 +105,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     _buildMenuItem(icon: Icons.policy_outlined, title: "Policies"),
                     _buildMenuItem(icon: Icons.email_outlined, title: "Change email"),
                     _buildMenuItem(icon: Icons.security_outlined, title: "Security settings"),
+                    _buildMenuItem(icon: Icons.badge_outlined, title: "About me"),
                     _buildMenuItem(icon: Icons.logout_outlined, title: "Logout", showTrailing: false),
 
-                    // Footer placeholder
+                    
                     const SizedBox(height: 20),
-                    Container(
-                      height: 100,
-                      color: Colors.transparent,
-                      child: const Center(child: Text("Footer placeholder")),
-                    ),
+                    const UserFooter(currentIndex: 3),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),

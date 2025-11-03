@@ -1,5 +1,6 @@
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
+import 'package:afia_plus_app/views/screens/userprofile/user_profile_screen_doctor_view.dart';
 import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/commons/config.dart';
@@ -24,7 +25,15 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-      home: DoctorProfileScreenDoctorViewDoc(),
+      routes: {
+        UserProfileScreen.routename : (context) => UserProfileScreen(),
+        DoctorProfileScreen.routename : (context) => DoctorProfileScreen(), 
+        DoctorViewDoctorProfileScreen.routename : (context) => DoctorViewDoctorProfileScreen(),
+        DoctorViewUserProfileScreen.routename : (context) => DoctorViewUserProfileScreen(),
+        SearchScreen.routename : (context) => SearchScreen(),
+      },
+
+      home: UserProfileScreen(),
     );
   }
 }
