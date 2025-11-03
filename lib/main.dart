@@ -15,6 +15,7 @@ import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart
 import 'package:afia_plus_app/views/screens/userPages/user_appointments';
 import 'package:afia_plus_app/views/screens/doctorPages/doctor_availability.dart';
 import 'package:afia_plus_app/views/screens/userPages/prescription.dart';
+import 'package:afia_plus_app/views/screens/homescreen/doctor_home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -28,7 +29,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-      home: PatientHomeScreen(),
+      home: DoctorHomeScreen(),
     );
   }
 }

@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_svg: ^2.2.1
   intl: ^0.20.2
+  lucide_flutter: ^0.552.0
 
 dev_dependencies:
   flutter_test:
@@ -20,11 +21,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  
   assets:
     - assets/images/
     
 
->>>>>>> 9ba214774477ed6ce2a74a034eb30fc3e0da156c
   fonts:
     - family: Syne
       fonts:
@@ -39,9 +40,4 @@ flutter:
         - asset: assets/fonts/Syne-ExtraBold.ttf
           weight: 800
 
-  
-  assets:
-    - assets/images/doctorBrahimi.png
-    - assets/images/doctorSirine.png
-    - assets/images/doctorLamis.png
-    - assets/images/doctorAbdelillah.png
+          

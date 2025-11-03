@@ -18,6 +18,11 @@ final ThemeData appTheme = ThemeData(
       fontWeight: FontWeight.w700,
       fontSize: 32,
     ), // Bold
+    titleMedium: TextStyle(
+      color: blackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: 20,
+    ), 
     headlineLarge: TextStyle(
       color: blackColor,
       fontWeight: FontWeight.w800
