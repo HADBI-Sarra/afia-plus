@@ -21,9 +21,9 @@ class DoctorFooter extends StatelessWidget {
       case 0:
         nextPage = const HomeScreen();
         break;
-      case 1:
-        nextPage = const SchedulePage();
-        break;
+      //case 1:
+      //nextPage = const SchedulePage();
+      //break;
       //case 2:
       //nextPage = const ScheduleAvailabilityPage();
       //break;

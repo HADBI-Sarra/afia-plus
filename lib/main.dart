@@ -22,11 +22,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-<<<<<<< HEAD
-      home: PrescriptionPage(),
-=======
       home: DoctorProfileScreen(),
->>>>>>> 9ba214774477ed6ce2a74a034eb30fc3e0da156c
     );
   }
 }
