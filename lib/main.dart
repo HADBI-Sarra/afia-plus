@@ -1,6 +1,8 @@
+import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
+import 'package:afia_plus_app/views/screens/login/login.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
 
 void main() {
@@ -15,7 +17,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-      home: HomeScreen(),
+      home: CreateAccountScreen(),
     );
   }
 }

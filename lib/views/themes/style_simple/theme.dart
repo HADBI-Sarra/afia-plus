@@ -6,20 +6,27 @@ final ThemeData appTheme = ThemeData(
   colorScheme: appColorScheme,
   fontFamily: 'Syne',
   textTheme: const TextTheme(
-    bodyLarge: TextStyle(fontWeight: FontWeight.w400), // Regular
-    bodyMedium: TextStyle(fontWeight: FontWeight.w500), // Medium
-    titleMedium: TextStyle(
-      color: blackColor,
-      fontWeight: FontWeight.w600
-    ), // SemiBold
+    bodySmall: TextStyle(
+      fontWeight: FontWeight.w400, // Regular
+    ),
+    bodyMedium: TextStyle(
+      fontWeight: FontWeight.w400, // Regular
+      fontSize: 16,
+    ),
     titleLarge: TextStyle(
       color: blackColor,
-      fontWeight: FontWeight.w700
+      fontWeight: FontWeight.w700,
+      fontSize: 32,
     ), // Bold
     headlineLarge: TextStyle(
       color: blackColor,
       fontWeight: FontWeight.w800
     ), // ExtraBold
+    labelMedium: TextStyle(
+      color: blackColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    )
   ),
 );
 

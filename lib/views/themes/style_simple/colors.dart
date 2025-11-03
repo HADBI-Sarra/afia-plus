@@ -10,3 +10,4 @@ const lightGreyColor = Color(0xFFE0E0E0);
 const gradientGreenColor = Color(0xffcffcf9);
 const backgroundLightGreenColor = Color(0xffedf3f3);
 const redColor = Color(0xffd53636);
+const greenColor = Color(0xff267f50);
