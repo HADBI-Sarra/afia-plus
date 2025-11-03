@@ -17,7 +17,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🩺 Header
+                
                 Row(
                   children: [
                     IconButton(
@@ -105,7 +105,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 👨‍⚕️ Doctor info
+          
           Row(
             children: [
               CircleAvatar(
@@ -131,7 +131,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // 🗓️ Date row
+      
           Row(
             children: [
               const Icon(Icons.calendar_today_outlined,

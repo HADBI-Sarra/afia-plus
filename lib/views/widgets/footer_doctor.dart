@@ -13,7 +13,7 @@ class DoctorFooter extends StatelessWidget {
   const DoctorFooter({super.key, required this.currentIndex});
 
   void _onItemTapped(BuildContext context, int index) {
-    if (index == currentIndex) return; 
+    if (index == currentIndex) return;
 
     Widget nextPage;
 
@@ -25,8 +25,8 @@ class DoctorFooter extends StatelessWidget {
         nextPage = const SchedulePage();
         break;
       //case 2:
-        //nextPage = const ScheduleAvailabilityPage();
-        //break;
+      //nextPage = const ScheduleAvailabilityPage();
+      //break;
       //case 3:
       //nextPage = const ProfileScreen();
       //break;

@@ -26,7 +26,8 @@ final ThemeData appTheme = ThemeData(
       color: blackColor,
       fontSize: 16,
       fontWeight: FontWeight.w500,
-    )
+    ),
+    
   ),
 );
 

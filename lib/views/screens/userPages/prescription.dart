@@ -86,7 +86,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 🔙 App Bar
                 Row(
                   children: [
                     IconButton(
@@ -114,7 +113,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
 
                 const SizedBox(height: 10),
 
-                // 🧾 List of Prescriptions
                 _buildPrescriptionCard(
                   doctor: "Dr. Brahimi Mohamed",
                   date: "18 September, 2025",
@@ -135,7 +133,6 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
         ),
       ),
 
-      // 🔻 Footer
       bottomNavigationBar: const UserFooter(currentIndex: 2),
     );
   }

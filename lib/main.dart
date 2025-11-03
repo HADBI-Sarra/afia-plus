@@ -2,7 +2,8 @@ import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
-import 'package:afia_plus_app/views/screens/login/login.dart';
+import 'package:afia_plus_app/views/screens/search/search.dart';
+import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
 import 'package:afia_plus_app/views/screens/userPages/user_appointments';
@@ -21,7 +22,11 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
+<<<<<<< HEAD
       home: PrescriptionPage(),
+=======
+      home: DoctorProfileScreen(),
+>>>>>>> 9ba214774477ed6ce2a74a034eb30fc3e0da156c
     );
   }
 }
