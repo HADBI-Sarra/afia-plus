@@ -19,10 +19,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: APP_NAME,
-      theme: appTheme,
-      home: DoctorProfileScreen(),
-    );
+    return MaterialApp(title: APP_NAME, theme: appTheme, home: SchedulePage());
   }
 }

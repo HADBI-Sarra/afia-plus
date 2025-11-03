@@ -18,14 +18,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-<<<<<<< HEAD
   
-=======
+
   assets:
     - assets/images/
     
 
->>>>>>> 9ba214774477ed6ce2a74a034eb30fc3e0da156c
+
   fonts:
     - family: Syne
       fonts:
@@ -41,8 +40,3 @@ flutter:
           weight: 800
 
   
-  assets:
-    - assets/images/doctorBrahimi.png
-    - assets/images/doctorSirine.png
-    - assets/images/doctorLamis.png
-    - assets/images/doctorAbdelillah.png

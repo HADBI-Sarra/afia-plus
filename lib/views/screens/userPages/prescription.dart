@@ -66,7 +66,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
           ),
