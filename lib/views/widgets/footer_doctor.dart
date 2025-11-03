@@ -3,7 +3,7 @@ import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/doctor_availability.dart';
-import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen.dart';
+import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
 // Import other pages when ready:
 // import 'package:afia_plus_app/views/screens/notifications/notifications_screen.dart';
 // import 'package:afia_plus_app/views/screens/profile/profile_screen.dart';
@@ -29,7 +29,7 @@ class DoctorFooter extends StatelessWidget {
         nextPage = const ScheduleAvailabilityPage();
         break;
       case 3:
-        nextPage = const DoctorProfileScreen();
+        nextPage = const DoctorViewDoctorProfileScreen();
         break;
       default:
         nextPage = const HomeScreen();
