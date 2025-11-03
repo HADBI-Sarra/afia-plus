@@ -7,6 +7,10 @@ import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/search/search.dart';
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
+import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
+import 'package:afia_plus_app/views/screens/userPages/user_appointments';
+import 'package:afia_plus_app/views/screens/doctorPages/doctor_availability.dart';
+import 'package:afia_plus_app/views/screens/userPages/prescription.dart';
 
 void main() {
   runApp(const MainApp());
