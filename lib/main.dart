@@ -1,9 +1,12 @@
+import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
+import 'package:afia_plus_app/views/screens/userprofile/user_profile_screen_doctor_view.dart';
+import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/search/search.dart';
-import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen.dart';
+import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
 import 'package:afia_plus_app/views/screens/userPages/user_appointments';
@@ -19,6 +22,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return MaterialApp(title: APP_NAME, theme: appTheme, home: SchedulePage());
+=======
+    return MaterialApp(
+      title: APP_NAME,
+      theme: appTheme,
+      routes: {
+        UserProfileScreen.routename : (context) => UserProfileScreen(),
+        DoctorProfileScreen.routename : (context) => DoctorProfileScreen(), 
+        DoctorViewDoctorProfileScreen.routename : (context) => DoctorViewDoctorProfileScreen(),
+        DoctorViewUserProfileScreen.routename : (context) => DoctorViewUserProfileScreen(),
+        SearchScreen.routename : (context) => SearchScreen(),
+      },
+
+      home: UserProfileScreen(),
+    );
+>>>>>>> ad7dcdfa4eb5a6bdf65c92dc2557e72a8ac56d1d
   }
 }

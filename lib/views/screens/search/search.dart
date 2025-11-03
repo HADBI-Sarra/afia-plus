@@ -5,7 +5,8 @@ import 'package:afia_plus_app/views/widgets/search_text_fields.dart';
 
 
 class SearchScreen extends StatefulWidget {
-  final userName = "Imene";
+  final userName = "Besmala";
+  static const routename = "/searchScreen";
   const SearchScreen ({super.key});
 
    @override
