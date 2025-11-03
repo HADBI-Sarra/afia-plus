@@ -18,11 +18,19 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+<<<<<<< HEAD
+  
+=======
+>>>>>>> ad7dcdfa4eb5a6bdf65c92dc2557e72a8ac56d1d
 
   assets:
     - assets/images/
     
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> ad7dcdfa4eb5a6bdf65c92dc2557e72a8ac56d1d
   fonts:
     - family: Syne
       fonts:
@@ -37,3 +45,7 @@ flutter:
         - asset: assets/fonts/Syne-ExtraBold.ttf
           weight: 800
 
+<<<<<<< HEAD
+  
+=======
+>>>>>>> ad7dcdfa4eb5a6bdf65c92dc2557e72a8ac56d1d

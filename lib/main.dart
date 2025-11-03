@@ -26,11 +26,13 @@ class MainApp extends StatelessWidget {
       title: APP_NAME,
       theme: appTheme,
       routes: {
-        UserProfileScreen.routename : (context) => UserProfileScreen(),
-        DoctorProfileScreen.routename : (context) => DoctorProfileScreen(), 
-        DoctorViewDoctorProfileScreen.routename : (context) => DoctorViewDoctorProfileScreen(),
-        DoctorViewUserProfileScreen.routename : (context) => DoctorViewUserProfileScreen(),
-        SearchScreen.routename : (context) => SearchScreen(),
+        UserProfileScreen.routename: (context) => UserProfileScreen(),
+        DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
+        DoctorViewDoctorProfileScreen.routename: (context) =>
+            DoctorViewDoctorProfileScreen(),
+        DoctorViewUserProfileScreen.routename: (context) =>
+            DoctorViewUserProfileScreen(),
+        SearchScreen.routename: (context) => SearchScreen(),
       },
 
       home: SearchScreen(),
