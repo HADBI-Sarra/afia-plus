@@ -22,22 +22,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return MaterialApp(title: APP_NAME, theme: appTheme, home: SchedulePage());
-=======
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
       routes: {
-        UserProfileScreen.routename : (context) => UserProfileScreen(),
-        DoctorProfileScreen.routename : (context) => DoctorProfileScreen(), 
-        DoctorViewDoctorProfileScreen.routename : (context) => DoctorViewDoctorProfileScreen(),
-        DoctorViewUserProfileScreen.routename : (context) => DoctorViewUserProfileScreen(),
-        SearchScreen.routename : (context) => SearchScreen(),
+        UserProfileScreen.routename: (context) => UserProfileScreen(),
+        DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
+        DoctorViewDoctorProfileScreen.routename: (context) =>
+            DoctorViewDoctorProfileScreen(),
+        DoctorViewUserProfileScreen.routename: (context) =>
+            DoctorViewUserProfileScreen(),
+        SearchScreen.routename: (context) => SearchScreen(),
       },
 
       home: UserProfileScreen(),
     );
->>>>>>> ad7dcdfa4eb5a6bdf65c92dc2557e72a8ac56d1d
   }
 }
