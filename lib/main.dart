@@ -33,7 +33,7 @@ class MainApp extends StatelessWidget {
         SearchScreen.routename : (context) => SearchScreen(),
       },
 
-      home: UserProfileScreen(),
+      home: SearchScreen(),
     );
   }
 }

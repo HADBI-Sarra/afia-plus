@@ -17,7 +17,7 @@ class DoctorProfileScreen extends StatefulWidget {
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-  int selectedTab = 0; // 0 = Book, 1 = About, 2 = Reviews
+  int selectedTab = 0; 
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                // --- Header: Name + Specialty + Rating + Image ---
+                
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -115,7 +115,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                 const SizedBox(height: 25),
 
-                // --- Tabs ---
+                
                 Row(
                   children: [
                     Expanded(
@@ -171,17 +171,17 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                 const SizedBox(height: 25),
 
-                // --- Scrollable Content ---
+                
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         if (selectedTab == 0)
-                          const DoctorBookTab(), // build your Book tab content here
+                          const DoctorBookTab(), 
                         if (selectedTab == 1)
-                          const DoctorAboutTab(), // About tab content
+                          const DoctorAboutTab(), 
                         if (selectedTab == 2)
-                          const DoctorReviewsTab(), // Reviews tab content
+                          const DoctorReviewsTab(), 
                       ],
                     ),
                   ),
@@ -189,7 +189,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                 const SizedBox(height: 20),
 
-                // --- Book Appointment Button (always visible) ---
+                
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
