@@ -3,6 +3,7 @@ import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/userPages/user_appointments';
 import 'package:afia_plus_app/views/screens/userPages/prescription.dart';
+import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.dart';
 
 class UserFooter extends StatelessWidget {
   final int currentIndex;
@@ -10,7 +11,7 @@ class UserFooter extends StatelessWidget {
   const UserFooter({super.key, required this.currentIndex});
 
   void _onItemTapped(BuildContext context, int index) {
-    if (index == currentIndex) return; 
+    if (index == currentIndex) return;
 
     Widget nextPage;
 
@@ -23,10 +24,10 @@ class UserFooter extends StatelessWidget {
         break;
       case 2:
         nextPage = const PrescriptionPage();
-      //   break;
-      // case 3:
-      //   nextPage = const ProfileScreen();
-      //   break;
+        break;
+      case 3:
+        nextPage = const UserProfileScreen();
+        break;
       default:
         nextPage = const HomeScreen();
     }

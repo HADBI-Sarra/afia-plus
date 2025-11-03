@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
+import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 
-class DoctorProfileScreenDoctorViewDoc extends StatefulWidget {
-  const DoctorProfileScreenDoctorViewDoc({super.key});
+class DoctorViewDoctorProfileScreen extends StatefulWidget {
+  static const routename = "/doctorViewDoctorrProfile";
+  const DoctorViewDoctorProfileScreen({super.key});
 
   @override
-  State<DoctorProfileScreenDoctorViewDoc> createState() => _DoctorProfileScreenDoctorViewDocState();
+  State<DoctorViewDoctorProfileScreen> createState() => _DoctorViewDoctorProfileScreenState();
 }
 
-class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDoctorViewDoc> {
+class _DoctorViewDoctorProfileScreenState extends State<DoctorViewDoctorProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +36,7 @@ class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDo
             children: [
               const SizedBox(height: 20),
 
-              // Top card with profile info using Row
+              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Container(
@@ -46,14 +48,14 @@ class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDo
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Bigger profile picture closer to left
+                      
                       Container(
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           image: const DecorationImage(
-                            image: AssetImage('assets/images/besmala.jpg'),
+                            image: AssetImage('assets/images/ouadi.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -65,7 +67,7 @@ class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDo
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Boukenouche besmala",
+                            "Dr.Ouadi Mehdi",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -73,7 +75,7 @@ class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDo
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            "20 y.o. (11 Oct 2005)",
+                            "Dentist",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -98,21 +100,17 @@ class _DoctorProfileScreenDoctorViewDocState extends State<DoctorProfileScreenDo
               Expanded(
                 child: ListView(
                   children: [
-                    _buildMenuItem(icon: Icons.favorite_outline, title: "Favorite doctors"),
                     _buildMenuItem(icon: Icons.calendar_today_outlined, title: "Booked appointments"),
                     _buildMenuItem(icon: Icons.notifications_outlined, title: "Notification settings"),
                     _buildMenuItem(icon: Icons.policy_outlined, title: "Policies"),
                     _buildMenuItem(icon: Icons.email_outlined, title: "Change email"),
                     _buildMenuItem(icon: Icons.security_outlined, title: "Security settings"),
+                    _buildMenuItem(icon: Icons.badge_outlined, title: "About me"),
                     _buildMenuItem(icon: Icons.logout_outlined, title: "Logout", showTrailing: false),
 
                     // Footer placeholder
                     const SizedBox(height: 20),
-                    Container(
-                      height: 100,
-                      color: Colors.transparent,
-                      child: const Center(child: Text("Footer placeholder")),
-                    ),
+                    const DoctorFooter(currentIndex: 3)
                   ],
                 ),
               ),

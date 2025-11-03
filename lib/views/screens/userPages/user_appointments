@@ -88,7 +88,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
     required String imagePath,
   }) {
     return Container(
-      height:130,
+      height:150,
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
