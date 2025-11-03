@@ -16,6 +16,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   bool firstTry = true;
   bool strongPassword = false;
   bool long = true;
@@ -24,10 +25,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool hasNumber = true;
   bool hasSpecial = true;
 
+  bool isPatient = true;
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -76,6 +80,45 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(
+                                    'Register as',
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: isPatient ? whiteButtonStyle : greenButtonStyle,
+                                          onPressed: () {
+                                            setState(() {
+                                              isPatient = false;
+                                            });
+                                          },
+                                          child: Text(
+                                            'Doctor',
+                                            style: isPatient ? greyButtonText : whiteButtonText,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 15),
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          style: isPatient ? greenButtonStyle : whiteButtonStyle,
+                                          onPressed: () {
+                                            setState(() {
+                                              isPatient = true;
+                                            });
+                                          },
+                                          child: Text(
+                                            'Patient',
+                                            style: isPatient? whiteButtonText : greyButtonText,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
                                   LabeledTextFormField(
                                     label: 'Email',
                                     hint: 'Enter your email',
@@ -139,10 +182,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                   // Form is valid, submit
                                 }
                               },
-                              style: loginButtonStyle,
+                              style: greenButtonStyle,
                               child: Text(
                                 'Next',
-                                style: buttonText,
+                                style: whiteButtonText,
                               ),
                             ),
                           ],

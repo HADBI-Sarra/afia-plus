@@ -26,7 +26,12 @@ final ThemeData appTheme = ThemeData(
       color: blackColor,
       fontSize: 16,
       fontWeight: FontWeight.w500,
-    )
+    ),
+    labelSmall: TextStyle(
+      color: greyColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    ),
   ),
 );
 

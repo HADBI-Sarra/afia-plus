@@ -5,6 +5,7 @@ const blueGreenColor = Color(0xff54adac);
 const blackColor = Color(0xff000000);
 const whiteColor = Color(0xffffffff);
 const blurWhiteColor = Color(0x99ffffff);
+const elevatedBlurWhiteColor = Color(0xddffffff);
 const greyColor = Color(0xff5b5f5f);
 const lightGreyColor = Color(0xFFE0E0E0);
 const gradientGreenColor = Color(0xffcffcf9);

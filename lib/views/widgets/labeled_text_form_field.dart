@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
+import 'package:intl/intl.dart';
 
 
 class LabeledTextFormField extends StatefulWidget {
@@ -10,6 +12,9 @@ class LabeledTextFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
+  final bool isDate;
+  final bool greyLabel;
+  final int? minlines;
 
   const LabeledTextFormField({
     required this.label,
@@ -18,6 +23,9 @@ class LabeledTextFormField extends StatefulWidget {
     this.controller,
     this.validator,
     this.onChanged,
+    this.isDate = false,
+    this.greyLabel = false,
+    this.minlines,
     super.key,
   });
 
@@ -38,6 +46,65 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
     );  
   }
 
+  Widget? suffixIcon() {
+    if (widget.isPassword) return eyeIcon();
+    if (widget.isDate) return Icon(Icons.calendar_today_outlined);
+    return null;
+  }
+
+  void _showScrollDatePicker() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: whiteColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        DateTime tempPicked = DateTime.now();
+
+        return Container(
+          height: 300,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        final formatted = DateFormat('dd/MM/yyyy').format(tempPicked);
+                        widget.controller?.text = formatted;
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Done'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: DateTime(2000, 1, 1),
+                  maximumDate: DateTime.now(),
+                  minimumDate: DateTime(1900, 1, 1),
+                  onDateTimeChanged: (DateTime newDate) {
+                    tempPicked = newDate;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -46,7 +113,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         SizedBox(height: 4),
         Text(
           widget.label,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: widget.greyLabel ? Theme.of(context).textTheme.labelSmall : Theme.of(context).textTheme.labelMedium,
         ),
         SizedBox(height: 8),
         TextFormField(
@@ -55,6 +122,9 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
           controller: widget.controller,
           validator: widget.validator,
           onChanged: widget.onChanged,
+          readOnly: widget.isDate,
+          minLines: widget.minlines,
+          maxLines: widget.minlines,
           decoration: InputDecoration(
             hintText: widget.hint,
             contentPadding: EdgeInsets.symmetric(
@@ -68,8 +138,9 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
             disabledBorder: inputBorder,
             filled: true,
             fillColor: blurWhiteColor,
-            suffixIcon: widget.isPassword ? eyeIcon() : null,
+            suffixIcon: suffixIcon(),
           ),
+          onTap: widget.isDate ? _showScrollDatePicker : null,
         ),
       ],
     );

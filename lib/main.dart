@@ -4,6 +4,10 @@ import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/login/login.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
+import 'package:afia_plus_app/views/screens/sign_up/doctor/doctor_personal_data.dart';
+import 'package:afia_plus_app/views/screens/sign_up/patient/patient_personal_data.dart';
+import 'package:afia_plus_app/views/screens/sign_up/doctor/professional_info.dart';
+import 'package:afia_plus_app/views/screens/homescreen/patient_home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -17,7 +21,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-      home: CreateAccountScreen(),
+      home: PatientHomeScreen(),
     );
   }
 }
