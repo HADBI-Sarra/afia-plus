@@ -4,7 +4,6 @@ import 'package:afia_plus_app/views/screens/userprofile/user_profile_screen_doct
 import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.dart';
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/commons/config.dart';
-import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
 import 'package:afia_plus_app/views/screens/search/search.dart';
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
@@ -30,9 +29,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: APP_NAME,
       theme: appTheme,
-<<<<<<< HEAD
-      home: DoctorHomeScreen(),
-=======
+      home: PatientHomeScreen(),
       routes: {
         UserProfileScreen.routename: (context) => UserProfileScreen(),
         DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
@@ -42,9 +39,6 @@ class MainApp extends StatelessWidget {
             DoctorViewUserProfileScreen(),
         SearchScreen.routename: (context) => SearchScreen(),
       },
-
-      home: SearchScreen(),
->>>>>>> ff6306dba659cd30e1cb89b07d6cab3015026860
     );
   }
 }

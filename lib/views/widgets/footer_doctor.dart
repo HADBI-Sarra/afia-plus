@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
-import 'package:afia_plus_app/views/screens/homescreen/home_screen.dart';
+import 'package:afia_plus_app/views/screens/homescreen/doctor_home_screen.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
 import 'package:afia_plus_app/views/screens/doctorPages/doctor_availability.dart';
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
@@ -20,7 +20,7 @@ class DoctorFooter extends StatelessWidget {
 
     switch (index) {
       case 0:
-        nextPage = const HomeScreen();
+        nextPage = const DoctorHomeScreen();
         break;
       case 1:
         nextPage = const SchedulePage();
@@ -32,7 +32,7 @@ class DoctorFooter extends StatelessWidget {
         nextPage = const DoctorViewDoctorProfileScreen();
         break;
       default:
-        nextPage = const HomeScreen();
+        nextPage = const DoctorHomeScreen();
     }
 
     Navigator.pushReplacement(

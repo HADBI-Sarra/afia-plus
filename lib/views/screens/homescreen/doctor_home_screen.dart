@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/search_text_fields.dart';
-import 'package:afia_plus_app/views/widgets/footer_user.dart';
+import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 import 'package:afia_plus_app/views/widgets/doctor_card.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
@@ -277,7 +277,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
                         const SizedBox(height: 10),
                         seviceLink('FAQ'),
                         const SizedBox(height: 20),
-                        UserFooter(currentIndex: 0),
+                        DoctorFooter(currentIndex: 0),
                       ],
                     ),
                   ),
