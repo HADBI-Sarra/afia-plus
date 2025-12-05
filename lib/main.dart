@@ -35,7 +35,8 @@ class MainApp extends StatelessWidget {
         SearchScreen.routename: (context) => SearchScreen(),
       },
 
-      home: SearchScreen(),
+      home: UpcomingAppointmentsPage(),
+      //DoctorViewDoctorProfileScreen(),
     );
   }
 }
