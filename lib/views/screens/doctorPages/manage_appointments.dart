@@ -197,7 +197,7 @@ class _SchedulePageState extends State<SchedulePage> {
                   'Accept',
                   style: TextStyle(color: whiteColor, fontSize: 12),
                 ),
-                style: loginButtonStyle.copyWith(
+                style: greenButtonStyle.copyWith(
                   minimumSize: WidgetStateProperty.all(const Size(140, 30)),
                   shape: WidgetStateProperty.all(
                     RoundedRectangleBorder(
@@ -275,7 +275,7 @@ class _SchedulePageState extends State<SchedulePage> {
             'Upload PDF',
             style: TextStyle(fontSize: 12, color: whiteColor),
           ),
-          style: loginButtonStyle.copyWith(
+          style: greenButtonStyle.copyWith(
             backgroundColor: WidgetStateProperty.all(blueGreenColor),
             minimumSize: WidgetStateProperty.all(const Size(90, 36)),
             shape: WidgetStateProperty.all(

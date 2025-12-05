@@ -19,7 +19,7 @@ final OutlineInputBorder inputBorder = OutlineInputBorder(
     color: whiteColor,
     width: 1.5,
   ),
-  borderRadius: BorderRadius.circular(100)
+  borderRadius: BorderRadius.circular(25)
 );
 
 final OutlineInputBorder focusedInputBorder = OutlineInputBorder(
@@ -27,7 +27,7 @@ final OutlineInputBorder focusedInputBorder = OutlineInputBorder(
     color: darkGreenColor,
     width: 1.5,
   ),
-  borderRadius: BorderRadius.circular(100)
+  borderRadius: BorderRadius.circular(25)
 );
 
 final OutlineInputBorder errorInputBorder = OutlineInputBorder(
@@ -35,11 +35,16 @@ final OutlineInputBorder errorInputBorder = OutlineInputBorder(
     color: redColor,
     width: 1.5,
   ),
-  borderRadius: BorderRadius.circular(100)
+  borderRadius: BorderRadius.circular(25)
 );
 
-final loginButtonStyle = ButtonStyle(
+final greenButtonStyle = ButtonStyle(
   backgroundColor: WidgetStateProperty.all(darkGreenColor),
+  minimumSize: WidgetStateProperty.all(const Size(double.infinity, 50)),
+);
+
+final whiteButtonStyle = ButtonStyle(
+  backgroundColor: WidgetStateProperty.all(elevatedBlurWhiteColor),
   minimumSize: WidgetStateProperty.all(const Size(double.infinity, 50)),
 );
 
@@ -48,8 +53,14 @@ const greenLink = TextStyle(
   fontWeight: FontWeight.w500,
 );
 
-const buttonText = TextStyle(
+const whiteButtonText = TextStyle(
   color: whiteColor,
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+);
+
+const greyButtonText = TextStyle(
+  color: greyColor,
   fontWeight: FontWeight.w500,
   fontSize: 16,
 );

@@ -98,10 +98,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   // Form is valid, process data
                                 }
                               },
-                              style: loginButtonStyle,
+                              style: greenButtonStyle,
                               child: Text(
                                 'Log in',
-                                style: buttonText,
+                                style: whiteButtonText,
                               ),
                             ),
                           ],
