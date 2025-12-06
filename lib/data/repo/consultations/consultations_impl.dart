@@ -14,6 +14,7 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
@@ -36,9 +37,11 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty,
         u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname
+        u2.lastname as patient_lastname,
+        u2.phone_number as patient_phone_number
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
       LEFT JOIN users u1 ON d.doctor_id = u1.user_id
@@ -62,6 +65,7 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
@@ -84,6 +88,7 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
@@ -107,9 +112,11 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty,
         u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname
+        u2.lastname as patient_lastname,
+        u2.phone_number as patient_phone_number
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
       LEFT JOIN users u1 ON d.doctor_id = u1.user_id
@@ -134,9 +141,11 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty,
         u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname
+        u2.lastname as patient_lastname,
+        u2.phone_number as patient_phone_number
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
       LEFT JOIN users u1 ON d.doctor_id = u1.user_id
@@ -160,6 +169,7 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
@@ -184,12 +194,18 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
   @override
   Future<void> updateConsultationStatus(int consultationId, String status) async {
     final db = await DBHelper.getDatabase();
-    await db.update(
+    final result = await db.update(
       'consultations',
       {'status': status},
       where: 'consultation_id = ?',
       whereArgs: [consultationId],
     );
+    
+    if (result == 0) {
+      throw Exception('No consultation found with ID: $consultationId');
+    }
+    
+    print('✅ Updated consultation $consultationId status to: $status (rows affected: $result)');
   }
 
   @override
@@ -223,9 +239,11 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
         u1.firstname as doctor_firstname,
         u1.lastname as doctor_lastname,
         u1.profile_picture as doctor_image_path,
+        u1.phone_number as doctor_phone_number,
         s.speciality_name as doctor_specialty,
         u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname
+        u2.lastname as patient_lastname,
+        u2.phone_number as patient_phone_number
       FROM consultations c
       LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
       LEFT JOIN users u1 ON d.doctor_id = u1.user_id
@@ -250,6 +268,8 @@ class ConsultationsRepositoryImpl implements ConsultationsRepository {
       patientFirstName: map['patient_firstname'] as String?,
       patientLastName: map['patient_lastname'] as String?,
       doctorImagePath: map['doctor_image_path'] as String?,
+      doctorPhoneNumber: map['doctor_phone_number'] as String?,
+      patientPhoneNumber: map['patient_phone_number'] as String?,
     );
   }
 }

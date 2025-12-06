@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
-import 'package:intl/intl.dart';
-
 
 class LabeledTextFormField extends StatefulWidget {
   final String label;
@@ -36,14 +34,16 @@ class LabeledTextFormField extends StatefulWidget {
 class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
   bool obscure = true;
 
-  Widget eyeIcon () {
+  Widget eyeIcon() {
     return IconButton(
-      icon: Icon(obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+      icon: Icon(
+        obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+      ),
       onPressed: () {
         obscure = obscure ? false : true;
         setState(() {});
       },
-    );  
+    );
   }
 
   Widget? suffixIcon() {
@@ -77,7 +77,13 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        final formatted = DateFormat('dd/MM/yyyy').format(tempPicked);
+                        final day = tempPicked.day.toString().padLeft(2, '0');
+                        final month = tempPicked.month.toString().padLeft(
+                          2,
+                          '0',
+                        );
+                        final year = tempPicked.year;
+                        final formatted = '$day/$month/$year';
                         widget.controller?.text = formatted;
                       });
                       Navigator.pop(context);
@@ -113,7 +119,9 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         SizedBox(height: 4),
         Text(
           widget.label,
-          style: widget.greyLabel ? Theme.of(context).textTheme.labelSmall : Theme.of(context).textTheme.labelMedium,
+          style: widget.greyLabel
+              ? Theme.of(context).textTheme.labelSmall
+              : Theme.of(context).textTheme.labelMedium,
         ),
         SizedBox(height: 8),
         TextFormField(
@@ -127,10 +135,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
           maxLines: widget.minlines,
           decoration: InputDecoration(
             hintText: widget.hint,
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 12,
-              horizontal: 20,
-            ),
+            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             enabledBorder: inputBorder,
             focusedBorder: focusedInputBorder,
             errorBorder: errorInputBorder,

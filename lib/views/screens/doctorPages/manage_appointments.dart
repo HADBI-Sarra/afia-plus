@@ -7,12 +7,14 @@ import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 import 'package:afia_plus_app/cubits/doctor_appointments_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class SchedulePage extends StatelessWidget {
   const SchedulePage({super.key});
 
   // TODO: Replace with actual doctor ID from authentication/session
-  static const int doctorId = 1;
+  // Using doctor ID 2 (Dr. Mohamed Brahimi) to match test data
+  static const int doctorId = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +63,20 @@ class _SchedulePageView extends StatelessWidget {
                 );
               }
 
-              return SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  10,
-                  16,
-                  kBottomNavigationBarHeight + 16,
-                ),
-                child: Column(
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<DoctorAppointmentsCubit>().refreshAppointments(SchedulePage.doctorId);
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+                color: darkGreenColor,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    10,
+                    16,
+                    kBottomNavigationBarHeight + 16,
+                  ),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
@@ -80,11 +88,11 @@ class _SchedulePageView extends StatelessWidget {
                           ),
                           onPressed: () => Navigator.pop(context),
                         ),
-                        const Expanded(
+                        Expanded(
                           child: Center(
                             child: Text(
-                              'Manage Appointments',
-                              style: TextStyle(
+                              AppLocalizations.of(context)!.upcomingAppointments,
+                              style: const TextStyle(
                                 color: blackColor,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 20,
@@ -98,9 +106,9 @@ class _SchedulePageView extends StatelessWidget {
                     const SizedBox(height: 16),
                     const SizedBox(height: 24),
                     if (state.upcomingAppointments.isNotEmpty) ...[
-                      const Text(
-                        'Upcoming Appointments',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.upcomingAppointments,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: darkGreenColor,
                           fontSize: 16,
@@ -114,9 +122,9 @@ class _SchedulePageView extends StatelessWidget {
                       const SizedBox(height: 24),
                     ],
                     if (state.pastAppointments.isNotEmpty) ...[
-                      const Text(
-                        'Past Appointments',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.pastAppointments,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           color: darkGreenColor,
                           fontSize: 16,
@@ -129,17 +137,18 @@ class _SchedulePageView extends StatelessWidget {
                           )),
                     ],
                     if (state.upcomingAppointments.isEmpty && state.pastAppointments.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(40.0),
+                      Padding(
+                        padding: const EdgeInsets.all(40.0),
                         child: Center(
                           child: Text(
-                            'No appointments found',
-                            style: TextStyle(color: greyColor, fontSize: 16),
+                          AppLocalizations.of(context)!.noAppointmentsFound,
+                          style: const TextStyle(color: greyColor, fontSize: 16),
                           ),
                         ),
                       ),
                     const SizedBox(height: 80),
                   ],
+                  ),
                 ),
               );
             },
@@ -168,35 +177,57 @@ class _SchedulePageView extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: darkGreenColor,
-          child: Icon(Icons.person, color: whiteColor),
-        ),
-        title: Text(
-          consultation.patientFullName,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: blackColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const CircleAvatar(
+            backgroundColor: darkGreenColor,
+            radius: 24,
+            child: Icon(Icons.person, color: whiteColor),
           ),
-        ),
-        subtitle: Text(
-          '${consultation.consultation.startTime}\n${consultation.consultation.consultationDate}',
-          style: const TextStyle(color: greyColor),
-        ),
-        trailing: consultation.consultation.status == 'pending'
-            ? IntrinsicHeight(
-                child: Column(
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  consultation.patientFullName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: blackColor,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  consultation.consultation.startTime,
+                  style: const TextStyle(color: greyColor, fontSize: 13),
+                ),
+                Text(
+                  consultation.consultation.consultationDate,
+                  style: const TextStyle(color: greyColor, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          if (consultation.consultation.status == 'pending')
+            BlocBuilder<DoctorAppointmentsCubit, DoctorAppointmentsState>(
+              builder: (context, state) {
+                final isProcessing = consultation.consultation.consultationId != null &&
+                    state.processingConsultationIds.contains(consultation.consultation.consultationId);
+                
+                return Column(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton.icon(
-                      onPressed: () {
+                      onPressed: isProcessing ? null : () {
                         if (consultation.consultation.consultationId != null) {
-                          context.read<DoctorAppointmentsCubit>().acceptAppointment(
-                                consultation.consultation.consultationId!,
-                                SchedulePage.doctorId,
-                              );
+                          _showAcceptConfirmationDialog(
+                            context: context,
+                            consultation: consultation,
+                          );
                         }
                       },
                       icon: const Icon(
@@ -204,12 +235,21 @@ class _SchedulePageView extends StatelessWidget {
                         size: 18,
                         color: whiteColor,
                       ),
-                      label: const Text(
-                        'Accept',
-                        style: TextStyle(color: whiteColor, fontSize: 12),
-                      ),
+                      label: isProcessing
+                          ? const SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                              ),
+                            )
+                          : Text(
+                              AppLocalizations.of(context)!.accept,
+                              style: const TextStyle(color: whiteColor, fontSize: 12),
+                            ),
                       style: greenButtonStyle.copyWith(
-                        minimumSize: WidgetStateProperty.all(const Size(140, 30)),
+                        minimumSize: WidgetStateProperty.all(const Size(120, 32)),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -217,14 +257,14 @@ class _SchedulePageView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     OutlinedButton.icon(
-                      onPressed: () {
+                      onPressed: isProcessing ? null : () {
                         if (consultation.consultation.consultationId != null) {
-                          context.read<DoctorAppointmentsCubit>().rejectAppointment(
-                                consultation.consultation.consultationId!,
-                                SchedulePage.doctorId,
-                              );
+                          _showRejectConfirmationDialog(
+                            context: context,
+                            consultation: consultation,
+                          );
                         }
                       },
                       icon: const Icon(
@@ -232,22 +272,34 @@ class _SchedulePageView extends StatelessWidget {
                         size: 18,
                         color: darkGreenColor,
                       ),
-                      label: const Text(
-                        'Reject',
-                        style: TextStyle(color: darkGreenColor, fontSize: 12),
-                      ),
+                      label: isProcessing
+                          ? const SizedBox(
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(darkGreenColor),
+                              ),
+                            )
+                          : Text(
+                              AppLocalizations.of(context)!.reject,
+                              style: const TextStyle(color: darkGreenColor, fontSize: 12),
+                            ),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: darkGreenColor),
-                        minimumSize: const Size(140, 30),
+                        side: BorderSide(
+                          color: isProcessing ? greyColor : darkGreenColor,
+                        ),
+                        minimumSize: const Size(120, 32),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
                   ],
-                ),
-              )
-            : null,
+                );
+              },
+            ),
+        ],
       ),
     );
   }
@@ -270,92 +322,448 @@ class _SchedulePageView extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: blueGreenColor,
-          child: Icon(Icons.person, color: whiteColor),
-        ),
-        title: Text(
-          consultation.patientFullName,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            color: blackColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const CircleAvatar(
+            backgroundColor: blueGreenColor,
+            radius: 24,
+            child: Icon(Icons.person, color: whiteColor),
           ),
-        ),
-        subtitle: Text(
-          '${consultation.consultation.startTime}\n${consultation.consultation.consultationDate}',
-          style: const TextStyle(color: greyColor),
-        ),
-        trailing: consultation.consultation.prescription == null || 
-                  consultation.consultation.prescription!.isEmpty
-            ? ElevatedButton.icon(
-                onPressed: () async {
-                  if (consultation.consultation.consultationId == null) return;
-
-                  // Pick PDF file
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['pdf'],
-                  );
-
-                  if (result != null && result.files.single.path != null) {
-                    final file = File(result.files.single.path!);
-                    
-                    // Upload PDF (path will be stored in prescription field)
-                    context.read<DoctorAppointmentsCubit>().uploadPrescriptionPDF(
-                          consultation.consultation.consultationId!,
-                          file,
-                          '', // Empty string as we're storing path, not text
-                        );
-                    
-                    // Show success message
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Prescription PDF uploaded successfully'),
-                          backgroundColor: darkGreenColor,
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    }
-                  }
-                },
-                icon: const Icon(Icons.upload_file, size: 18, color: whiteColor),
-                label: const Text(
-                  'Upload PDF',
-                  style: TextStyle(fontSize: 12, color: whiteColor),
-                ),
-                style: greenButtonStyle.copyWith(
-                  backgroundColor: WidgetStateProperty.all(blueGreenColor),
-                  minimumSize: WidgetStateProperty.all(const Size(90, 36)),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  consultation.patientFullName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: blackColor,
+                    fontSize: 15,
                   ),
                 ),
-              )
-            : Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                const SizedBox(height: 4),
+                Text(
+                  consultation.consultation.startTime,
+                  style: const TextStyle(color: greyColor, fontSize: 13),
+                ),
+                Text(
+                  consultation.consultation.consultationDate,
+                  style: const TextStyle(color: greyColor, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Check database for existing prescription PDF
+          consultation.consultation.prescription == null || 
+                  consultation.consultation.prescription!.isEmpty
+              ? ElevatedButton.icon(
+                  onPressed: () async {
+                    if (consultation.consultation.consultationId == null) return;
+
+                    // Pick PDF file
+                    FilePickerResult? result = await FilePicker.platform.pickFiles(
+                      type: FileType.custom,
+                      allowedExtensions: ['pdf'],
+                    );
+
+                    if (result != null && result.files.single.path != null) {
+                      final file = File(result.files.single.path!);
+                      
+                      // Upload PDF (path will be stored in prescription field)
+                      if (context.mounted) {
+                        context.read<DoctorAppointmentsCubit>().uploadPrescriptionPDF(
+                              consultation.consultation.consultationId!,
+                              file,
+                              '', // Empty string as we're storing path, not text
+                            );
+                      }
+                      
+                      // Show success message
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.pdfUploadedSuccess),
+                            backgroundColor: darkGreenColor,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.upload_file, size: 18, color: whiteColor),
+                  label: Text(
+                    AppLocalizations.of(context)!.uploadPdf,
+                    style: const TextStyle(fontSize: 12, color: whiteColor),
+                  ),
+                  style: greenButtonStyle.copyWith(
+                    backgroundColor: WidgetStateProperty.all(blueGreenColor),
+                    minimumSize: WidgetStateProperty.all(const Size(100, 36)),
+                    shape: WidgetStateProperty.all(
+                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: darkGreenColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle, size: 16, color: darkGreenColor),
+                      const SizedBox(width: 6),
+                      Text(
+                        AppLocalizations.of(context)!.pdfUploaded,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: darkGreenColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+
+  void _showAcceptConfirmationDialog({
+    required BuildContext context,
+    required ConsultationWithDetails consultation,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: darkGreenColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: const Icon(
+                  Icons.check_circle_outline,
+                  color: darkGreenColor,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.confirmAccept,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: blackColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.confirmAcceptMessage,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: blackColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: greyColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.check_circle, size: 16, color: darkGreenColor),
-                    SizedBox(width: 4),
-                    Text(
-                      'PDF Uploaded',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: darkGreenColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        const Icon(Icons.person, size: 18, color: darkGreenColor),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            consultation.patientFullName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: blackColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${consultation.consultation.consultationDate} at ${consultation.consultation.startTime}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: greyColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-      ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
+                  color: greyColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                if (consultation.consultation.consultationId != null) {
+                  context.read<DoctorAppointmentsCubit>().acceptAppointment(
+                        consultation.consultation.consultationId!,
+                        SchedulePage.doctorId,
+                      );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.appointmentAccepted),
+                        backgroundColor: darkGreenColor,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: darkGreenColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.accept,
+                style: const TextStyle(
+                  color: whiteColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRejectConfirmationDialog({
+    required BuildContext context,
+    required ConsultationWithDetails consultation,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.cancel_outlined,
+                  color: Colors.red,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  AppLocalizations.of(context)!.confirmReject,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: blackColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.confirmRejectMessage,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: blackColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: greyColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.person, size: 18, color: darkGreenColor),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            consultation.patientFullName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              color: blackColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${consultation.consultation.consultationDate} at ${consultation.consultation.startTime}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: greyColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'The patient will be notified of the rejection.',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.red,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
+                  color: greyColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                final consultationId = consultation.consultation.consultationId;
+                if (consultationId == null) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Error: Consultation ID is null'),
+                        backgroundColor: Colors.red,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                  return;
+                }
+                
+                if (context.mounted) {
+                  print('🔴 UI: Rejecting consultation ID: $consultationId');
+                  try {
+                    await context.read<DoctorAppointmentsCubit>().rejectAppointment(
+                          consultationId,
+                          SchedulePage.doctorId,
+                        );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)!.appointmentRejected),
+                          backgroundColor: Colors.red,
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    print('❌ UI Error: $e');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error rejecting appointment: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+              child: const Text(
+                'Reject',
+                style: TextStyle(
+                  color: whiteColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

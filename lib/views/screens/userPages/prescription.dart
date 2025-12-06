@@ -11,6 +11,7 @@ import 'package:afia_plus_app/views/widgets/footer_user.dart';
 import 'package:afia_plus_app/cubits/prescription_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/pdf_service.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class PrescriptionPage extends StatelessWidget {
   const PrescriptionPage({super.key});
@@ -31,6 +32,7 @@ class _PrescriptionPageView extends StatelessWidget {
   const _PrescriptionPageView();
 
   Widget _buildPrescriptionCard({
+    required BuildContext context,
     required ConsultationWithDetails consultation,
   }) {
     return Container(
@@ -73,7 +75,9 @@ class _PrescriptionPageView extends StatelessWidget {
               onPressed: () async {
                 final prescriptionPath = consultation.consultation.prescription;
                 if (prescriptionPath == null || prescriptionPath.isEmpty) {
-                  _showError(context, 'No prescription available');
+                  if (context.mounted) {
+                    _showError(context, AppLocalizations.of(context)!.noPrescriptionAvailable);
+                  }
                   return;
                 }
 
@@ -86,13 +90,15 @@ class _PrescriptionPageView extends StatelessWidget {
                     await _openStoredPDF(context, prescriptionPath);
                   }
                 } catch (e) {
-                  _showError(context, 'Failed to open PDF: ${e.toString()}');
+                  if (context.mounted) {
+                    _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+                  }
                 }
               },
               icon: const Icon(Icons.download_rounded, color: darkGreenColor),
-              label: const Text(
-                "View Prescription",
-                style: TextStyle(
+              label: Text(
+                AppLocalizations.of(context)!.viewPrescription,
+                style: const TextStyle(
                   color: darkGreenColor,
                   fontWeight: FontWeight.w600,
                 ),
@@ -131,7 +137,7 @@ class _PrescriptionPageView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Error: ${state.error}',
+                        '${AppLocalizations.of(context)!.error}: ${state.error}',
                         style: const TextStyle(color: Colors.red),
                       ),
                       const SizedBox(height: 16),
@@ -139,7 +145,7 @@ class _PrescriptionPageView extends StatelessWidget {
                         onPressed: () {
                           context.read<PrescriptionCubit>().refreshPrescriptions(PrescriptionPage.patientId);
                         },
-                        child: const Text('Retry'),
+                        child: Text(AppLocalizations.of(context)!.retry),
                       ),
                     ],
                   ),
@@ -160,11 +166,11 @@ class _PrescriptionPageView extends StatelessWidget {
                             ),
                             onPressed: () => Navigator.pop(context),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Center(
                               child: Text(
-                                "My Prescriptions",
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.myPrescriptions,
+                                style: const TextStyle(
                                   color: blackColor,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
@@ -176,18 +182,24 @@ class _PrescriptionPageView extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 40),
-                      const Text(
-                        'No prescriptions available',
-                        style: TextStyle(color: greyColor, fontSize: 16),
+                      Text(
+                        AppLocalizations.of(context)!.noPrescriptionsFound,
+                        style: const TextStyle(color: greyColor, fontSize: 16),
                       ),
                     ],
                   ),
                 );
               }
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                child: Column(
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<PrescriptionCubit>().refreshPrescriptions(PrescriptionPage.patientId);
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+                color: darkGreenColor,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
@@ -216,10 +228,12 @@ class _PrescriptionPageView extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     ...state.prescriptions.map((consultation) => _buildPrescriptionCard(
+                          context: context,
                           consultation: consultation,
                         )),
                     const SizedBox(height: 80),
                   ],
+                  ),
                 ),
               );
             },
@@ -246,10 +260,14 @@ class _PrescriptionPageView extends StatelessWidget {
       // Open the file
       final result = await OpenFilex.open(tempFile.path);
       if (result.type != ResultType.done) {
-        _showError(context, 'Failed to open PDF file');
+        if (context.mounted) {
+          _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(''));
+        }
       }
     } catch (e) {
-      _showError(context, 'Error loading PDF: ${e.toString()}');
+      if (context.mounted) {
+        _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+      }
     }
   }
 
@@ -258,17 +276,23 @@ class _PrescriptionPageView extends StatelessWidget {
     try {
       final pdfFile = await PDFService.getPDFFile(storedPath);
       if (pdfFile == null || !await pdfFile.exists()) {
-        _showError(context, 'PDF file not found');
+        if (context.mounted) {
+          _showError(context, AppLocalizations.of(context)!.pdfFileNotFound);
+        }
         return;
       }
 
       // Open the file
       final result = await OpenFilex.open(pdfFile.path);
       if (result.type != ResultType.done) {
-        _showError(context, 'Failed to open PDF file');
+        if (context.mounted) {
+          _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(''));
+        }
       }
     } catch (e) {
-      _showError(context, 'Error opening PDF: ${e.toString()}');
+      if (context.mounted) {
+        _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+      }
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
-import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
 import 'package:afia_plus_app/views/screens/userprofile/user_profile_screen_doctor_view.dart';
 import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.dart';
 import 'package:flutter/material.dart';
@@ -7,17 +6,30 @@ import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/screens/search/search.dart';
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
-import 'package:afia_plus_app/views/screens/sign_up/doctor/doctor_personal_data.dart';
-import 'package:afia_plus_app/views/screens/sign_up/patient/patient_personal_data.dart';
-import 'package:afia_plus_app/views/screens/sign_up/doctor/professional_info.dart';
-import 'package:afia_plus_app/views/screens/homescreen/patient_home_screen.dart';
-import 'package:afia_plus_app/views/screens/doctorPages/manage_appointments.dart';
-import 'package:afia_plus_app/views/screens/userPages/user_appointments';
-import 'package:afia_plus_app/views/screens/doctorPages/doctor_availability.dart';
-import 'package:afia_plus_app/views/screens/userPages/prescription.dart';
+import 'package:afia_plus_app/views/screens/userPages/user_appointments.dart';
+import 'package:afia_plus_app/utils/db_verification_screen.dart';
+import 'package:afia_plus_app/utils/db_seeder.dart';
+import 'package:afia_plus_app/cubits/locale_cubit.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:afia_plus_app/views/screens/homescreen/doctor_home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Force reseed database (clears old data and inserts fresh test data)
+  // Comment this out after first run if you want to keep your data
+  try {
+    print('🔄 Force reseeding database...');
+    await DBSeeder.forceReseed();
+    print('✅ Database reseeded successfully!');
+  } catch (e) {
+    print('❌ Error reseeding database: $e');
+    // Fallback to normal seeding if force reseed fails
+    await DBSeeder.ensureDatabaseSeeded();
+  }
+
   runApp(const MainApp());
 }
 
@@ -26,22 +38,43 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: APP_NAME,
-      theme: appTheme,
+    return BlocProvider(
+      create: (context) => LocaleCubit(),
+      child: BlocBuilder<LocaleCubit, Locale>(
+        builder: (context, locale) {
+          return MaterialApp(
+            title: APP_NAME,
+            theme: appTheme,
+            locale: locale, // Dynamic locale from LocaleCubit
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('en'), // English
+              Locale('ar'), // Arabic
+            ],
+            home: DoctorHomeScreen(),
 
-      routes: {
-        UserProfileScreen.routename: (context) => UserProfileScreen(),
-        DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
-        DoctorViewDoctorProfileScreen.routename: (context) =>
-            DoctorViewDoctorProfileScreen(),
-        DoctorViewUserProfileScreen.routename: (context) =>
-            DoctorViewUserProfileScreen(),
-        SearchScreen.routename: (context) => SearchScreen(),
-      },
+            //const DoctorHomeScreen(),
+            //UpcomingAppointmentsPage(),
+            routes: {
+              UserProfileScreen.routename: (context) => UserProfileScreen(),
+              DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
+              DoctorViewDoctorProfileScreen.routename: (context) =>
+                  DoctorViewDoctorProfileScreen(),
+              DoctorViewUserProfileScreen.routename: (context) =>
+                  DoctorViewUserProfileScreen(),
+              SearchScreen.routename: (context) => SearchScreen(),
+              '/db-verify': (context) => const DBVerificationScreen(),
+            },
 
-      home: UpcomingAppointmentsPage(),
-      //DoctorViewDoctorProfileScreen(),
+            //DoctorViewDoctorProfileScreen(),
+          );
+        },
+      ),
     );
   }
 }

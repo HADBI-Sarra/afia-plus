@@ -1,0 +1,322 @@
+{
+  "@@locale": "en",
+  "appName": "3afiaPlus",
+  "@appName": {
+    "description": "The application name"
+  },
+  "upcomingAppointments": "Upcoming Appointments",
+  "@upcomingAppointments": {
+    "description": "Title for upcoming appointments section"
+  },
+  "pastAppointments": "Past Appointments",
+  "@pastAppointments": {
+    "description": "Title for past appointments section"
+  },
+  "pendingConsultations": "Pending Consultations",
+  "@pendingConsultations": {
+    "description": "Title for pending consultations section"
+  },
+  "comingConsultations": "Coming Consultations",
+  "@comingConsultations": {
+    "description": "Title for coming consultations section"
+  },
+  "prescriptions": "Prescriptions",
+  "@prescriptions": {
+    "description": "Title for prescriptions section"
+  },
+  "seeAll": "See all",
+  "@seeAll": {
+    "description": "Link text to see all items"
+  },
+  "accept": "Accept",
+  "@accept": {
+    "description": "Accept button text"
+  },
+  "reject": "Reject",
+  "@reject": {
+    "description": "Reject button text"
+  },
+  "uploadPdf": "Upload PDF",
+  "@uploadPdf": {
+    "description": "Upload PDF button text"
+  },
+  "pdfUploaded": "PDF Uploaded",
+  "@pdfUploaded": {
+    "description": "Indicator that PDF is uploaded"
+  },
+  "viewPrescription": "View Prescription",
+  "@viewPrescription": {
+    "description": "View prescription button text"
+  },
+  "whatsapp": "WhatsApp",
+  "@whatsapp": {
+    "description": "WhatsApp button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error label"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  "noAppointmentsFound": "No appointments found",
+  "@noAppointmentsFound": {
+    "description": "Message when no appointments are available"
+  },
+  "noConsultationsFound": "No consultations found",
+  "@noConsultationsFound": {
+    "description": "Message when no consultations are available"
+  },
+  "noPrescriptionsFound": "No prescriptions found",
+  "@noPrescriptionsFound": {
+    "description": "Message when no prescriptions are available"
+  },
+  "confirmAccept": "Accept Appointment",
+  "@confirmAccept": {
+    "description": "Confirmation dialog title for accepting appointment"
+  },
+  "confirmAcceptMessage": "Are you sure you want to accept this appointment?",
+  "@confirmAcceptMessage": {
+    "description": "Confirmation message for accepting appointment"
+  },
+  "confirmReject": "Reject Appointment",
+  "@confirmReject": {
+    "description": "Confirmation dialog title for rejecting appointment"
+  },
+  "confirmRejectMessage": "Are you sure you want to reject this appointment? This action cannot be undone.",
+  "@confirmRejectMessage": {
+    "description": "Confirmation message for rejecting appointment"
+  },
+  "confirmDelete": "Delete Appointment",
+  "@confirmDelete": {
+    "description": "Confirmation dialog title for deleting appointment"
+  },
+  "confirmDeleteMessage": "Are you sure you want to delete this appointment? This action cannot be undone.",
+  "@confirmDeleteMessage": {
+    "description": "Confirmation message for deleting appointment"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button text"
+  },
+  "no": "No",
+  "@no": {
+    "description": "No button text"
+  },
+  "appointmentAccepted": "Appointment accepted successfully",
+  "@appointmentAccepted": {
+    "description": "Success message when appointment is accepted"
+  },
+  "appointmentRejected": "Appointment rejected successfully",
+  "@appointmentRejected": {
+    "description": "Success message when appointment is rejected"
+  },
+  "appointmentDeleted": "Appointment deleted successfully",
+  "@appointmentDeleted": {
+    "description": "Success message when appointment is deleted"
+  },
+  "pdfUploadedSuccess": "Prescription PDF uploaded successfully",
+  "@pdfUploadedSuccess": {
+    "description": "Success message when PDF is uploaded"
+  },
+  "pdfUploadFailed": "Failed to upload PDF: {error}",
+  "@pdfUploadFailed": {
+    "description": "Error message when PDF upload fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "pdfOpenFailed": "Failed to open PDF: {error}",
+  "@pdfOpenFailed": {
+    "description": "Error message when PDF cannot be opened",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsappNotInstalled": "Could not open WhatsApp. Please make sure WhatsApp is installed.",
+  "@whatsappNotInstalled": {
+    "description": "Error message when WhatsApp is not installed"
+  },
+  "phoneNumberNotAvailable": "Phone number not available",
+  "@phoneNumberNotAvailable": {
+    "description": "Error message when phone number is missing"
+  },
+  "doctorPhoneNumberNotAvailable": "Doctor phone number not available",
+  "@doctorPhoneNumberNotAvailable": {
+    "description": "Error message when doctor phone number is missing"
+  },
+  "errorLoadingConsultations": "Error Loading consultations",
+  "@errorLoadingConsultations": {
+    "description": "Error message when consultations fail to load"
+  },
+  "errorLoadingAppointments": "Error Loading appointments",
+  "@errorLoadingAppointments": {
+    "description": "Error message when appointments fail to load"
+  },
+  "statusPending": "Pending",
+  "@statusPending": {
+    "description": "Status label for pending appointments"
+  },
+  "statusScheduled": "Scheduled",
+  "@statusScheduled": {
+    "description": "Status label for scheduled appointments"
+  },
+  "statusCompleted": "Completed",
+  "@statusCompleted": {
+    "description": "Status label for completed appointments"
+  },
+  "statusCancelled": "Cancelled",
+  "@statusCancelled": {
+    "description": "Status label for cancelled appointments"
+  },
+  "logIn": "Log in",
+  "@logIn": {
+    "description": "Login button text"
+  },
+  "niceToHaveYouBack": "Nice to have you back!",
+  "@niceToHaveYouBack": {
+    "description": "Welcome message on login screen"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email label"
+  },
+  "enterYourEmail": "Enter your email",
+  "@enterYourEmail": {
+    "description": "Email input hint"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password label"
+  },
+  "enterYourPassword": "Enter your password",
+  "@enterYourPassword": {
+    "description": "Password input hint"
+  },
+  "personalData": "Personal data",
+  "@personalData": {
+    "description": "Personal data form title"
+  },
+  "providePersonalData": "Provide your personal data to book visits in just a few clicks.",
+  "@providePersonalData": {
+    "description": "Personal data form description"
+  },
+  "firstName": "First name",
+  "@firstName": {
+    "description": "First name label"
+  },
+  "enterYourFirstName": "Enter your first name",
+  "@enterYourFirstName": {
+    "description": "First name input hint"
+  },
+  "lastName": "Last name",
+  "@lastName": {
+    "description": "Last name label"
+  },
+  "enterYourLastName": "Enter your last name",
+  "@enterYourLastName": {
+    "description": "Last name input hint"
+  },
+  "dateOfBirth": "Date of birth",
+  "@dateOfBirth": {
+    "description": "Date of birth label"
+  },
+  "pullToRefresh": "Pull to refresh",
+  "@pullToRefresh": {
+    "description": "Pull to refresh hint"
+  },
+  "myPrescriptions": "My Prescriptions",
+  "@myPrescriptions": {
+    "description": "Title for prescriptions page"
+  },
+  "myAppointments": "My Appointments",
+  "@myAppointments": {
+    "description": "Title for appointments page"
+  },
+  "confirmedAppointments": "Confirmed Appointments",
+  "@confirmedAppointments": {
+    "description": "Section title for confirmed appointments"
+  },
+  "notConfirmedAppointments": "Not Confirmed Appointments",
+  "@notConfirmedAppointments": {
+    "description": "Section title for not confirmed appointments"
+  },
+  "noPrescriptionAvailable": "No prescription available",
+  "@noPrescriptionAvailable": {
+    "description": "Message when prescription is not available"
+  },
+  "pdfFileNotFound": "PDF file not found",
+  "@pdfFileNotFound": {
+    "description": "Error message when PDF file cannot be found"
+  },
+  "cancelAppointment": "Cancel Appointment",
+  "@cancelAppointment": {
+    "description": "Cancel appointment button and dialog title"
+  },
+  "keepAppointment": "Keep Appointment",
+  "@keepAppointment": {
+    "description": "Button to keep/cancel deletion of appointment"
+  },
+  "appointmentCancelled": "Appointment cancelled successfully",
+  "@appointmentCancelled": {
+    "description": "Success message when appointment is cancelled"
+  },
+  "thisActionCannotBeUndone": "This action cannot be undone.",
+  "@thisActionCannotBeUndone": {
+    "description": "Warning message that action cannot be undone"
+  },
+  "areYouSureCancelAppointment": "Are you sure you want to cancel this appointment?",
+  "@areYouSureCancelAppointment": {
+    "description": "Confirmation message for cancelling appointment"
+  },
+  "specialist": "Specialist",
+  "@specialist": {
+    "description": "Default specialty label when specialty is not available"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language label"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language label"
+  },
+  "whatsappError": "Could not open WhatsApp. Please make sure WhatsApp is installed.",
+  "@whatsappError": {
+    "description": "Error message when WhatsApp cannot be opened"
+  },
+  "whatsappMessageDoctor": "Hello Dr. {doctorName}, I have a question about my appointment on {date}.",
+  "@whatsappMessageDoctor": {
+    "description": "WhatsApp message template for contacting doctor",
+    "placeholders": {
+      "doctorName": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  }
+}
+
