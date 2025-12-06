@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_flutter/lucide_flutter.dart';
+//import 'package:lucide_flutter/lucide_flutter.dart';
 
 class DoctorCard extends StatelessWidget {
   final String imagePath;

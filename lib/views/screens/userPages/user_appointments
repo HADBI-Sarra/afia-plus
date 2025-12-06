@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/footer_user.dart';
+
 class UpcomingAppointmentsPage extends StatelessWidget {
   const UpcomingAppointmentsPage({super.key});
 
@@ -17,7 +18,6 @@ class UpcomingAppointmentsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                
                 Row(
                   children: [
                     IconButton(
@@ -27,7 +27,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
                     const Expanded(
                       child: Center(
                         child: Text(
-                          'Upcoming Appointments',
+                          'My Appointments',
                           style: TextStyle(
                             color: blackColor,
                             fontWeight: FontWeight.w700,
@@ -45,6 +45,18 @@ class UpcomingAppointmentsPage extends StatelessWidget {
                 Expanded(
                   child: ListView(
                     children: [
+                      // Confirmed Appointments Section
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Confirmed Appointments',
+                          style: TextStyle(
+                            color: blackColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                       _buildDoctorCard(
                         name: 'Dr. Mohamed Brahimi',
                         specialty: 'Cardiologist',
@@ -56,6 +68,21 @@ class UpcomingAppointmentsPage extends StatelessWidget {
                         specialty: 'Dentist',
                         date: '13 Nov, 10:00 - 10:30',
                         imagePath: 'assets/images/doctorSirine.png',
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // Not Confirmed Appointments Section
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Not Confirmed Appointments',
+                          style: TextStyle(
+                            color: blackColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                       _buildDoctorCard(
                         name: 'Dr. Boukenouche Lamis',
@@ -88,7 +115,7 @@ class UpcomingAppointmentsPage extends StatelessWidget {
     required String imagePath,
   }) {
     return Container(
-      height:150,
+      height: 150,
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -105,7 +132,6 @@ class UpcomingAppointmentsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           Row(
             children: [
               CircleAvatar(
@@ -125,13 +151,15 @@ class UpcomingAppointmentsPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.more_vert, color: greyColor),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: greyColor),
+                onPressed: () {},
+              ),
             ],
           ),
 
           const SizedBox(height: 10),
 
-      
           Row(
             children: [
               const Icon(Icons.calendar_today_outlined,

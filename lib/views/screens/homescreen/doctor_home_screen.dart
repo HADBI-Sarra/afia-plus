@@ -31,59 +31,59 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
   }
 
   Widget _buildConsultationCard({
-  required String name,
-  required String time,
-  required String date,
-}) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 6),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: whiteColor.withOpacity(0.9),
-      borderRadius: BorderRadius.circular(15),
-      boxShadow: [
-        BoxShadow(
-          color: greyColor.withOpacity(0.15),
-          blurRadius: 5,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: ListTile(
-      leading: const CircleAvatar(
-        backgroundColor: darkGreenColor,
-        child: Icon(Icons.person, color: whiteColor),
+    required String name,
+    required String time,
+    required String date,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: whiteColor.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: greyColor.withOpacity(0.15),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      title: Text(
-        name,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          color: blackColor,
-        ),
-      ),
-      subtitle: Text(
-        '$time\n$date',
-        style: const TextStyle(color: greyColor),
-      ),
-      trailing: ElevatedButton(
-        onPressed: () {
-          // open WhatsApp or navigate to chat
-        },
-        style: ElevatedButton.styleFrom(
+      child: ListTile(
+        leading: const CircleAvatar(
           backgroundColor: darkGreenColor,
-          minimumSize: const Size(140, 36),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+          child: Icon(Icons.person, color: whiteColor),
+        ),
+        title: Text(
+          name,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            color: blackColor,
           ),
         ),
-        child: const Text(
-          'WhatsApp',
-          style: TextStyle(color: whiteColor, fontSize: 14),
+        subtitle: Text(
+          '$time\n$date',
+          style: const TextStyle(color: greyColor),
+        ),
+        trailing: ElevatedButton(
+          onPressed: () {
+            // open WhatsApp or navigate to chat
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: darkGreenColor,
+            minimumSize: const Size(140, 36),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: const Text(
+            'WhatsApp',
+            style: TextStyle(color: whiteColor, fontSize: 14),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildAppointmentCard({
     required String name,
@@ -179,15 +179,9 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       style: whiteButtonStyle,
       child: Row(
         children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(name, style: Theme.of(context).textTheme.labelMedium),
           Expanded(child: Container()),
-          Text(
-            number,
-            style: TextStyle(color: greyColor),
-          )
+          Text(number, style: TextStyle(color: greyColor)),
         ],
       ),
     );
@@ -199,10 +193,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
       style: whiteButtonStyle,
       child: Row(
         children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(name, style: Theme.of(context).textTheme.labelMedium),
           Expanded(child: Container()),
           Icon(Icons.arrow_outward_rounded),
         ],
