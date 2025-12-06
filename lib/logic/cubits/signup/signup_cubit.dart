@@ -109,6 +109,17 @@ class SignupCubit extends Cubit<SignupState> {
       professionalAgreeBoxChecked: !state.professionalAgreeBoxChecked,
       professionalRedCheckBox: state.professionalAgreeBoxChecked ? false : state.professionalRedCheckBox));
 
+  void setSpecialityId(int id) {
+    emit(state.copyWith(specialityId: id));
+  }
+
+  void setSpecialityName(String name) {
+    emit(state.copyWith(
+      specialityName: name,
+      specialityError: _validateSpeciality(name),
+    ));
+  }
+
   // ---------------- Submission ----------------
   /// Validates **account info only** for Step 1
   bool validateAccountStep() {
@@ -432,6 +443,11 @@ class SignupCubit extends Cubit<SignupState> {
 
   String? _validateSpeciality(String? value) {
     if (value == null || value.isEmpty) return 'Please select your speciality';
+    return null;
+  }
+
+  String? _validateSpecialityId(int? value) {
+    if (value == null || value == 0) return 'Please select your speciality';
     return null;
   }
 

@@ -19,6 +19,8 @@ import 'data/repo/doctors/doctor_repository.dart';
 import 'data/repo/doctors/db_doctor_repository.dart';
 import 'data/repo/auth/auth_repository.dart';
 import 'data/repo/auth/db_auth_repository.dart';
+import 'data/repo/specialities/db_speciality_repository.dart';
+import 'data/repo/specialities/speciality_repository.dart';
 
 Future<void> initMyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +41,7 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<PatientRepository>(() => DBPatientRepository());
   sl.registerLazySingleton<DoctorRepository>(() => DBDoctorRepository());
   sl.registerLazySingleton<AuthRepository>(() => DbAuthRepository(db));
+  sl.registerLazySingleton<SpecialityRepository>(() => DBSpecialityRepository());
 }
 
 void main() async {

@@ -62,6 +62,9 @@ class SignupState {
   final String? consultationPriceError;
   final bool professionalAgreeBoxChecked;
   final bool professionalRedCheckBox;
+  final int specialityId;
+  final String specialityName;
+
 
   // ---------------- General ----------------
   final bool isLoading;
@@ -129,6 +132,8 @@ class SignupState {
     this.consultationPriceError,
     this.professionalAgreeBoxChecked = false,
     this.professionalRedCheckBox = false,
+    this.specialityId = 0,
+    this.specialityName = '',
 
     // General
     this.isLoading = false,
@@ -197,6 +202,8 @@ class SignupState {
     String? consultationPriceError,
     bool? professionalAgreeBoxChecked,
     bool? professionalRedCheckBox,
+    int? specialityId,
+    String? specialityName,
 
     // General
     bool? isLoading,
@@ -264,6 +271,8 @@ class SignupState {
       consultationPriceError: consultationPriceError,
       professionalAgreeBoxChecked: professionalAgreeBoxChecked ?? this.professionalAgreeBoxChecked,
       professionalRedCheckBox: professionalRedCheckBox ?? this.professionalRedCheckBox,
+      specialityId: specialityId ?? this.specialityId,
+      specialityName: specialityName ?? this.specialityName,
 
       // General
       isLoading: isLoading ?? this.isLoading,
