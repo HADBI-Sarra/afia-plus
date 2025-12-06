@@ -48,6 +48,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.currentStep != curr.currentStep || prev.message != curr.message,
       listener: (context, state) {
+        // Show snackbar for error messages
+        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
         // Navigate automatically based on step
         if (state.currentStep == SignupStep.personal) {
           if (state.isPatient) {
@@ -177,12 +187,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ? const CircularProgressIndicator(color: Colors.white)
                             : Text('Next', style: whiteButtonText),
                       ),
-
-                      if (state.message.isNotEmpty && state.message != 'Success')
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(state.message, style: const TextStyle(color: Colors.red)),
-                        ),
 
                       const SizedBox(height: 30),
                       Row(

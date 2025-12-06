@@ -1,21 +1,21 @@
 import 'package:afia_plus_app/data/db_helper.dart';
-import 'specialties_abstract.dart';
+import 'specialities_abstract.dart';
 
-class SpecialtiesImpl implements SpecialtiesRepo {
+class SpecialitiesImpl implements SpecialitiesRepo {
   @override
-  Future<List<Map<String, dynamic>>> getSpecialties() async {
+  Future<List<Map<String, dynamic>>> getSpecialities() async {
     final db = await DBHelper.getDatabase();
     return await db.query('specialities');
   }
 
   @override
-  Future<int> addSpecialty(Map<String, dynamic> data) async {
+  Future<int> addSpeciality(Map<String, dynamic> data) async {
     final db = await DBHelper.getDatabase();
     return await db.insert('specialities', data);
   }
 
   @override
-  Future<int> updateSpecialty(int id, Map<String, dynamic> data) async {
+  Future<int> updateSpeciality(int id, Map<String, dynamic> data) async {
     final db = await DBHelper.getDatabase();
     return await db.update(
       'specialities',
@@ -26,7 +26,7 @@ class SpecialtiesImpl implements SpecialtiesRepo {
   }
 
   @override
-  Future<int> deleteSpecialty(int id) async {
+  Future<int> deleteSpeciality(int id) async {
     final db = await DBHelper.getDatabase();
     return await db.delete(
       'specialities',

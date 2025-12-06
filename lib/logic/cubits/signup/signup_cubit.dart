@@ -341,6 +341,7 @@ class SignupCubit extends Cubit<SignupState> {
         university: state.university,
         certification: state.certification,
         institution: state.certificationInstitution,
+        residency: state.training,
         licenseNumber: state.licenceNumber,
         licenseDescription: state.licenceDesc,
         yearsExperience: int.tryParse(state.yearsOfExperience),

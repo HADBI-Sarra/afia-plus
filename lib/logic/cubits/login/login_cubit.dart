@@ -2,12 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/user.dart';
 import '../../../data/models/result.dart';
 import '../../../data/repo/auth/auth_repository.dart';
+import '../auth/auth_cubit.dart';
 import 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final AuthRepository authRepo;
+  final AuthCubit? authCubit;
 
-  LoginCubit(this.authRepo) : super(LoginState());
+  LoginCubit(this.authRepo, {this.authCubit}) : super(LoginState());
 
   void validateEmail(String email) {
     if (email.isEmpty) {
@@ -29,18 +31,55 @@ class LoginCubit extends Cubit<LoginState> {
     }
   }
 
+  String? _validateEmailSync(String email) {
+    if (email.isEmpty) {
+      return 'Email cannot be empty';
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+      return 'Enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePasswordSync(String password) {
+    if (password.isEmpty) {
+      return 'Password cannot be empty';
+    } else if (password.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
+
   Future<void> login(String email, String password) async {
-    validateEmail(email);
-    validatePassword(password);
+    // Check validation synchronously first
+    final emailError = _validateEmailSync(email);
+    final passwordError = _validatePasswordSync(password);
 
-    if (state.emailError != null || state.passwordError != null) return;
+    // Update UI validation errors
+    emit(state.copyWith(
+      emailError: emailError,
+      passwordError: passwordError,
+      message: '',
+    ));
 
-    emit(state.copyWith(isLoading: true, message: ''));
+    if (emailError != null || passwordError != null) {
+      return;
+    }
+
+    emit(state.copyWith(isLoading: true, message: '', emailError: null, passwordError: null));
 
     final result = await authRepo.login(email, password);
 
     if (result.state) {
-      emit(state.copyWith(isLoading: false, user: result.data, message: 'Login successful'));
+      emit(state.copyWith(isLoading: false, user: result.data, message: ''));
+      // Refresh AuthCubit to update the authentication state and wait for it
+      if (authCubit != null) {
+        await authCubit!.checkLoginStatus();
+        // Verify that we're actually authenticated before signaling navigation
+        final authState = authCubit!.state;
+        if (authState is AuthenticatedPatient || authState is AuthenticatedDoctor) {
+          emit(state.copyWith(user: result.data, message: ''));
+        }
+      }
     } else {
       emit(state.copyWith(isLoading: false, message: result.message));
     }

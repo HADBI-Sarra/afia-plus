@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-//import 'package:lucide_flutter/lucide_flutter.dart';
 
 class DoctorCard extends StatelessWidget {
-  final String imagePath;
+  final String? imagePath; // <-- make nullable
   final String name;
   final String specialty;
   final double rating;
@@ -10,7 +9,7 @@ class DoctorCard extends StatelessWidget {
 
   const DoctorCard({
     super.key,
-    required this.imagePath,
+    this.imagePath, // <-- optional now
     required this.name,
     required this.specialty,
     required this.rating,
@@ -19,6 +18,8 @@ class DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasImage = imagePath != null && imagePath!.isNotEmpty;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -37,15 +38,31 @@ class DoctorCard extends StatelessWidget {
         children: [
           Stack(
             children: [
+              // --- IMAGE OR AVATAR ---
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                child: Image.asset(
-                  imagePath,
-                  width: double.infinity,
-                  height: 150,
-                  fit: BoxFit.cover,
-                ),
+                child: hasImage
+                    ? Image.asset(
+                        imagePath!,
+                        width: double.infinity,
+                        height: 150,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: const Center(
+                          child: Icon(
+                            Icons.person,
+                            size: 60,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
               ),
+
+              // --- RATING BADGE ---
               Positioned(
                 bottom: 8,
                 right: 8,
@@ -68,9 +85,7 @@ class DoctorCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         rating.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ],
                   ),
@@ -78,6 +93,8 @@ class DoctorCard extends StatelessWidget {
               ),
             ],
           ),
+
+          // --- NAME + SPECIALITY ---
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
             child: Column(
@@ -100,6 +117,8 @@ class DoctorCard extends StatelessWidget {
               ],
             ),
           ),
+
+          // --- ARROW BUTTON ---
           InkWell(
             onTap: onTap,
             child: Container(

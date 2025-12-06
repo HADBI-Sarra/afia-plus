@@ -1,26 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/doctor_about_tab.dart';
 import 'package:afia_plus_app/views/widgets/doctor_book_tab.dart';
 import 'package:afia_plus_app/views/widgets/doctor_reviews_tab.dart';
+import 'package:afia_plus_app/logic/cubits/doctors/doctors_cubit.dart';
+import 'package:afia_plus_app/data/models/doctor.dart';
+import 'package:afia_plus_app/data/models/speciality.dart';
+import 'package:afia_plus_app/data/repo/specialities/speciality_repository.dart';
 
 class DoctorProfileScreen extends StatefulWidget {
-  final doctorName = "Yousfi Slimane";
-  final doctorSpeciality = "Gynecologist";
-  final rating = "4.9";
+  final int doctorId;
   static const routename = "/userViewDoctorProfile";
-  const DoctorProfileScreen({super.key});
+  const DoctorProfileScreen({Key? key, required this.doctorId}) : super(key: key);
 
   @override
   State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-  int selectedTab = 0; 
+  Doctor? doctor;
+  Speciality? speciality;
+  bool loading = true;
+  String? error;
+  int selectedTab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDoctor();
+  }
+
+  Future<void> _loadDoctor() async {
+    final cubit = context.read<DoctorsCubit>();
+    final result = await cubit.getDoctorById(widget.doctorId);
+    if (result.state && result.data != null) {
+      setState(() {
+        doctor = result.data;
+        loading = false;
+      });
+      if (doctor?.specialityId != null && doctor!.specialityId != 0) {
+        final specialityRepo = GetIt.I<SpecialityRepository>();
+        final fetched = await specialityRepo.getSpecialityById(doctor!.specialityId!);
+        setState(() => speciality = fetched);
+      }
+    } else {
+      setState(() {
+        error = result.message ?? "Unable to find doctor";
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (loading) return Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (error != null) return Scaffold(body: Center(child: Text(error!)));
+    if (doctor == null) return Scaffold(body: Center(child: Text("Doctor not found")));
+
     return Container(
       decoration: gradientBackgroundDecoration,
       child: Scaffold(
@@ -30,13 +69,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-            "Doctor Profile",
-            style: TextStyle(
-              color: blackColor,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
+          title: const Text("Doctor Profile",
+            style: TextStyle(color: blackColor, fontWeight: FontWeight.w700, fontSize: 20),
           ),
           leading: IconButton(
             icon: const Icon(Icons.chevron_left, color: blackColor),
@@ -54,7 +88,6 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -64,19 +97,13 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            "Dr.${widget.doctorName}",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(color: blackColor),
+                            "Dr.${doctor!.firstname} ${doctor!.lastname}",
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: blackColor),
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            widget.doctorSpeciality,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(color: greyColor),
+                            speciality?.name ?? "Speciality",
+                            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: greyColor),
                           ),
                           const SizedBox(height: 15),
                           // Rating
@@ -92,8 +119,10 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               children: [
                                 Icon(Icons.grade_rounded, color: greenColor, size: 16),
                                 const SizedBox(width: 4),
-                                Text(widget.rating,
-                                    style: Theme.of(context).textTheme.bodyMedium),
+                                Text(
+                                  doctor!.averageRating.toStringAsFixed(1),
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                ),
                               ],
                             ),
                           ),
@@ -103,19 +132,48 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     const SizedBox(width: 15),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        'assets/images/yousfi.jpg',
-                        width: 120,
-                        height: 180,
-                        fit: BoxFit.cover,
-                      ),
+                      child: doctor!.profilePicture != null && doctor!.profilePicture!.isNotEmpty
+                        ? Image.network(
+                            doctor!.profilePicture!,
+                            width: 120,
+                            height: 180,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 120,
+                                height: 180,
+                                decoration: BoxDecoration(
+                                  color: greyColor.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: greyColor,
+                                ),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 120,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: greyColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              Icons.person,
+                              size: 60,
+                              color: greyColor,
+                            ),
+                          ),
                     ),
                   ],
                 ),
 
                 const SizedBox(height: 25),
 
-                
+                // Tabs
                 Row(
                   children: [
                     Expanded(
@@ -168,20 +226,18 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 25),
 
-                
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         if (selectedTab == 0)
-                          const DoctorBookTab(), 
+                          DoctorBookTab(doctor: doctor!),
                         if (selectedTab == 1)
-                          const DoctorAboutTab(), 
+                          DoctorAboutTab(doctor: doctor!, speciality: speciality),
                         if (selectedTab == 2)
-                          const DoctorReviewsTab(), 
+                          DoctorReviewsTab(doctor: doctor!),
                       ],
                     ),
                   ),
@@ -189,18 +245,15 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                 const SizedBox(height: 20),
 
-                
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: darkGreenColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    onPressed: () {},
+                    onPressed: () {/* Implement booking logic if needed */},
                     child: Text(
                       "Book appointment",
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(

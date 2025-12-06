@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../../data/models/doctor.dart';
 import '../../../data/models/result.dart';
+import '../../../data/models/review.dart';
 import '../../../data/repo/doctors/doctor_repository.dart';
 
 class DoctorsCubit extends Cubit<Map<String, dynamic>> {
@@ -76,6 +77,14 @@ class DoctorsCubit extends Cubit<Map<String, dynamic>> {
       return await doctorRepo.getDoctorById(id);
     } catch (e) {
       return ReturnResult(state: false, message: e.toString());
+    }
+  }
+
+  Future<ReturnResult<List<Review>>> getReviewsByDoctorId(int doctorId) async {
+    try {
+      return await doctorRepo.getReviewsByDoctorId(doctorId);
+    } catch (e) {
+      return ReturnResult(state: false, message: e.toString(), data: []);
     }
   }
 }

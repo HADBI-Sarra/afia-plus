@@ -216,20 +216,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                     children: [
                                       Expanded(
                                         child: DoctorCard(
-                                          imagePath: 'assets/images/yousfi.jpg',
+                                          imagePath: null,
                                           name: 'Dr. Yousfi Slimane',
                                           specialty: 'Gynecologyst',
-                                          rating: 5.0,
+                                          rating: 0.0,
                                           onTap: () {},
                                         ),
                                       ),
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: DoctorCard(
-                                          imagePath: 'assets/images/battahar-riad.jpg',
+                                          imagePath: null,
                                           name: 'Dr. Foudad Riad',
                                           specialty: 'Urologist',
-                                          rating: 4.9,
+                                          rating: 0.0,
                                           onTap: () {},
                                         ),
                                       ),
@@ -240,20 +240,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                     children: [
                                       Expanded(
                                         child: DoctorCard(
-                                          imagePath: 'assets/images/Maryam-El-Mokhtari.jpg',
+                                          imagePath: null,
                                           name: 'Dr. Maryam Akli',
                                           specialty: 'Dermatologist',
-                                          rating: 4.9,
+                                          rating: 0.0,
                                           onTap: () {},
                                         ),
                                       ),
                                       const SizedBox(width: 10),
                                       Expanded(
                                         child: DoctorCard(
-                                          imagePath: 'assets/images/dentist.jpg',
+                                          imagePath: null,
                                           name: 'Dr. Kaouache Antr',
                                           specialty: 'Dentist',
-                                          rating: 4.9,
+                                          rating: 0.0,
                                           onTap: () {},
                                         ),
                                       ),

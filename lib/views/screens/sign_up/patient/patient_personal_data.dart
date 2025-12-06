@@ -51,6 +51,16 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.message != curr.message,
       listener: (context, state) async {
+        // Show snackbar for error messages
+        if (state.message.isNotEmpty && state.message != 'Success') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
         if (state.message == 'Success') {
           // Make sure the AuthCubit fetches the current user
           final authCubit = context.read<AuthCubit>();
@@ -182,15 +192,6 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                             ? const CircularProgressIndicator(color: Colors.white)
                             : Text('Create an account', style: whiteButtonText),
                       ),
-
-                      if (state.message.isNotEmpty && state.message != "Success")
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            state.message,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ),
                     ],
                   ),
                 ),

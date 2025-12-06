@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../db_helper.dart';
 import '../../models/doctor.dart';
 import '../../models/result.dart';
+import '../../models/review.dart';
 import 'doctor_repository.dart';
 
 class DBDoctorRepository implements DoctorRepository {
@@ -392,6 +393,33 @@ class DBDoctorRepository implements DoctorRepository {
       return ReturnResult(state: false, message: 'Doctor not found');
     } catch (e) {
       return ReturnResult(state: false, message: 'Doctor could not be deleted: $e');
+    }
+  }
+
+  @override
+  Future<ReturnResult<List<Review>>> getReviewsByDoctorId(int doctorId) async {
+    final db = await DBHelper.getDatabase();
+    try {
+      final results = await db.rawQuery('''
+        SELECT 
+          dr.review_id,
+          dr.doctor_id,
+          dr.patient_id,
+          dr.rating,
+          dr.comment,
+          dr.created_at,
+          u.firstname || ' ' || u.lastname as patient_name
+        FROM doctor_reviews dr
+        LEFT JOIN patients p ON dr.patient_id = p.patient_id
+        LEFT JOIN users u ON p.patient_id = u.user_id
+        WHERE dr.doctor_id = ?
+        ORDER BY dr.created_at DESC
+      ''', [doctorId]);
+
+      final reviews = results.map((map) => Review.fromMap(map)).toList();
+      return ReturnResult(state: true, message: 'Reviews fetched successfully', data: reviews);
+    } catch (e) {
+      return ReturnResult(state: false, message: 'Could not fetch reviews: $e', data: []);
     }
   }
 }

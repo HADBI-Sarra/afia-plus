@@ -8,7 +8,9 @@ import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/logic/cubits/signup/signup_cubit.dart';
+import 'package:afia_plus_app/logic/cubits/doctors/doctors_cubit.dart';
 import 'package:afia_plus_app/views/screens/root/root_screen.dart';
+import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 
 import 'data/db_helper.dart';
 import 'data/repo/users/user_repository.dart';
@@ -67,11 +69,15 @@ class MainApp extends StatelessWidget {
         BlocProvider(
           create: (_) => SignupCubit(authRepository: authRepo),
         ),
+        BlocProvider(
+          create: (_) => DoctorsCubit(),
+        ),
       ],
       child: MaterialApp(
         title: APP_NAME,
         theme: appTheme,
         home: const RootScreen(),
+        // home: const DoctorProfileScreen(doctorId: 6),
       ),
     );
   }

@@ -16,6 +16,68 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  // Show logout confirmation dialog
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text(
+            "Logout",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: darkGreenColor,
+            ),
+          ),
+          content: const Text(
+            "Are you sure you want to logout?",
+            style: TextStyle(
+              fontSize: 16,
+              color: blackColor,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close dialog
+              },
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: darkGreenColor,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close dialog
+                context.read<AuthCubit>().logout(); // Perform logout
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: darkGreenColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                "Logout",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: whiteColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -174,7 +236,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 : null,
             onTap: () {
               if (title == "Logout") {
-                context.read<AuthCubit>().logout();
+                _showLogoutConfirmationDialog(context);
               } else {
                 // Other menu actions
               }

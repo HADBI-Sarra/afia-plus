@@ -167,6 +167,15 @@ class DBHelper {
             print(doc); // Each doc is a Map<String, dynamic> with all columns
           }
         }
+        final patients = await db.query('patients'); // query all rows
+        if (patients.isEmpty) {
+          print('____No patients found in the database.');
+        } else {
+          print('____patients table rows:');
+          for (var pat in patients) {
+            print(pat); // Each doc is a Map<String, dynamic> with all columns
+          }
+        }
       },
     );
 
