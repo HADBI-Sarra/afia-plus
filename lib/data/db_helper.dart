@@ -14,6 +14,7 @@ class DBHelper {
       join(await getDatabasesPath(), _databaseName),
       version: _databaseVersion,
       onCreate: (db, version) async {
+        // Users table
         await db.execute('''
         CREATE TABLE users (
           user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +29,7 @@ class DBHelper {
         )
         ''');
 
+        // Patients table
         await db.execute('''
         CREATE TABLE patients (
           patient_id INTEGER PRIMARY KEY,
@@ -36,13 +38,57 @@ class DBHelper {
         )
         ''');
 
+        // Specialities table
         await db.execute('''
-        CREATE TABLE specialities (
+        CREATE TABLE IF NOT EXISTS specialities (
           speciality_id INTEGER PRIMARY KEY AUTOINCREMENT,
           speciality_name TEXT UNIQUE
         )
         ''');
 
+        // Insert fixed set of specialities
+        final List<String> specialities = [
+          'Dentist',
+          'Cardiologist',
+          'General Practitioner',
+          'Pediatrician',
+          'Gynecologist',
+          'Dermatologist',
+          'Orthopedic Surgeon',
+          'Urologist',
+          'Psychiatrist',
+          'Ophthalmologist',
+          'ENT Specialist',
+          'Gastroenterologist',
+          'Endocrinologist',
+          'Pulmonologist',
+          'Neurologist',
+          'Nephrologist',
+          'Rheumatologist',
+          'Oncologist',
+          'Anesthesiologist',
+          'Radiologist',
+          'Emergency Medicine',
+          'Plastic Surgeon',
+          'Orthodontist',
+          'Maxillofacial Surgeon',
+          'Physiotherapist',
+          'Allergist',
+          'Hematologist',
+          'Infectious Disease Specialist',
+          'Geriatrician',
+          'Family Medicine',
+          'Internal Medicine',
+          'Intensive Care Specialist',
+          'Sports Medicine',
+          'Nutritionist/Dietitian'
+        ];
+
+        for (var name in specialities) {
+          await db.insert('specialities', {'speciality_name': name});
+        }
+
+        // Doctors table
         await db.execute('''
         CREATE TABLE doctors (
           doctor_id INTEGER PRIMARY KEY,
@@ -66,6 +112,7 @@ class DBHelper {
         )
         ''');
 
+        // Doctor availability table
         await db.execute('''
         CREATE TABLE doctor_availability (
           availability_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -77,6 +124,7 @@ class DBHelper {
         )
         ''');
 
+        // Consultations table
         await db.execute('''
         CREATE TABLE consultations (
           consultation_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,6 +141,7 @@ class DBHelper {
         )
         ''');
 
+        // Doctor reviews table
         await db.execute('''
         CREATE TABLE doctor_reviews (
           review_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,7 +150,6 @@ class DBHelper {
           rating INTEGER CHECK(rating >= 1 AND rating <= 5),
           comment TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-          
           FOREIGN KEY(doctor_id) REFERENCES doctors(doctor_id) ON DELETE CASCADE,
           FOREIGN KEY(patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
         )
@@ -122,6 +170,18 @@ class DBHelper {
           } catch (e) {
             print('⚠️ Migration error (may already exist): $e');
             // Column might already exist, continue anyway
+          }
+        }
+      },
+      onOpen: (db) async {
+        // Print all doctors with all columns
+        final doctors = await db.query('doctors'); // query all rows
+        if (doctors.isEmpty) {
+          print('____No doctors found in the database.');
+        } else {
+          print('____Doctors table rows:');
+          for (var doc in doctors) {
+            print(doc); // Each doc is a Map<String, dynamic> with all columns
           }
         }
       },

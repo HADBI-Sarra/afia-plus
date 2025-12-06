@@ -25,7 +25,7 @@ class PatientHomeScreen extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        Expanded(child: Container()),
+        const Spacer(),
         Text(
           'See all',
           style: greenLink,
@@ -227,7 +227,7 @@ class PatientHomeScreen extends StatelessWidget {
             name,
             style: Theme.of(context).textTheme.labelMedium,
           ),
-          Expanded(child: Container()),
+          const Spacer(),
           Text(
             "$number doctors",
             style: TextStyle(color: greyColor),
@@ -247,8 +247,8 @@ class PatientHomeScreen extends StatelessWidget {
             name,
             style: Theme.of(context).textTheme.labelMedium,
           ),
-          Expanded(child: Container()),
-          Icon(Icons.arrow_outward_rounded),
+          const Spacer(),
+          const Icon(Icons.arrow_outward_rounded),
         ],
       ),
     );
@@ -261,8 +261,6 @@ class PatientHomeScreen extends StatelessWidget {
       child: Container(
         decoration: gradientBackgroundDecoration,
         child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -403,7 +401,6 @@ class PatientHomeScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-
                           ],
                         ),
                         const SizedBox(height: 20),

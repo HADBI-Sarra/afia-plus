@@ -19,9 +19,15 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget sectionTitle(BuildContext context, String title) {
     return Row(
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
-        Expanded(child: Container()),
-        Text('See all', style: greenLink),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const Spacer(),
+        Text(
+          'See all',
+          style: greenLink,
+        ),
       ],
     );
   }

@@ -8,22 +8,24 @@ class LabeledTextFormField extends StatefulWidget {
   final String hint;
   final bool isPassword;
   final TextEditingController? controller;
-  final String? Function(String?)? validator;
+  final String? errorText;
   final void Function(String)? onChanged;
   final bool isDate;
   final bool greyLabel;
   final int? minlines;
+  final TextInputType? keyboardType;
 
   const LabeledTextFormField({
     required this.label,
     required this.hint,
     this.isPassword = false,
     this.controller,
-    this.validator,
+    this.errorText,
     this.onChanged,
     this.isDate = false,
     this.greyLabel = false,
     this.minlines,
+    this.keyboardType,
     super.key,
   });
 
@@ -40,7 +42,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
       ),
       onPressed: () {
-        obscure = obscure ? false : true;
+        obscure = !obscure;
         setState(() {});
       },
     );
@@ -48,7 +50,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
 
   Widget? suffixIcon() {
     if (widget.isPassword) return eyeIcon();
-    if (widget.isDate) return Icon(Icons.calendar_today_outlined);
+    if (widget.isDate) return const Icon(Icons.calendar_today_outlined);
     return null;
   }
 
@@ -85,6 +87,11 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                         final year = tempPicked.year;
                         final formatted = '$day/$month/$year';
                         widget.controller?.text = formatted;
+
+                        // 🔥 CRITICAL FIX: update Cubit/state
+                        if (widget.onChanged != null) {
+                          widget.onChanged!(formatted);
+                        }
                       });
                       Navigator.pop(context);
                     },
@@ -116,26 +123,26 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           widget.label,
           style: widget.greyLabel
               ? Theme.of(context).textTheme.labelSmall
               : Theme.of(context).textTheme.labelMedium,
         ),
-        SizedBox(height: 8),
-        TextFormField(
+        const SizedBox(height: 8),
+        TextField(
           obscureText: obscure && widget.isPassword,
           cursorColor: darkGreenColor,
           controller: widget.controller,
-          validator: widget.validator,
           onChanged: widget.onChanged,
           readOnly: widget.isDate,
-          minLines: widget.minlines,
-          maxLines: widget.minlines,
+          minLines: widget.isPassword ? 1 : widget.minlines,
+          maxLines: widget.isPassword ? 1 : widget.minlines,
+          keyboardType: widget.keyboardType,
           decoration: InputDecoration(
             hintText: widget.hint,
-            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             enabledBorder: inputBorder,
             focusedBorder: focusedInputBorder,
             errorBorder: errorInputBorder,
@@ -144,6 +151,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
             filled: true,
             fillColor: blurWhiteColor,
             suffixIcon: suffixIcon(),
+            errorText: widget.errorText,
           ),
           onTap: widget.isDate ? _showScrollDatePicker : null,
         ),

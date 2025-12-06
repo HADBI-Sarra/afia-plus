@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/labeled_text_form_field.dart';
+import '../../../../logic/cubits/signup/signup_cubit.dart';
+import '../../../../logic/cubits/signup/signup_state.dart';
+import 'professional_info.dart';
 
 class DoctorPersonalDataScreen extends StatefulWidget {
   const DoctorPersonalDataScreen({super.key});
@@ -11,177 +15,122 @@ class DoctorPersonalDataScreen extends StatefulWidget {
 }
 
 class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _dobController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
-  final _ninController = TextEditingController();
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
+  late final TextEditingController _phoneNumberController;
+  late final TextEditingController _ninController;
 
-  bool agreeBoxChecked = false;
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<SignupCubit>().state;
+
+    _firstNameController = TextEditingController(text: state.firstName);
+    _lastNameController = TextEditingController(text: state.lastName);
+    _phoneNumberController = TextEditingController(text: state.phoneNumber);
+    _ninController = TextEditingController(text: state.nin);
+  }
 
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _dobController.dispose();
     _phoneNumberController.dispose();
     _ninController.dispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: gradientBackgroundDecoration,
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.transparent,
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leading: Icon(
-            Icons.arrow_back_ios_new,
-            color: greyColor,
-          ),
-        ),
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+    final cubit = context.read<SignupCubit>();
+
+    return BlocListener<SignupCubit, SignupState>(
+      listenWhen: (previous, current) => previous.message != current.message,
+      listener: (context, state) {
+        if (state.message == 'NextStep') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const ProfessionalInfoScreen()),
+          );
+        }
+      },
+      child:BlocBuilder<SignupCubit, SignupState>(
+          builder: (context, state) {
+            return Container(
+              decoration: gradientBackgroundDecoration,
+              child: Scaffold(
+                extendBodyBehindAppBar: true,
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  leading: Icon(Icons.arrow_back_ios_new, color: greyColor),
+                ),
+                body: SafeArea(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Personal data',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
+                        Text('Personal data', style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 10),
-                        const Text('Provide your personal data to offer online consultations quickly and securely.'),
+                        const Text(
+                          'Provide your personal data to offer online consultations quickly and securely.',
+                        ),
                         const SizedBox(height: 20),
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              LabeledTextFormField(
-                                label: 'First name',
-                                hint: 'Enter your first name',
-                                controller: _firstNameController,
-                                validator: _validateFirstName,
-                              ),
-                              const SizedBox(height: 12),
-                              LabeledTextFormField(
-                                label: 'Last name',
-                                hint: 'Enter your last name',
-                                controller: _lastNameController,
-                                validator: _validateLastName,
-                              ),
-                              const SizedBox(height: 12),
-                              LabeledTextFormField(
-                                label: 'Date of birth',
-                                hint: 'DD/MM/YYYY',
-                                controller: _dobController,
-                                validator: _validateDob,
-                                isDate: true,
-                              ),
-                              const SizedBox(height: 12),
-                              LabeledTextFormField(
-                                label: 'Phone number',
-                                hint: 'e.g. 05123 45 67 89',
-                                controller: _phoneNumberController,
-                                validator: _validatePhoneNumber,
-                              ),
-                              const SizedBox(height: 12),
-                              LabeledTextFormField(
-                                label: 'National Identification Number (NIN)',
-                                hint: 'e.g. 198012345678901234',
-                                controller: _ninController,
-                                validator: _validateNin,
-                              ),
-                            ],
-                          ),
+                        LabeledTextFormField(
+                          label: 'First name',
+                          hint: 'Enter your first name',
+                          controller: _firstNameController,
+                          onChanged: cubit.setFirstName,
+                          errorText: state.firstNameError,
+                        ),
+                        const SizedBox(height: 12),
+                        LabeledTextFormField(
+                          label: 'Last name',
+                          hint: 'Enter your last name',
+                          controller: _lastNameController,
+                          onChanged: cubit.setLastName,
+                          errorText: state.lastNameError,
+                        ),
+                        const SizedBox(height: 12),
+                        LabeledTextFormField(
+                          label: 'Phone number',
+                          hint: 'e.g. 05123 45 67 89',
+                          controller: _phoneNumberController,
+                          onChanged: cubit.setPhoneNumber,
+                          errorText: state.phoneError,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        const SizedBox(height: 12),
+                        LabeledTextFormField(
+                          label: 'National Identification Number (NIN)',
+                          hint: 'e.g. 198012345678901234',
+                          controller: _ninController,
+                          onChanged: cubit.setNin,
+                          errorText: state.ninError,
+                          keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 40),
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              // Form is valid, process data
-                            }
-                          },
+                          onPressed: state.isLoading ? null : cubit.submitPersonalData,
                           style: greenButtonStyle,
-                          child: Text(
-                            'Next',
-                            style: whiteButtonText,
-                          ),
+                          child: state.isLoading
+                              ? const CircularProgressIndicator(color: Colors.white)
+                              : Text('Next', style: whiteButtonText),
                         ),
+                        if (state.message.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Text(state.message, style: const TextStyle(color: Colors.red)),
+                          ),
                       ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
+              ),
+            );
+          },
+        )
+      );
   }
-
-  String? _validateFirstName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'First name cannot be empty';
-    } else if (!RegExp(r"^[A-Za-z'-]{2,}$").hasMatch(value)) {
-      return 'Enter a valid first name';
-    } else {
-      return null;
-    }
-  }
-
-  String? _validateLastName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Last name cannot be empty';
-    } else if (!RegExp(r"^[A-Za-z'-]{2,}$").hasMatch(value)) {
-      return 'Enter a valid last name';
-    } else {
-      return null;
-    }
-  }
-
-  String? _validateDob(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Date of birth cannot be empty';
-    } else if (int.parse(value.substring(6, 10)) >= 2008) {
-      return 'You are to young to have an account';
-    } else {
-      return null;
-    }
-  }
-
-  String? _validatePhoneNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Phone number cannot be empty';
-    } else if (!RegExp(r'^0[567][0-9]{8}$').hasMatch(value)) {
-      return 'Enter a valid phone number';
-    } else {
-      return null;
-    }
-  }
-
-  String? _validateNin(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Last name cannot be empty';
-    } else if (!RegExp(r'^[0-9]{18}$').hasMatch(value)) {
-      return 'Enter a valid NIN';
-    } else {
-      return null;
-    }
-  }
-
 }
