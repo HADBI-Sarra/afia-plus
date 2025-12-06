@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
-import 'package:afia_plus_app/views/widgets/search_text_fields.dart';
 import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 import 'package:afia_plus_app/views/widgets/doctor_card.dart';
+import '../../../../logic/cubits/auth/auth_cubit.dart';
 
 class DoctorHomeScreen extends StatefulWidget {
   const DoctorHomeScreen({super.key});
-
-  final String name = "Mohamed";
 
   @override
   State<DoctorHomeScreen> createState() => _DoctorHomeScreenState();
@@ -22,7 +21,7 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
           title,
           style: Theme.of(context).textTheme.titleMedium,
         ),
-        Expanded(child: Container()),
+        const Spacer(),
         Text(
           'See all',
           style: greenLink,
@@ -221,73 +220,91 @@ class _DoctorHomeScreenState extends State<DoctorHomeScreen> {
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          leading: Icon(
+          leading: const Icon(
             Icons.arrow_back_ios_new,
             color: greyColor,
           ),
         ),
         body: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Quick overview',
-                          style: Theme.of(context).textTheme.titleMedium,
+          child: BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, authState) {
+              if (authState is AuthLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (authState is AuthenticatedDoctor) {
+                final doctor = authState.doctor;
+                final doctorName =
+                    (doctor.firstname.isNotEmpty) ? doctor.firstname : 'Doctor';
+
+                return LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
                         ),
-                        const SizedBox(height: 20),
-                        specialityLink('Today', '2 appointments'),
-                        const SizedBox(height: 10),
-                        specialityLink('Pending Requests', '1 request'),
-                        const SizedBox(height: 10),
-                        specialityLink('Total patients', '48 patients'),
-                        const SizedBox(height: 20),
-                        sectionTitle('Coming consultations'),
-                        const SizedBox(height: 20),
-                        _buildConsultationCard(
-                          name: 'Sakri Yasser',
-                          time: '10:00 - 10:30',
-                          date: '22 Oct 2025',
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hello $doctorName!',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 20),
+                              sectionTitle('Quick overview'),
+                              const SizedBox(height: 20),
+                              // Example quick overview cards
+                              specialityLink('Today', '2 appointments'),
+                              const SizedBox(height: 10),
+                              specialityLink('Pending Requests', '1 request'),
+                              const SizedBox(height: 10),
+                              specialityLink('Total patients', '48 patients'),
+                              const SizedBox(height: 20),
+                              sectionTitle('Coming consultations'),
+                              const SizedBox(height: 20),
+                              _buildConsultationCard(
+                                name: 'Sakri Yasser',
+                                time: '10:00 - 10:30',
+                                date: '22 Oct 2025',
+                              ),
+                              const SizedBox(height: 20),
+                              sectionTitle('Pending consultations'),
+                              const SizedBox(height: 20),
+                              _buildAppointmentCard(
+                                name: 'Sakri Yasser',
+                                time: '10:00 - 10:30',
+                                date: '22 Oct 2025',
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Services',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 20),
+                              seviceLink('Appointments'),
+                              const SizedBox(height: 10),
+                              seviceLink('Availability'),
+                              const SizedBox(height: 10),
+                              seviceLink('FAQ'),
+                              const SizedBox(height: 20),
+                              const DoctorFooter(currentIndex: 0),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        sectionTitle('Pending consultations'),
-                        const SizedBox(height: 20),
-                        _buildAppointmentCard(
-                          name: 'Sakri Yasser',
-                          time: '10:00 - 10:30',
-                          date: '22 Oct 2025',
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Services',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 20),
-                        seviceLink('Appointments'),
-                        const SizedBox(height: 10),
-                        seviceLink('Availability'),
-                        const SizedBox(height: 10),
-                        seviceLink('FAQ'),
-                        const SizedBox(height: 20),
-                        DoctorFooter(currentIndex: 0),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text('Unable to load doctor data'),
+                );
+              }
             },
           ),
         ),
       ),
     );
   }
-
 }
