@@ -40,7 +40,7 @@ class DBHelper {
 
         // Specialities table
         await db.execute('''
-        CREATE TABLE specialities (
+        CREATE TABLE IF NOT EXISTS specialities (
           speciality_id INTEGER PRIMARY KEY AUTOINCREMENT,
           speciality_name TEXT UNIQUE
         )
@@ -156,6 +156,18 @@ class DBHelper {
         ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {},
+      onOpen: (db) async {
+        // Print all doctors with all columns
+        final doctors = await db.query('doctors'); // query all rows
+        if (doctors.isEmpty) {
+          print('____No doctors found in the database.');
+        } else {
+          print('____Doctors table rows:');
+          for (var doc in doctors) {
+            print(doc); // Each doc is a Map<String, dynamic> with all columns
+          }
+        }
+      },
     );
 
     return _database!;

@@ -217,10 +217,12 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                                   hint: 'Select your speciality',
                                   items: _dbSpecialities,
                                   itemLabel: (s) => s.name,
-                                  value: _dbSpecialities.firstWhere(
-                                    (s) => s.id == state.specialityId,
-                                    orElse: () => Speciality(id: 0, name: ''),
-                                  ),
+                                  value: _dbSpecialities
+                                    .cast<Speciality?>()
+                                    .firstWhere(
+                                      (s) => s?.id == state.specialityId,
+                                      orElse: () => null,
+                                    ),
                                   onChanged: (selected) {
                                     if (selected != null) {
                                       cubit.setSpecialityId(selected.id!);

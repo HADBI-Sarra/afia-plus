@@ -164,7 +164,7 @@ class SignupCubit extends Cubit<SignupState> {
   /// Validates **professional info only** for Step 3
   bool validateProfessionalStep() {
     final bioError = _validateBio(state.bio);
-    final specialityError = _validateSpeciality(state.speciality);
+    final specialityError = _validateSpecialityId(state.specialityId);
     final workError = _validateWorkingPlace(state.workingPlace);
     final degreeError = _validateDegree(state.degree);
     final universityError = _validateUniversity(state.university);
@@ -334,6 +334,7 @@ class SignupCubit extends Cubit<SignupState> {
         password: state.password,
         phoneNumber: state.phoneNumber,
         nin: state.nin,
+        specialityId: state.specialityId,
         bio: state.bio,
         locationOfWork: state.workingPlace,
         degree: state.degree,

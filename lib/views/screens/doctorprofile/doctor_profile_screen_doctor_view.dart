@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:afia_plus_app/data/repo/specialities/speciality_repository.dart';
+import 'package:afia_plus_app/data/models/speciality.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
@@ -18,6 +21,59 @@ class DoctorViewDoctorProfileScreen extends StatefulWidget {
 
 class _DoctorViewDoctorProfileScreenState
     extends State<DoctorViewDoctorProfileScreen> {
+  // Loaded specialities from DB
+  List<Speciality> _dbSpecialities = [];
+  bool _loadingSpecialities = true;
+  String? _specialityError;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load specialities after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSpecialities();
+    });
+  }
+
+  Future<void> _loadSpecialities() async {
+    try {
+      final repo = GetIt.instance<SpecialityRepository>();
+      final list = await repo.getAllSpecialities();
+
+      if (mounted) {
+        setState(() {
+          _dbSpecialities = list;
+          _loadingSpecialities = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading specialities: $e');
+      if (mounted) {
+        setState(() {
+          _loadingSpecialities = false;
+          _specialityError = 'Failed to load specialities';
+        });
+      }
+    }
+  }
+
+  // Helper method to get speciality name by ID
+  String _getSpecialityNameById(int? specialityId) {
+    if (specialityId == null || specialityId == 0) {
+      return "Specialty not set";
+    }
+    
+    try {
+      final speciality = _dbSpecialities.firstWhere(
+        (s) => s.id == specialityId,
+        orElse: () => Speciality(id: 0, name: "Loading..."),
+      );
+      return speciality.name;
+    } catch (e) {
+      return "Unknown Specialty";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,7 +109,7 @@ class _DoctorViewDoctorProfileScreenState
             child: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
                 String fullName = "Doctor";
-                String subtitle = "Specialty";
+                String subtitle = "Specialty not set";
                 Widget profilePic = CircleAvatar(
                   radius: 50,
                   backgroundColor: greyColor.withOpacity(0.3),
@@ -63,12 +119,16 @@ class _DoctorViewDoctorProfileScreenState
                 if (state is AuthenticatedDoctor) {
                   final doctor = state.doctor;
                   fullName = "${doctor.firstname} ${doctor.lastname}";
-                  subtitle = doctor.specialityId != null
-                      ? "Specialty ID: ${doctor.specialityId}"
-                      : "Specialty not set";
 
-                  if (doctor.profilePicture != null &&
-                      doctor.profilePicture!.isNotEmpty) {
+                  // Get speciality name
+                  if (_loadingSpecialities) {
+                    subtitle = "Loading specialty...";
+                  } else {
+                    subtitle = _getSpecialityNameById(doctor.specialityId);
+                  }
+
+                  // Display profile picture if available
+                  if (doctor.profilePicture != null && doctor.profilePicture!.isNotEmpty) {
                     profilePic = CircleAvatar(
                       radius: 50,
                       backgroundImage: NetworkImage(doctor.profilePicture!),
@@ -92,28 +152,32 @@ class _DoctorViewDoctorProfileScreenState
                           children: [
                             profilePic,
                             const SizedBox(width: 12),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  fullName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(fontSize: 18),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  subtitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(fontSize: 16),
-                                ),
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    fullName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontSize: 18),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    subtitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                  ),
+                                ],
+                              ),
                             ),
-                            const Spacer(),
+                            const SizedBox(width: 12),
                             const Icon(
                               Icons.arrow_forward_ios,
                               color: darkGreenColor,
@@ -123,6 +187,17 @@ class _DoctorViewDoctorProfileScreenState
                         ),
                       ),
                     ),
+                    
+                    // Show loading/error state for specialities if needed
+                    if (_specialityError != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        child: Text(
+                          _specialityError!,
+                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
+                    
                     const SizedBox(height: 20),
                     Expanded(
                       child: ListView(
