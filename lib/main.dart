@@ -43,7 +43,9 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<PatientRepository>(() => DBPatientRepository());
   sl.registerLazySingleton<DoctorRepository>(() => DBDoctorRepository());
   sl.registerLazySingleton<AuthRepository>(() => DbAuthRepository(db));
-  sl.registerLazySingleton<SpecialityRepository>(() => DBSpecialityRepository());
+  sl.registerLazySingleton<SpecialityRepository>(
+    () => DBSpecialityRepository(),
+  );
 
   // Force reseed database (clears old data and inserts fresh test data)
   // Comment this out after first run if you want to keep your data
@@ -75,15 +77,15 @@ class MainApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => LocaleCubit()),
         BlocProvider(
-          create: (_) => LocaleCubit(),
+          create: (_) => AuthCubit(
+            authRepository: authRepo,
+            patientRepository: patientRepo,
+            doctorRepository: doctorRepo,
+          ),
         ),
-        BlocProvider(
-          create: (_) => AuthCubit(authRepository: authRepo, patientRepository: patientRepo, doctorRepository: doctorRepo),
-        ),
-        BlocProvider(
-          create: (_) => SignupCubit(authRepository: authRepo),
-        ),
+        BlocProvider(create: (_) => SignupCubit(authRepository: authRepo)),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -101,7 +103,8 @@ class MainApp extends StatelessWidget {
               Locale('en'), // English
               Locale('ar'), // Arabic
             ],
-            home: UpcomingAppointmentsPage(),
+            home: DoctorHomeScreen(),
+            //UpcomingAppointmentsPage(),
             //DoctorHomeScreen(),
             routes: {
               UserProfileScreen.routename: (context) => UserProfileScreen(),
@@ -119,4 +122,3 @@ class MainApp extends StatelessWidget {
     );
   }
 }
-
