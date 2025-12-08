@@ -77,7 +77,7 @@ class MainApp extends StatelessWidget {
         title: APP_NAME,
         theme: appTheme,
         home: const RootScreen(),
-        // home: const DoctorProfileScreen(doctorId: 6),
+        // home: const DoctorProfileScreen(doctorId: 1),
       ),
     );
   }
