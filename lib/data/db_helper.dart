@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
   static const _databaseName = "AFIA_PLUS_DB.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2; // Incremented to trigger migration
   static Database? _database;
 
   // Singleton pattern for database
@@ -156,7 +156,24 @@ class DBHelper {
         )
         ''');
       },
-      onUpgrade: (db, oldVersion, newVersion) async {},
+      onUpgrade: (db, oldVersion, newVersion) async {
+        // Migration from version 1 to 2: Add profile_picture column
+        if (oldVersion < 2) {
+          try {
+            // Check if column already exists (in case migration runs multiple times)
+            final tableInfo = await db.rawQuery('PRAGMA table_info(users)');
+            final hasProfilePicture = tableInfo.any((column) => column['name'] == 'profile_picture');
+            
+            if (!hasProfilePicture) {
+              await db.execute('ALTER TABLE users ADD COLUMN profile_picture TEXT');
+              print('✅ Database migrated: Added profile_picture column to users table');
+            }
+          } catch (e) {
+            print('⚠️ Migration error (may already exist): $e');
+            // Column might already exist, continue anyway
+          }
+        }
+      },
       onOpen: (db) async {
         // Print all doctors with all columns
         final doctors = await db.query('doctors'); // query all rows
@@ -166,6 +183,15 @@ class DBHelper {
           print('____Doctors table rows:');
           for (var doc in doctors) {
             print(doc); // Each doc is a Map<String, dynamic> with all columns
+          }
+        }
+        final patients = await db.query('patients'); // query all rows
+        if (patients.isEmpty) {
+          print('____No patients found in the database.');
+        } else {
+          print('____patients table rows:');
+          for (var pat in patients) {
+            print(pat); // Each doc is a Map<String, dynamic> with all columns
           }
         }
       },

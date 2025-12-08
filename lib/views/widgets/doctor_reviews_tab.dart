@@ -1,37 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
+import 'package:afia_plus_app/data/models/doctor.dart';
+import 'package:afia_plus_app/data/models/review.dart';
+import 'package:afia_plus_app/logic/cubits/doctors/doctors_cubit.dart';
+import 'package:intl/intl.dart';
 
-class DoctorReviewsTab extends StatelessWidget {
-  const DoctorReviewsTab({super.key});
+class DoctorReviewsTab extends StatefulWidget {
+  final Doctor doctor;
+  const DoctorReviewsTab({Key? key, required this.doctor}) : super(key: key);
+
+  @override
+  State<DoctorReviewsTab> createState() => _DoctorReviewsTabState();
+}
+
+class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
+  List<Review> reviews = [];
+  bool loading = true;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReviews();
+  }
+
+  Future<void> _loadReviews() async {
+    final cubit = context.read<DoctorsCubit>();
+    final result = await cubit.getReviewsByDoctorId(widget.doctor.userId ?? 0);
+    
+    if (mounted) {
+      setState(() {
+        if (result.state && result.data != null) {
+          reviews = result.data!;
+        } else {
+          error = result.message;
+        }
+        loading = false;
+      });
+    }
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '';
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM d, yyyy').format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Sample reviews
-    final reviews = [
-      Review(
-        name: "Sarah H.",
-        date: "Oct 2, 2025",
-        comment:
-            "Dr. Yousfi is amazing! Very professional and caring. Highly recommend.",
-      ),
-      Review(
-        name: "Ahmed D.",
-        date: "Sep 25, 2025",
-        comment:
-            "Great experience! Explained everything clearly and made me feel comfortable.",
-      ),
-      Review(
-        name: "Anfel R.",
-        date: "Sep 15, 2025",
-        comment: "Friendly and knowledgeable. I felt very supported during my online meet.",
-      ),
-      Review(
-        name: "Besmala H.",
-        date: "Oct 2, 2025",
-        comment:
-            "Dr.ousfi is really outstanding. He explained everything in detail. ",
-      ),
-    ];
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error != null) {
+      return Center(
+        child: Text(
+          error!,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: greyColor),
+        ),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,11 +74,8 @@ class DoctorReviewsTab extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "13 reviews",
-              style: Theme.of(context)
-                  .textTheme
-                  .labelMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              "${reviews.length} ${reviews.length == 1 ? 'review' : 'reviews'}",
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Row(
               children: [
@@ -53,10 +83,8 @@ class DoctorReviewsTab extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   "Leave a review",
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium
-                      ?.copyWith(color: darkGreenColor, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: darkGreenColor, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -65,53 +93,61 @@ class DoctorReviewsTab extends StatelessWidget {
         const SizedBox(height: 20),
 
         // Reviews List
-        ...reviews.map((review) => Column(
-              children: [
-                ReviewItem(review: review),
-                const SizedBox(height: 12),
-                // Thin grey divider
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Divider(color: lightGreyColor, thickness: 1),
-                ),
-                const SizedBox(height: 12),
-              ],
-            )),
+        if (reviews.isEmpty)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "No reviews yet. Be the first to review!",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: greyColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          )
+        else
+          ...reviews.map((review) => Column(
+                children: [
+                  ReviewItem(review: review),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Divider(color: lightGreyColor, thickness: 1),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              )),
       ],
     );
   }
 }
 
-class Review {
-  final String name;
-  final String date;
-  final String comment;
-
-  Review({required this.name, required this.date, required this.comment});
-}
-
 class ReviewItem extends StatelessWidget {
   final Review review;
 
-  const ReviewItem({super.key, required this.review});
+  const ReviewItem({Key? key, required this.review}) : super(key: key);
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) return '';
+    try {
+      final date = DateTime.parse(dateString);
+      return DateFormat('MMM d, yyyy').format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Circular avatar
         Container(
           width: 50,
           height: 50,
-          decoration: BoxDecoration(
-            color: greyColor.withOpacity(0.3),
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: greyColor.withOpacity(0.3), shape: BoxShape.circle),
           child: Icon(Icons.person, color: greyColor, size: 28),
         ),
         const SizedBox(width: 12),
-        // Review content
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,38 +160,35 @@ class ReviewItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        review.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
+                        review.patientName ?? "Anonymous",
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        review.date,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: greyColor),
+                        _formatDate(review.createdAt),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: greyColor),
                       ),
                     ],
                   ),
                   Row(
                     children: List.generate(
                       5,
-                      (index) => const Icon(Icons.star, color: darkGreenColor, size: 16),
+                      (index) => Icon(
+                        Icons.star,
+                        color: index < review.rating ? darkGreenColor : greyColor.withOpacity(0.3),
+                        size: 16,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                review.comment,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: blackColor),
-              ),
+              if (review.comment != null && review.comment!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  review.comment!,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: blackColor),
+                ),
+              ],
             ],
           ),
         ),

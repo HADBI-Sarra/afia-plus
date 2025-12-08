@@ -10,6 +10,8 @@ dependencies:
   equatable: ^2.0.7
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_svg: ^2.2.1
   get_it: ^9.2.0
@@ -19,6 +21,10 @@ dependencies:
   shared_preferences: ^2.5.3
   sqflite: ^2.4.2
   sqflite_common_ffi: ^2.3.6
+  file_picker: ^8.1.4
+  path_provider: ^2.1.4
+  open_filex: ^4.7.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -26,9 +32,11 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/prescription pdfs/
   fonts:
     - family: Syne
       fonts:
