@@ -2,8 +2,8 @@ import 'patients_abstract.dart';
 
 class PatientsDummy implements PatientsRepo {
   List<Map<String, dynamic>> patients = [
-    {'id': 1, 'name': 'Patient A', 'age': 32, 'gender': 'Male'},
-    {'id': 2, 'name': 'Patient B', 'age': 27, 'gender': 'Female'},
+    {'patient_id': 1, 'date_of_birth': '1992-03-15'},
+    {'patient_id': 2, 'date_of_birth': '1988-10-22'},
   ];
 
   @override
@@ -13,14 +13,14 @@ class PatientsDummy implements PatientsRepo {
 
   @override
   Future<int> addPatient(Map<String, dynamic> data) async {
-    data['id'] = patients.length + 1;
+    data['patient_id'] = patients.length + 1;
     patients.add(data);
     return 1;
   }
 
   @override
   Future<int> updatePatient(int id, Map<String, dynamic> data) async {
-    final index = patients.indexWhere((e) => e['id'] == id);
+    final index = patients.indexWhere((e) => e['patient_id'] == id);
     if (index != -1) {
       patients[index] = {...patients[index], ...data};
       return 1;
@@ -30,7 +30,7 @@ class PatientsDummy implements PatientsRepo {
 
   @override
   Future<int> deletePatient(int id) async {
-    patients.removeWhere((e) => e['id'] == id);
+    patients.removeWhere((e) => e['patient_id'] == id);
     return 1;
   }
 }

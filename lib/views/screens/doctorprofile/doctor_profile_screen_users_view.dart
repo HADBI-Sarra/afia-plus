@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
+import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 import 'package:afia_plus_app/views/widgets/doctor_about_tab.dart';
 import 'package:afia_plus_app/views/widgets/doctor_book_tab.dart';
 import 'package:afia_plus_app/views/widgets/doctor_reviews_tab.dart';
 
+
+// inside class DoctorProfileScreen:
 class DoctorProfileScreen extends StatefulWidget {
-  final doctorName = "Yousfi Slimane";
-  final doctorSpeciality = "Gynecologist";
-  final rating = "4.9";
+  final String doctorName;
+  final String doctorSpeciality;
+  final String rating;
+  final int doctorId; // <-- new
+
   static const routename = "/userViewDoctorProfile";
-  const DoctorProfileScreen({super.key});
+  const DoctorProfileScreen({
+    super.key,
+    this.doctorName = "Yousfi Slimane",
+    this.doctorSpeciality = "Gynecologist",
+    this.rating = "4.9",
+    this.doctorId = 1, // default sample doctor id
+  });
 
   @override
   State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
 }
 
 class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
-  int selectedTab = 0; 
+  int selectedTab = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +188,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                     child: Column(
                       children: [
                         if (selectedTab == 0)
-                          const DoctorBookTab(), 
+                          DoctorBookTab(doctorId: widget.doctorId), 
                         if (selectedTab == 1)
                           const DoctorAboutTab(), 
                         if (selectedTab == 2)

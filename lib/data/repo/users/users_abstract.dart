@@ -1,6 +1,7 @@
 abstract class UsersRepo {
-  Future<int> insertUser(Map<String, dynamic> data);
-  Future<Map<String, dynamic>?> getUserById(int id);
-  Future<List<Map<String, dynamic>>> getAllUsers();
+  Future<List<Map<String, dynamic>>> getUsers();
+  Future<int> addUser(Map<String, dynamic> data);
+  Future<int> updateUser(int id, Map<String, dynamic> data);
   Future<int> deleteUser(int id);
+  Future<Map<String, dynamic>?> getUserByEmail(String email);
 }
