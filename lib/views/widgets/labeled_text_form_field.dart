@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
-import 'package:intl/intl.dart';
 
 class LabeledTextFormField extends StatefulWidget {
   final String label;
@@ -39,7 +38,9 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
 
   Widget eyeIcon() {
     return IconButton(
-      icon: Icon(obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+      icon: Icon(
+        obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+      ),
       onPressed: () {
         obscure = !obscure;
         setState(() {});
@@ -78,7 +79,13 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
                   TextButton(
                     onPressed: () {
                       setState(() {
-                        final formatted = DateFormat('dd/MM/yyyy').format(tempPicked);
+                        final day = tempPicked.day.toString().padLeft(2, '0');
+                        final month = tempPicked.month.toString().padLeft(
+                          2,
+                          '0',
+                        );
+                        final year = tempPicked.year;
+                        final formatted = '$day/$month/$year';
                         widget.controller?.text = formatted;
 
                         // 🔥 CRITICAL FIX: update Cubit/state
