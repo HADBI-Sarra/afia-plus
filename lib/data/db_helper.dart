@@ -81,7 +81,7 @@ class DBHelper {
           'Internal Medicine',
           'Intensive Care Specialist',
           'Sports Medicine',
-          'Nutritionist/Dietitian'
+          'Nutritionist/Dietitian',
         ];
 
         for (var name in specialities) {
@@ -161,11 +161,17 @@ class DBHelper {
           try {
             // Check if column already exists (in case migration runs multiple times)
             final tableInfo = await db.rawQuery('PRAGMA table_info(users)');
-            final hasProfilePicture = tableInfo.any((column) => column['name'] == 'profile_picture');
-            
+            final hasProfilePicture = tableInfo.any(
+              (column) => column['name'] == 'profile_picture',
+            );
+
             if (!hasProfilePicture) {
-              await db.execute('ALTER TABLE users ADD COLUMN profile_picture TEXT');
-              print('✅ Database migrated: Added profile_picture column to users table');
+              await db.execute(
+                'ALTER TABLE users ADD COLUMN profile_picture TEXT',
+              );
+              print(
+                '✅ Database migrated: Added profile_picture column to users table',
+              );
             }
           } catch (e) {
             print('⚠️ Migration error (may already exist): $e');

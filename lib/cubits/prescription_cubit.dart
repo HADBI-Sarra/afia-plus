@@ -31,23 +31,19 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
   final ConsultationsRepository _repository;
 
   PrescriptionCubit({ConsultationsRepository? repository})
-      : _repository = repository ?? ConsultationsRepositoryImpl(),
-        super(PrescriptionState());
+    : _repository = repository ?? ConsultationsRepositoryImpl(),
+      super(PrescriptionState());
 
   Future<void> loadPrescriptions(int patientId) async {
     emit(state.copyWith(isLoading: true, error: null));
-    
+
     try {
-      final prescriptions = await _repository.getPatientPrescriptions(patientId);
-      emit(state.copyWith(
-        prescriptions: prescriptions,
-        isLoading: false,
-      ));
+      final prescriptions = await _repository.getPatientPrescriptions(
+        patientId,
+      );
+      emit(state.copyWith(prescriptions: prescriptions, isLoading: false));
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 
@@ -55,4 +51,3 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
     await loadPrescriptions(patientId);
   }
 }
-

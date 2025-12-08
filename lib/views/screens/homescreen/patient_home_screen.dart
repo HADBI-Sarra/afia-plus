@@ -21,20 +21,15 @@ class PatientHomeScreen extends StatelessWidget {
   Widget sectionTitle(BuildContext context, String title) {
     return Row(
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text(title, style: Theme.of(context).textTheme.titleMedium),
         const Spacer(),
-        Text(
-          'See all',
-          style: greenLink,
-        ),
+        Text('See all', style: greenLink),
       ],
     );
   }
 
-  Widget _buildDoctorCardFromConsultation(BuildContext context, {
+  Widget _buildDoctorCardFromConsultation(
+    BuildContext context, {
     required ConsultationWithDetails consultation,
   }) {
     // Default image path - you can enhance this with actual doctor image from DB
@@ -47,7 +42,9 @@ class PatientHomeScreen extends StatelessWidget {
       context: context,
       consultation: consultation,
       name: 'Dr. ${consultation.doctorFullName}',
-      specialty: consultation.doctorSpecialty ?? AppLocalizations.of(context)!.specialist,
+      specialty:
+          consultation.doctorSpecialty ??
+          AppLocalizations.of(context)!.specialist,
       date: consultation.formattedDate,
       imagePath: imagePath,
       phoneNumber: consultation.doctorPhoneNumber,
@@ -84,10 +81,7 @@ class PatientHomeScreen extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 24,
-                backgroundImage: AssetImage(imagePath),
-              ),
+              CircleAvatar(radius: 24, backgroundImage: AssetImage(imagePath)),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -137,7 +131,8 @@ class PatientHomeScreen extends StatelessWidget {
                             size: 24,
                           ),
                           onPressed: () {
-                            if (consultation.consultation.consultationId != null) {
+                            if (consultation.consultation.consultationId !=
+                                null) {
                               _showDeleteConfirmationDialog(
                                 context: context,
                                 consultation: consultation,
@@ -171,15 +166,18 @@ class PatientHomeScreen extends StatelessWidget {
                   if (phoneNumber != null && phoneNumber.isNotEmpty) {
                     final success = await WhatsAppService.openWhatsApp(
                       phoneNumber: phoneNumber,
-                      message: AppLocalizations.of(context)!.whatsappMessageDoctor(
-                        consultation.doctorFullName,
-                        date,
-                      ),
+                      message: AppLocalizations.of(context)!
+                          .whatsappMessageDoctor(
+                            consultation.doctorFullName,
+                            date,
+                          ),
                     );
                     if (!success && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.whatsappError),
+                          content: Text(
+                            AppLocalizations.of(context)!.whatsappError,
+                          ),
                           backgroundColor: Colors.red,
                           duration: const Duration(seconds: 2),
                         ),
@@ -189,7 +187,11 @@ class PatientHomeScreen extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.doctorPhoneNumberNotAvailable),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.doctorPhoneNumberNotAvailable,
+                          ),
                           backgroundColor: Colors.orange,
                           duration: const Duration(seconds: 2),
                         ),
@@ -202,7 +204,10 @@ class PatientHomeScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   minimumSize: const Size(100, 36),
                 ),
                 child: Text(
@@ -223,15 +228,9 @@ class PatientHomeScreen extends StatelessWidget {
       style: whiteButtonStyle,
       child: Row(
         children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(name, style: Theme.of(context).textTheme.labelMedium),
           const Spacer(),
-          Text(
-            "$number doctors",
-            style: TextStyle(color: greyColor),
-          )
+          Text("$number doctors", style: TextStyle(color: greyColor)),
         ],
       ),
     );
@@ -243,10 +242,7 @@ class PatientHomeScreen extends StatelessWidget {
       style: whiteButtonStyle,
       child: Row(
         children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(name, style: Theme.of(context).textTheme.labelMedium),
           const Spacer(),
           const Icon(Icons.arrow_outward_rounded),
         ],
@@ -257,171 +253,173 @@ class PatientHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PatientHomeCubit()..loadUpcomingConsultations(PatientHomeScreen.patientId),
+      create: (context) =>
+          PatientHomeCubit()
+            ..loadUpcomingConsultations(PatientHomeScreen.patientId),
       child: Container(
         decoration: gradientBackgroundDecoration,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
-            leading: Icon(
-              Icons.arrow_back_ios_new,
-              color: greyColor,
-            ),
-            actions: const [
-              LanguageSwitcher(),
-              SizedBox(width: 8),
-            ],
+            leading: Icon(Icons.arrow_back_ios_new, color: greyColor),
+            actions: const [LanguageSwitcher(), SizedBox(width: 8)],
           ),
           body: SafeArea(
             child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Hello $name!',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 20),
-                        SearchTextField(hint: 'Start typing'),
-                        const SizedBox(height: 20),
-                        sectionTitle(context, 'Coming consultations'),
-                        const SizedBox(height: 20),
-                        BlocBuilder<PatientHomeCubit, PatientHomeState>(
-                          builder: (context, state) {
-                            if (state.isLoading) {
-                              return const Center(
-                                child: Padding(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hello $name!',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 20),
+                          SearchTextField(hint: 'Start typing'),
+                          const SizedBox(height: 20),
+                          sectionTitle(context, 'Coming consultations'),
+                          const SizedBox(height: 20),
+                          BlocBuilder<PatientHomeCubit, PatientHomeState>(
+                            builder: (context, state) {
+                              if (state.isLoading) {
+                                return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+
+                              if (state.error != null) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    'Error loading consultations',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                );
+                              }
+
+                              if (state.upcomingConsultations.isEmpty) {
+                                return const Padding(
                                   padding: EdgeInsets.all(20.0),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
+                                  child: Text(
+                                    'No upcoming consultations',
+                                    style: TextStyle(color: greyColor),
+                                  ),
+                                );
+                              }
 
-                            if (state.error != null) {
-                              return Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Text(
-                                  'Error loading consultations',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              );
-                            }
-
-                            if (state.upcomingConsultations.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'No upcoming consultations',
-                                  style: TextStyle(color: greyColor),
-                                ),
-                              );
-                            }
-
-                            return Column(
-                              children: state.upcomingConsultations
-                                  .map((consultation) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 12.0),
+                              return Column(
+                                children: state.upcomingConsultations
+                                    .map(
+                                      (consultation) => Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12.0,
+                                        ),
                                         child: _buildDoctorCardFromConsultation(
                                           context,
                                           consultation: consultation,
                                         ),
-                                      ))
-                                  .toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        sectionTitle(context, 'Popular specializations'),
-                        const SizedBox(height: 20),
-                        specialityLink(context, 'Dentist', 21),
-                        const SizedBox(height: 10),
-                        specialityLink(context, 'Pulmonologist', 19),
-                        const SizedBox(height: 10),
-                        specialityLink(context, 'Gastroenterologist', 8),
-                        const SizedBox(height: 10),
-                        specialityLink(context, 'Cardiologist', 15),
-                        const SizedBox(height: 20),
-                        sectionTitle(context, 'Popular doctors'),
-                        const SizedBox(height: 20),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: DoctorCard(
-                                    imagePath: 'assets/images/yousfi.jpg',
-                                    name: 'Dr. Yousfi Slimane',
-                                    specialty: 'Gynecologyst',
-                                    rating: 5.0,
-                                    onTap: () {},
+                                      ),
+                                    )
+                                    .toList(),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          sectionTitle(context, 'Popular specializations'),
+                          const SizedBox(height: 20),
+                          specialityLink(context, 'Dentist', 21),
+                          const SizedBox(height: 10),
+                          specialityLink(context, 'Pulmonologist', 19),
+                          const SizedBox(height: 10),
+                          specialityLink(context, 'Gastroenterologist', 8),
+                          const SizedBox(height: 10),
+                          specialityLink(context, 'Cardiologist', 15),
+                          const SizedBox(height: 20),
+                          sectionTitle(context, 'Popular doctors'),
+                          const SizedBox(height: 20),
+                          Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DoctorCard(
+                                      imagePath: 'assets/images/yousfi.jpg',
+                                      name: 'Dr. Yousfi Slimane',
+                                      specialty: 'Gynecologyst',
+                                      rating: 5.0,
+                                      onTap: () {},
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: DoctorCard(
-                                    imagePath: 'assets/images/battahar-riad.jpg',
-                                    name: 'Dr. Foudad Riad',
-                                    specialty: 'Urologist',
-                                    rating: 4.9,
-                                    onTap: () {},
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: DoctorCard(
+                                      imagePath:
+                                          'assets/images/battahar-riad.jpg',
+                                      name: 'Dr. Foudad Riad',
+                                      specialty: 'Urologist',
+                                      rating: 4.9,
+                                      onTap: () {},
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: DoctorCard(
-                                    imagePath: 'assets/images/Maryam-El-Mokhtari.jpg',
-                                    name: 'Dr. Maryam Akli',
-                                    specialty: 'Dermatologist',
-                                    rating: 4.9,
-                                    onTap: () {},
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: DoctorCard(
+                                      imagePath:
+                                          'assets/images/Maryam-El-Mokhtari.jpg',
+                                      name: 'Dr. Maryam Akli',
+                                      specialty: 'Dermatologist',
+                                      rating: 4.9,
+                                      onTap: () {},
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: DoctorCard(
-                                    imagePath: 'assets/images/dentist.jpg',
-                                    name: 'Dr. Kaouache Antr',
-                                    specialty: 'Dentist',
-                                    rating: 4.9,
-                                    onTap: () {},
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: DoctorCard(
+                                      imagePath: 'assets/images/dentist.jpg',
+                                      name: 'Dr. Kaouache Antr',
+                                      specialty: 'Dentist',
+                                      rating: 4.9,
+                                      onTap: () {},
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Services',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 20),
-                        seviceLink(context, 'Appointments'),
-                        const SizedBox(height: 10),
-                        seviceLink(context, 'Prescriptions'),
-                        const SizedBox(height: 10),
-                        seviceLink(context, 'FAQ'),
-                        const SizedBox(height: 20),
-                        UserFooter(currentIndex: 0),
-                      ],
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Services',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          const SizedBox(height: 20),
+                          seviceLink(context, 'Appointments'),
+                          const SizedBox(height: 10),
+                          seviceLink(context, 'Prescriptions'),
+                          const SizedBox(height: 10),
+                          seviceLink(context, 'FAQ'),
+                          const SizedBox(height: 20),
+                          UserFooter(currentIndex: 0),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
             ),
           ),
         ),
@@ -584,7 +582,9 @@ class PatientHomeScreen extends StatelessWidget {
                   // Show success message
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!.appointmentCancelled),
+                      content: Text(
+                        AppLocalizations.of(context)!.appointmentCancelled,
+                      ),
                       backgroundColor: darkGreenColor,
                       duration: const Duration(seconds: 2),
                     ),
