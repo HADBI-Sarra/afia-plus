@@ -6,10 +6,14 @@ import 'calendar.dart';
 
 class DoctorBookTab extends StatefulWidget {
   final int doctorId;
-  
+  final void Function(DateTime?)? onDaySelected;
+  final void Function(String?)? onTimeSelected;
+
   const DoctorBookTab({
     super.key,
     required this.doctorId,
+    this.onDaySelected,
+    this.onTimeSelected,
   });
 
   @override
@@ -19,6 +23,9 @@ class DoctorBookTab extends StatefulWidget {
 class _DoctorBookTabState extends State<DoctorBookTab> {
   DateTime? selectedDay;
   String? selectedTime;
+
+  DateTime? get getSelectedDay => selectedDay;
+  String? get getSelectedTime => selectedTime;
 
   @override
   void initState() {
@@ -100,6 +107,12 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
                   selectedDay = day;
                   selectedTime = null;
                 });
+                if (widget.onDaySelected != null) {
+                  widget.onDaySelected!(day);
+                }
+                if (widget.onTimeSelected != null) {
+                  widget.onTimeSelected!(null);
+                }
               },
             ),
 
@@ -135,6 +148,9 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
                       setState(() {
                         selectedTime = t;
                       });
+                      if (widget.onTimeSelected != null) {
+                        widget.onTimeSelected!(t);
+                      }
                     },
                   ),
               ],

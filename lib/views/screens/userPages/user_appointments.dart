@@ -4,6 +4,7 @@ import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/footer_user.dart';
 import 'package:afia_plus_app/cubits/user_appointments_cubit.dart';
+import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
@@ -11,20 +12,36 @@ import 'package:afia_plus_app/l10n/app_localizations.dart';
 class UpcomingAppointmentsPage extends StatelessWidget {
   const UpcomingAppointmentsPage({super.key});
 
-  // TODO: Replace with actual patient ID from authentication/session
-  static const int patientId = 1;
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UserAppointmentsCubit()..loadAppointments(patientId),
-      child: const _UpcomingAppointmentsPageView(),
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (authState is! AuthenticatedPatient) {
+          return const Scaffold(
+            body: Center(child: Text('Please log in as a patient to view appointments.')),
+          );
+        }
+
+        final patientId = authState.patient.userId!;
+
+        return BlocProvider(
+          create: (context) => UserAppointmentsCubit()..loadAppointments(patientId),
+          child: _UpcomingAppointmentsPageView(patientId: patientId),
+        );
+      },
     );
   }
 }
 
 class _UpcomingAppointmentsPageView extends StatelessWidget {
-  const _UpcomingAppointmentsPageView();
+  final int patientId;
+  const _UpcomingAppointmentsPageView({required this.patientId});
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +68,7 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context
-                              .read<UserAppointmentsCubit>()
-                              .refreshAppointments(
-                                UpcomingAppointmentsPage.patientId,
-                              );
+                          context.read<UserAppointmentsCubit>().refreshAppointments(patientId);
                         },
                         child: Text(AppLocalizations.of(context)!.retry),
                       ),
@@ -100,15 +113,8 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          context
-                              .read<UserAppointmentsCubit>()
-                              .refreshAppointments(
-                                UpcomingAppointmentsPage.patientId,
-                              );
-                          // Wait a bit for the refresh to complete
-                          await Future.delayed(
-                            const Duration(milliseconds: 500),
-                          );
+                          context.read<UserAppointmentsCubit>().refreshAppointments(patientId);
+                          await Future.delayed(const Duration(milliseconds: 500));
                         },
                         color: darkGreenColor,
                         child: ListView(
@@ -503,7 +509,7 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                 if (consultation.consultation.consultationId != null) {
                   context.read<UserAppointmentsCubit>().deleteAppointment(
                     consultation.consultation.consultationId!,
-                    UpcomingAppointmentsPage.patientId,
+                    patientId,
                   );
                   // Show success message
                   ScaffoldMessenger.of(context).showSnackBar(

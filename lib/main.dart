@@ -49,16 +49,13 @@ Future<void> initMyApp() async {
     () => DBSpecialityRepository(),
   );
 
-  // Force reseed database (clears old data and inserts fresh test data)
-  // Comment this out after first run if you want to keep your data
+  // Seed only if needed; do not wipe existing data on every restart
   try {
-    print('🔄 Force reseeding database...');
-    await DBSeeder.forceReseed();
-    print('✅ Database reseeded successfully!');
-  } catch (e) {
-    print('❌ Error reseeding database: $e');
-    // Fallback to normal seeding if force reseed fails
+    print('🔄 Ensuring database is seeded (no wipe)...');
     await DBSeeder.ensureDatabaseSeeded();
+    print('✅ Database ready (no forced reseed).');
+  } catch (e) {
+    print('❌ Error ensuring database seed: $e');
   }
 }
 

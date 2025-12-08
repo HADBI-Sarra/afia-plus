@@ -41,12 +41,12 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
     emit(state.copyWith(isLoading: true, error: null));
     
     try {
-      final consultations = await _repository.getConfirmedPatientConsultations(patientId);
-      // Filter to show only upcoming (scheduled) consultations, limit to 1-2 for home screen
-      final upcoming = consultations
-          .where((c) => c.consultation.status == 'scheduled')
-          .take(2)
-          .toList();
+      final confirmed = await _repository.getConfirmedPatientConsultations(patientId);
+      final pending = await _repository.getNotConfirmedPatientConsultations(patientId);
+
+      // Show both pending and scheduled as "coming" on home; limit to 2 for brevity
+      final scheduled = confirmed.where((c) => c.consultation.status == 'scheduled');
+      final upcoming = [...pending, ...scheduled].take(2).toList();
       
       emit(state.copyWith(
         upcomingConsultations: upcoming,

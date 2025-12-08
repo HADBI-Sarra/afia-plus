@@ -32,7 +32,8 @@ class BookingCubit extends Cubit<BookingState> {
         availabilityId: availabilityId,
         consultationDate: consultationDate,
         startTime: startTime,
-        status: 'scheduled',
+        // Create as pending so the doctor can confirm
+        status: 'pending',
         prescription: '',
       );
 

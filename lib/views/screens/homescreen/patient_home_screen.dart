@@ -488,9 +488,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // -----------------------
   @override
   Widget build(BuildContext context) {
-    // Provide PatientHomeCubit here so its state is available inside the widget tree.
+    // Provide PatientHomeCubit with the authenticated patientId
+    final authState = context.read<AuthCubit>().state;
+    if (authState is! AuthenticatedPatient) {
+      return const Scaffold(body: Center(child: Text('User not logged in')));
+    }
+    final patientId = authState.patient.userId!;
+
     return BlocProvider(
-      create: (ctx) => PatientHomeCubit()..loadUpcomingConsultations(PatientHomeScreen.patientId),
+      create: (ctx) => PatientHomeCubit()..loadUpcomingConsultations(patientId),
       child: Container(
         decoration: gradientBackgroundDecoration,
         child: Scaffold(

@@ -58,11 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           BlocListener<LoginCubit, LoginState>(
             listenWhen: (previous, current) {
-              // Listen when login is successful and authenticated
-              return current.user != null && 
-                     !current.isLoading && 
-                     current.message.contains('authenticated') &&
-                     previous.message != current.message;
+              // Fire navigation when user is authenticated and not loading
+              return current.user != null &&
+                     !current.isLoading &&
+                     previous.user != current.user;
             },
             listener: (context, state) async {
               // Wait a moment to ensure RootScreen has rebuilt

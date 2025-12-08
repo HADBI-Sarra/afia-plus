@@ -47,11 +47,15 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
     emit(state.copyWith(isLoading: true, error: null));
     
     try {
-      final upcoming = await _repository.getUpcomingDoctorConsultations(doctorId);
+      final allUpcoming = await _repository.getUpcomingDoctorConsultations(doctorId);
       final past = await _repository.getPastDoctorConsultations(doctorId);
+      // Separate by status and combine as needed
+      final scheduled = allUpcoming.where((c) => c.consultation.status == 'scheduled');
+      final pending = allUpcoming.where((c) => c.consultation.status == 'pending');
+      final combinedUpcoming = <ConsultationWithDetails>[...pending, ...scheduled];
       
       emit(state.copyWith(
-        upcomingAppointments: upcoming,
+        upcomingAppointments: combinedUpcoming,
         pastAppointments: past,
         isLoading: false,
       ));

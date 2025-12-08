@@ -14,7 +14,7 @@ class LoginCubit extends Cubit<LoginState> {
   void validateEmail(String email) {
     if (email.isEmpty) {
       emit(state.copyWith(emailError: 'Email cannot be empty'));
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+    } else if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(email)) {
       emit(state.copyWith(emailError: 'Enter a valid email'));
     } else {
       emit(state.copyWith(emailError: null));
@@ -34,7 +34,7 @@ class LoginCubit extends Cubit<LoginState> {
   String? _validateEmailSync(String email) {
     if (email.isEmpty) {
       return 'Email cannot be empty';
-    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+    } else if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(email)) {
       return 'Enter a valid email';
     }
     return null;
