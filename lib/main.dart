@@ -109,7 +109,7 @@ class MainApp extends StatelessWidget {
               Locale('en'), // English
               Locale('ar'), // Arabic
             ],
-            home: DoctorHomeScreen(),
+            home: RootScreen(),
             //UpcomingAppointmentsPage(),
             //DoctorHomeScreen(),
             routes: {
