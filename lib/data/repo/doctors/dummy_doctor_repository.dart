@@ -1,5 +1,6 @@
 import '../../models/doctor.dart';
 import '../../models/result.dart';
+import '../../models/review.dart';
 import 'doctor_repository.dart';
 
 class DummyDoctorRepository implements DoctorRepository {
@@ -288,6 +289,13 @@ class DummyDoctorRepository implements DoctorRepository {
 		if (index == -1) return ReturnResult(state: false, message: 'Doctor not found');
 		_doctors.removeAt(index);
 		return ReturnResult(state: true, message: 'Doctor deleted successfully');
+	}
+
+	@override
+	Future<ReturnResult<List<Review>>> getReviewsByDoctorId(int doctorId) async {
+		// Dummy implementation - return empty list
+		// In a real scenario, you might want to return some dummy reviews for testing
+		return ReturnResult(state: true, message: 'Reviews fetched successfully', data: []);
 	}
 }
 

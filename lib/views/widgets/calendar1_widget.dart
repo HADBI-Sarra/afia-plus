@@ -3,11 +3,13 @@ import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 
 class AvailabilityCalendar extends StatefulWidget {
   final DateTime selectedDate;
+  final List<DateTime> availableDates;
   final Function(DateTime) onDateSelected;
 
   const AvailabilityCalendar({
     super.key,
     required this.selectedDate,
+    required this.availableDates,
     required this.onDateSelected,
   });
 
@@ -26,10 +28,9 @@ class _AvailabilityCalendarState extends State<AvailabilityCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    final daysInMonth = List.generate(
-      DateUtils.getDaysInMonth(_focusedMonth.year, _focusedMonth.month),
-      (index) => DateTime(_focusedMonth.year, _focusedMonth.month, index + 1),
-    );
+    final monthStart = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
+    final daysInMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1, 0).day;
+    final firstWeekday = monthStart.weekday % 7; // 0 = Sunday, 1 = Monday, etc.
 
     return Column(
       children: [
@@ -84,50 +85,117 @@ class _AvailabilityCalendarState extends State<AvailabilityCalendar> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
               .map(
-                (d) => Text(
-                  d,
-                  style: const TextStyle(color: greyColor, fontSize: 13),
+                (d) => Expanded(
+                  child: Center(
+                    child: Text(
+                      d,
+                      style: const TextStyle(color: greyColor, fontSize: 13),
+                    ),
+                  ),
                 ),
               )
               .toList(),
         ),
         const SizedBox(height: 6),
 
-        // 🔹 Calendar Days Grid
-        Wrap(
-          alignment: WrapAlignment.center,
-          children: daysInMonth.map((day) {
-            final bool isSelected =
-                widget.selectedDate.day == day.day &&
-                widget.selectedDate.month == day.month &&
-                widget.selectedDate.year == day.year;
+        // 🔹 Calendar Days Grid - Properly aligned
+        Builder(
+          builder: (context) {
+            List<Widget> calendarDays = [];
+            
+            // Add empty cells for days before the first day of the month
+            for (int i = 0; i < firstWeekday; i++) {
+              calendarDays.add(
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    margin: const EdgeInsets.all(4),
+                  ),
+                ),
+              );
+            }
+            
+            // Add cells for each day of the month
+            for (int day = 1; day <= daysInMonth; day++) {
+              final thisDate = DateTime(_focusedMonth.year, _focusedMonth.month, day);
+              final isAvailable = widget.availableDates.any((d) =>
+                  d.year == thisDate.year &&
+                  d.month == thisDate.month &&
+                  d.day == thisDate.day);
+              
+              final bool isSelected =
+                  widget.selectedDate.day == day &&
+                  widget.selectedDate.month == _focusedMonth.month &&
+                  widget.selectedDate.year == _focusedMonth.year;
 
-            return GestureDetector(
-              onTap: () => widget.onDateSelected(day),
-              child: Container(
-                margin: const EdgeInsets.all(4),
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isSelected ? darkGreenColor : Colors.transparent,
-                  border: Border.all(
-                    color: isSelected
-                        ? darkGreenColor
-                        : greyColor.withOpacity(0.3),
+              calendarDays.add(
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => widget.onDateSelected(thisDate),
+                    child: Container(
+                      height: 40,
+                      margin: const EdgeInsets.all(4),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected ? darkGreenColor : Colors.transparent,
+                        border: Border.all(
+                          color: isSelected
+                              ? darkGreenColor
+                              : isAvailable
+                                  ? blackColor
+                                  : greyColor.withOpacity(0.5),
+                          width: isSelected ? 0 : 1.5,
+                        ),
+                      ),
+                      child: Text(
+                        "$day",
+                        style: TextStyle(
+                          color: isSelected
+                              ? whiteColor
+                              : isAvailable
+                                  ? blackColor
+                                  : greyColor.withOpacity(0.7),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: Text(
-                  "${day.day}",
-                  style: TextStyle(
-                    color: isSelected ? whiteColor : blackColor,
-                    fontWeight: FontWeight.w500,
+              );
+            }
+            
+            // Add empty cells for remaining days in the last week
+            final totalCells = calendarDays.length;
+            final remainingCells = 7 - (totalCells % 7);
+            if (remainingCells < 7) {
+              for (int i = 0; i < remainingCells; i++) {
+                calendarDays.add(
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      margin: const EdgeInsets.all(4),
+                    ),
+                  ),
+                );
+              }
+            }
+            
+            // Group days into weeks (rows of 7)
+            List<Widget> weekRows = [];
+            for (int i = 0; i < calendarDays.length; i += 7) {
+              weekRows.add(
+                Row(
+                  children: calendarDays.sublist(
+                    i,
+                    i + 7 > calendarDays.length ? calendarDays.length : i + 7,
                   ),
                 ),
-              ),
-            );
-          }).toList(),
+              );
+            }
+            
+            return Column(children: weekRows);
+          },
         ),
       ],
     );

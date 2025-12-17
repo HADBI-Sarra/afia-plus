@@ -1,12 +1,14 @@
+import 'package:afia_plus_app/views/screens/root/root_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart'; // <-- added
+import 'package:get_it/get_it.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/labeled_text_form_field.dart';
 import '../../../data/repo/auth/auth_repository.dart';
 import '../../../logic/cubits/login/login_cubit.dart';
 import '../../../logic/cubits/login/login_state.dart';
+import '../../../logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,12 +32,60 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginCubit(GetIt.instance<AuthRepository>()), // <-- FIXED DI
-      child: BlocBuilder<LoginCubit, LoginState>(
-        builder: (context, state) {
-          final cubit = context.read<LoginCubit>();
+      create: (_) => LoginCubit(
+        GetIt.instance<AuthRepository>(),
+        authCubit: context.read<AuthCubit>(),
+      ),
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<LoginCubit, LoginState>(
+            listenWhen: (previous, current) {
+              // Listen for message changes
+              return previous.message != current.message && current.message.isNotEmpty;
+            },
+            listener: (context, state) {
+              // Show snackbar for error messages
+              if (state.message.isNotEmpty && !state.message.contains('authenticated')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            },
+          ),
+          BlocListener<LoginCubit, LoginState>(
+            listenWhen: (previous, current) {
+              // Fire navigation when user is authenticated and not loading
+              return current.user != null &&
+                     !current.isLoading &&
+                     previous.user != current.user;
+            },
+            listener: (context, state) async {
+              // Wait a moment to ensure RootScreen has rebuilt
+              await Future.delayed(const Duration(milliseconds: 300));
+              if (context.mounted) {
+                // Verify auth state one more time before navigating
+                final authCubit = context.read<AuthCubit>();
+                final authState = authCubit.state;
+                if (authState is AuthenticatedPatient || authState is AuthenticatedDoctor) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RootScreen()),
+                    (route) => false,
+                  );
+                }
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<LoginCubit, LoginState>(
+          builder: (context, state) {
+            final cubit = context.read<LoginCubit>();
 
-          return Container(
+            return Container(
             decoration: gradientBackgroundDecoration,
             child: Scaffold(
               extendBodyBehindAppBar: true,
@@ -85,11 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? const CircularProgressIndicator(color: Colors.white)
                             : Text('Log in', style: whiteButtonText),
                       ),
-                      if (state.message.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(state.message, style: const TextStyle(color: Colors.red)),
-                        ),
                       const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           );
-        },
+          },
+        ),
       ),
     );
   }

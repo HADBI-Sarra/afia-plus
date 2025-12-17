@@ -10,7 +10,7 @@ class DummyUserRepository implements UserRepository {
     if (value == null || value.isEmpty) {
       return 'Email cannot be empty';
     }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+    if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(value)) {
       return 'Enter a valid email';
     }
     return null;

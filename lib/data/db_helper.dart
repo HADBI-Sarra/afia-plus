@@ -7,6 +7,7 @@ class DBHelper {
   static const _databaseVersion = 2; // Incremented to trigger migration
   static Database? _database;
 
+  // Singleton pattern for database
   static Future<Database> getDatabase() async {
     if (_database != null) return _database!;
 
@@ -190,9 +191,54 @@ class DBHelper {
             print(doc); // Each doc is a Map<String, dynamic> with all columns
           }
         }
+        final patients = await db.query('patients'); // query all rows
+        if (patients.isEmpty) {
+          print('____No patients found in the database.');
+        } else {
+          print('____patients table rows:');
+          for (var pat in patients) {
+            print(pat); // Each doc is a Map<String, dynamic> with all columns
+          }
+        }
       },
     );
 
     return _database!;
+  }
+
+  /// -----------------------------
+  /// New method: Get specialities with doctor count (only specialties that have doctors)
+  /// -----------------------------
+  Future<List<Map<String, dynamic>>> getSpecialitiesWithDoctorCount() async {
+    final db = await getDatabase();
+    final result = await db.rawQuery('''
+      SELECT s.speciality_id, s.speciality_name, COUNT(d.doctor_id) AS doctor_count
+      FROM specialities s
+      INNER JOIN doctors d ON s.speciality_id = d.speciality_id
+      GROUP BY s.speciality_id
+      HAVING COUNT(d.doctor_id) > 0
+      ORDER BY s.speciality_name
+    ''');
+    return result;
+  }
+
+  /// Optional: Get top N specialities
+  Future<List<Map<String, dynamic>>> getTopSpecialities(int limit) async {
+    final allSpecialities = await getSpecialitiesWithDoctorCount();
+    return allSpecialities.take(limit).toList();
+  }
+
+  /// Get all doctors by speciality
+  Future<List<Map<String, dynamic>>> getDoctorsBySpeciality(int specialityId) async {
+    final db = await getDatabase();
+    final result = await db.rawQuery('''
+      SELECT d.doctor_id, u.firstname, u.lastname, d.location_of_work, 
+             s.speciality_name, COALESCE(d.average_rating, 0.0) AS average_rating
+      FROM doctors d
+      JOIN users u ON d.doctor_id = u.user_id
+      JOIN specialities s ON d.speciality_id = s.speciality_id
+      WHERE d.speciality_id = ?
+    ''', [specialityId]);
+    return result;
   }
 }

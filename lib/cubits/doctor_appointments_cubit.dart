@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/pdf_service.dart';
@@ -38,21 +37,25 @@ class DoctorAppointmentsState {
 }
 
 class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
-  final ConsultationsRepository _repository;
+  final ConsultationsImpl _repository;
 
-  DoctorAppointmentsCubit({ConsultationsRepository? repository})
-      : _repository = repository ?? ConsultationsRepositoryImpl(),
+  DoctorAppointmentsCubit({ConsultationsImpl? repository})
+      : _repository = repository ?? ConsultationsImpl(),
         super(DoctorAppointmentsState());
 
   Future<void> loadAppointments(int doctorId) async {
     emit(state.copyWith(isLoading: true, error: null));
     
     try {
-      final upcoming = await _repository.getUpcomingDoctorConsultations(doctorId);
+      final allUpcoming = await _repository.getUpcomingDoctorConsultations(doctorId);
       final past = await _repository.getPastDoctorConsultations(doctorId);
+      // Separate by status and combine as needed
+      final scheduled = allUpcoming.where((c) => c.consultation.status == 'scheduled');
+      final pending = allUpcoming.where((c) => c.consultation.status == 'pending');
+      final combinedUpcoming = <ConsultationWithDetails>[...pending, ...scheduled];
       
       emit(state.copyWith(
-        upcomingAppointments: upcoming,
+        upcomingAppointments: combinedUpcoming,
         pastAppointments: past,
         isLoading: false,
       ));

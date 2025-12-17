@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 
@@ -36,10 +35,10 @@ class DoctorHomeState {
 }
 
 class DoctorHomeCubit extends Cubit<DoctorHomeState> {
-  final ConsultationsRepository _repository;
+  final ConsultationsImpl _repository;
 
-  DoctorHomeCubit({ConsultationsRepository? repository})
-      : _repository = repository ?? ConsultationsRepositoryImpl(),
+  DoctorHomeCubit({ConsultationsImpl? repository})
+      : _repository = repository ?? ConsultationsImpl(),
         super(DoctorHomeState());
 
   Future<void> loadConsultations(int doctorId) async {

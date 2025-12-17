@@ -3,7 +3,7 @@ import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dar
 import 'package:afia_plus_app/models/consultation.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 
-class ConsultationsRepositoryImpl implements ConsultationsRepository {
+class ConsultationsImpl implements ConsultationsRepository {
   @override
   Future<List<ConsultationWithDetails>> getPatientConsultations(int patientId) async {
     final db = await DBHelper.getDatabase();

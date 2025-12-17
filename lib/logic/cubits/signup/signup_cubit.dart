@@ -341,6 +341,7 @@ class SignupCubit extends Cubit<SignupState> {
         university: state.university,
         certification: state.certification,
         institution: state.certificationInstitution,
+        residency: state.training,
         licenseNumber: state.licenceNumber,
         licenseDescription: state.licenceDesc,
         yearsExperience: int.tryParse(state.yearsOfExperience),
@@ -366,7 +367,7 @@ class SignupCubit extends Cubit<SignupState> {
   // ---------------- Validators ----------------
   String? _validateEmail(String value) {
     if (value.isEmpty) return 'Email cannot be empty';
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Enter a valid email';
+    if (!RegExp(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$").hasMatch(value)) return 'Enter a valid email';
     return null;
   }
 

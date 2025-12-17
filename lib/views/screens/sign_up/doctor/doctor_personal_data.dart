@@ -47,6 +47,16 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (previous, current) => previous.message != current.message,
       listener: (context, state) {
+        // Show snackbar for error messages
+        if (state.message.isNotEmpty && state.message != 'NextStep') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
         if (state.message == 'NextStep') {
           Navigator.push(
             context,
@@ -118,11 +128,6 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                               ? const CircularProgressIndicator(color: Colors.white)
                               : Text('Next', style: whiteButtonText),
                         ),
-                        if (state.message.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
-                            child: Text(state.message, style: const TextStyle(color: Colors.red)),
-                          ),
                       ],
                     ),
                   ),

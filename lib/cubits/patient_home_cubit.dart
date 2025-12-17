@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 
@@ -32,22 +31,22 @@ class PatientHomeState {
 }
 
 class PatientHomeCubit extends Cubit<PatientHomeState> {
-  final ConsultationsRepository _repository;
+  final ConsultationsImpl _repository;
 
-  PatientHomeCubit({ConsultationsRepository? repository})
-      : _repository = repository ?? ConsultationsRepositoryImpl(),
+  PatientHomeCubit({ConsultationsImpl? repository})
+      : _repository = repository ?? ConsultationsImpl(),
         super(PatientHomeState());
 
   Future<void> loadUpcomingConsultations(int patientId) async {
     emit(state.copyWith(isLoading: true, error: null));
     
     try {
-      final consultations = await _repository.getConfirmedPatientConsultations(patientId);
-      // Filter to show only upcoming (scheduled) consultations, limit to 1-2 for home screen
-      final upcoming = consultations
-          .where((c) => c.consultation.status == 'scheduled')
-          .take(2)
-          .toList();
+      final confirmed = await _repository.getConfirmedPatientConsultations(patientId);
+      final pending = await _repository.getNotConfirmedPatientConsultations(patientId);
+
+      // Show both pending and scheduled as "coming" on home; limit to 2 for brevity
+      final scheduled = confirmed.where((c) => c.consultation.status == 'scheduled');
+      final upcoming = [...pending, ...scheduled].take(2).toList();
       
       emit(state.copyWith(
         upcomingConsultations: upcoming,

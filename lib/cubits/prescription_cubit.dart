@@ -31,7 +31,7 @@ class PrescriptionCubit extends Cubit<PrescriptionState> {
   final ConsultationsRepository _repository;
 
   PrescriptionCubit({ConsultationsRepository? repository})
-    : _repository = repository ?? ConsultationsRepositoryImpl(),
+    : _repository = repository ?? ConsultationsImpl(),
       super(PrescriptionState());
 
   Future<void> loadPrescriptions(int patientId) async {

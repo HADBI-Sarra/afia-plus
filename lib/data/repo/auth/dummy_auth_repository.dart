@@ -11,7 +11,7 @@ class DummyAuthRepository implements AuthRepository {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email cannot be empty';
-    if (!RegExp(r"^[^@]+@[^@]+\.[^@]+").hasMatch(value)) return 'Enter a valid email address';
+    if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(value)) return 'Enter a valid email address';
     return null;
   }
 

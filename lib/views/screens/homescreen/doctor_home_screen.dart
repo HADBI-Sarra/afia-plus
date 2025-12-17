@@ -7,14 +7,12 @@ import 'package:afia_plus_app/cubits/doctor_home_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/views/widgets/language_switcher.dart';
+import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
 
   final String name = "Mohamed";
-  // TODO: Replace with actual doctor ID from authentication/session
-  // Using doctor ID 2 (Dr. Mohamed Brahimi) to match test data
-  static const int doctorId = 2;
 
   Widget sectionTitle(BuildContext context, String title) {
     return Row(
@@ -149,6 +147,7 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget _buildAppointmentCardFromData({
     required ConsultationWithDetails consultation,
     required BuildContext context,
+    required int doctorId,
   }) {
     return _buildAppointmentCard(
       name: consultation.patientFullName,
@@ -156,6 +155,7 @@ class DoctorHomeScreen extends StatelessWidget {
       date: consultation.consultation.consultationDate,
       consultationId: consultation.consultation.consultationId,
       context: context,
+      doctorId: doctorId,
     );
   }
 
@@ -165,6 +165,7 @@ class DoctorHomeScreen extends StatelessWidget {
     required String date,
     required int? consultationId,
     required BuildContext context,
+    required int doctorId,
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -232,6 +233,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           patientName: name,
                           date: date,
                           time: time,
+                          doctorId: doctorId,
                         );
                       }
                     },
@@ -272,6 +274,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           patientName: name,
                           date: date,
                           time: time,
+                          doctorId: doctorId,
                         );
                       }
                     },
@@ -342,33 +345,46 @@ class DoctorHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DoctorHomeCubit()..loadConsultations(DoctorHomeScreen.doctorId),
-      child: Container(
-        decoration: gradientBackgroundDecoration,
-        child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.transparent,
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            leading: Icon(Icons.arrow_back_ios_new, color: greyColor),
-            actions: const [
-              LanguageSwitcher(),
-              SizedBox(width: 8),
-            ],
-          ),
-          body: SafeArea(
-            child: LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthLoading) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (authState is! AuthenticatedDoctor) {
+          return const Scaffold(
+            body: Center(child: Text('Please log in as a doctor to view your home screen.')),
+          );
+        }
+
+        final doctorId = authState.doctor.userId!;
+
+        return BlocProvider(
+          create: (context) => DoctorHomeCubit()..loadConsultations(doctorId),
+          child: Container(
+            decoration: gradientBackgroundDecoration,
+            child: Scaffold(
+              extendBodyBehindAppBar: true,
+              backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInset: true,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                leading: const Icon(Icons.arrow_back_ios_new, color: greyColor),
+                actions: const [
+                  LanguageSwitcher(),
+                  SizedBox(width: 8),
+                ],
+              ),
+              body: SafeArea(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                         Text(
                           'Quick overview',
                           style: Theme.of(context).textTheme.titleMedium,
@@ -449,6 +465,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                         child: _buildAppointmentCardFromData(
                                           consultation: consultation,
                                           context: context,
+                                            doctorId: doctorId,
                                         ),
                                       ))
                                   .toList(),
@@ -479,7 +496,8 @@ class DoctorHomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
+  });
+}
 
   void _showAcceptConfirmationDialog({
     required BuildContext context,
@@ -487,6 +505,7 @@ class DoctorHomeScreen extends StatelessWidget {
     required String patientName,
     required String date,
     required String time,
+    required int doctorId,
   }) {
     showDialog(
       context: context,
@@ -596,7 +615,7 @@ class DoctorHomeScreen extends StatelessWidget {
                 Navigator.of(dialogContext).pop();
                 context.read<DoctorHomeCubit>().acceptConsultation(
                       consultationId,
-                      DoctorHomeScreen.doctorId,
+                      doctorId,
                     );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -634,6 +653,7 @@ class DoctorHomeScreen extends StatelessWidget {
     required String patientName,
     required String date,
     required String time,
+    required int doctorId,
   }) {
     showDialog(
       context: context,
@@ -755,7 +775,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   try {
                     await context.read<DoctorHomeCubit>().rejectConsultation(
                           consultationId,
-                          DoctorHomeScreen.doctorId,
+                          doctorId,
                         );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
