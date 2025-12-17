@@ -37,6 +37,32 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
       : _repository = repository ?? ConsultationsImpl(),
         super(PatientHomeState());
 
+  DateTime? _parseDateTime(String rawDate, String rawTime) {
+    final normalizedDate = rawDate.contains('/') ? rawDate.split('/') : rawDate.split('-');
+    final timeParts = rawTime.split(':');
+    if (normalizedDate.length != 3 || timeParts.length < 2) return null;
+    try {
+      final isYearFirst = normalizedDate[0].length == 4;
+      final year = int.parse(isYearFirst ? normalizedDate[0] : normalizedDate[2]);
+      final month = int.parse(normalizedDate[1]);
+      final day = int.parse(isYearFirst ? normalizedDate[2] : normalizedDate[0]);
+      final hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+      return DateTime(year, month, day, hour, minute);
+    } catch (_) {
+      return DateTime.tryParse('$rawDate $rawTime');
+    }
+  }
+
+  bool _isPastAppointment(ConsultationWithDetails consultation) {
+    final date = _parseDateTime(
+      consultation.consultation.consultationDate,
+      consultation.consultation.startTime,
+    );
+    if (date == null) return false;
+    return date.isBefore(DateTime.now());
+  }
+
   Future<void> loadUpcomingConsultations(int patientId) async {
     emit(state.copyWith(isLoading: true, error: null));
     
@@ -46,7 +72,7 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
 
       // Show both pending and scheduled as "coming" on home; limit to 2 for brevity
       final scheduled = confirmed.where((c) => c.consultation.status == 'scheduled');
-      final upcoming = [...pending, ...scheduled].take(2).toList();
+      final upcoming = [...pending, ...scheduled].where((c) => !_isPastAppointment(c)).take(2).toList();
       
       emit(state.copyWith(
         upcomingConsultations: upcoming,

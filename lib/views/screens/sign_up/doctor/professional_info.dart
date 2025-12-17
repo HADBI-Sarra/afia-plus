@@ -407,10 +407,13 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
         ),
         const SizedBox(height: 20),
 
-        // TERMS + BUTTON
+        // TERMS + BUTTON (wrap text to avoid overflow on small screens)
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
               onPressed: cubit.toggleProfessionalAgreeBox,
               icon: Icon(
                 state.professionalAgreeBoxChecked
@@ -422,7 +425,13 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
               ),
             ),
             const SizedBox(width: 10),
-            const Text('I agree to the Terms and Conditions'),
+            Expanded(
+              child: Text(
+                'I agree to the Terms and Conditions',
+                style: Theme.of(context).textTheme.bodyMedium,
+                softWrap: true,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 13),

@@ -20,8 +20,10 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   // ---------------- Account step ----------------
-  void setEmail(String value) =>
-      emit(state.copyWith(email: value, emailError: _validateEmail(value)));
+  void setEmail(String value) {
+    final trimmed = value.trim();
+    emit(state.copyWith(email: trimmed, emailError: _validateEmail(trimmed)));
+  }
 
   void setPassword(String value) {
     final flags = _passwordFlags(value);
@@ -366,8 +368,9 @@ class SignupCubit extends Cubit<SignupState> {
 
   // ---------------- Validators ----------------
   String? _validateEmail(String value) {
-    if (value.isEmpty) return 'Email cannot be empty';
-    if (!RegExp(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$").hasMatch(value)) return 'Enter a valid email';
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return 'Email cannot be empty';
+    if (!RegExp(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$").hasMatch(trimmed)) return 'Enter a valid email';
     return null;
   }
 

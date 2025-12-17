@@ -165,8 +165,11 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                       const SizedBox(height: 5),
 
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
                             onPressed: cubit.toggleAgreeBox,
                             icon: Icon(
                               state.agreeBoxChecked
@@ -178,7 +181,13 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Text('I agree to the Terms and Conditions'),
+                          Expanded(
+                            child: Text(
+                              'I agree to the Terms and Conditions',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              softWrap: true,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),

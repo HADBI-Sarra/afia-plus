@@ -1,6 +1,6 @@
 /// Application-wide constants
 class AppConstants {
-  // User IDs (TODO: Replace with actual authentication)
+  // Legacy defaults (do not use in new code; rely on AuthCubit for IDs)
   static const int defaultPatientId = 1;
   static const int defaultDoctorId = 2;
 

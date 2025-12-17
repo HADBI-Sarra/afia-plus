@@ -118,6 +118,8 @@ class _ScheduleAvailabilityPageState extends State<ScheduleAvailabilityPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AvailabilityCubit, AvailabilityState>(
       builder: (context, state) {
+        final DateTime today = DateTime.now();
+        final DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
         final String dateKey = _selectedDate.toIso8601String().substring(0, 10);
         List<DoctorAvailabilityModel> slotsForDay = [];
         List<DateTime> availableDates = [];
@@ -160,7 +162,17 @@ class _ScheduleAvailabilityPageState extends State<ScheduleAvailabilityPage> {
                       selectedDate: _selectedDate,
                       availableDates: availableDates,
                       onDateSelected: (date) {
-                        setState(() => _selectedDate = date);
+                        final DateTime dateOnly = DateTime(date.year, date.month, date.day);
+                        if (dateOnly.isBefore(todayDateOnly)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('You cannot set availability in the past.'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                          return;
+                        }
+                        setState(() => _selectedDate = dateOnly);
                       },
                     ),
                     const SizedBox(height: 12),
@@ -212,7 +224,19 @@ class _ScheduleAvailabilityPageState extends State<ScheduleAvailabilityPage> {
           ),
           floatingActionButton: FloatingActionButton(
             backgroundColor: darkGreenColor,
-            onPressed: _showAddTimesModal,
+            onPressed: () {
+              final DateTime dateOnly = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+              if (dateOnly.isBefore(todayDateOnly)) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Select today or a future date to add availability.'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                return;
+              }
+              _showAddTimesModal();
+            },
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
             child: const Icon(Icons.add, color: whiteColor),
           ),

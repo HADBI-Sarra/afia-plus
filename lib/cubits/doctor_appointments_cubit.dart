@@ -43,6 +43,35 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
       : _repository = repository ?? ConsultationsImpl(),
         super(DoctorAppointmentsState());
 
+  DateTime? _parseDateTime(String rawDate, String rawTime) {
+    // Accept both yyyy-MM-dd and dd/MM/yyyy to support stored / displayed values
+    final normalizedDate = rawDate.contains('/') ? rawDate.split('/') : rawDate.split('-');
+    final timeParts = rawTime.split(':');
+
+    if (normalizedDate.length != 3 || timeParts.length < 2) return null;
+    try {
+      // If first part has 4 chars assume yyyy-MM-dd else dd/MM/yyyy
+      final isYearFirst = normalizedDate[0].length == 4;
+      final year = int.parse(isYearFirst ? normalizedDate[0] : normalizedDate[2]);
+      final month = int.parse(normalizedDate[1]);
+      final day = int.parse(isYearFirst ? normalizedDate[2] : normalizedDate[0]);
+      final hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+      return DateTime(year, month, day, hour, minute);
+    } catch (_) {
+      return DateTime.tryParse('$rawDate $rawTime');
+    }
+  }
+
+  bool _isPastAppointment(ConsultationWithDetails consultation) {
+    final date = _parseDateTime(
+      consultation.consultation.consultationDate,
+      consultation.consultation.startTime,
+    );
+    if (date == null) return false;
+    return date.isBefore(DateTime.now());
+  }
+
   Future<void> loadAppointments(int doctorId) async {
     emit(state.copyWith(isLoading: true, error: null));
     
@@ -53,10 +82,14 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
       final scheduled = allUpcoming.where((c) => c.consultation.status == 'scheduled');
       final pending = allUpcoming.where((c) => c.consultation.status == 'pending');
       final combinedUpcoming = <ConsultationWithDetails>[...pending, ...scheduled];
+
+      // Move any pending/scheduled consultations whose date already passed to past list
+      final expired = combinedUpcoming.where(_isPastAppointment).toList();
+      final upcomingFiltered = combinedUpcoming.where((c) => !_isPastAppointment(c)).toList();
       
       emit(state.copyWith(
-        upcomingAppointments: combinedUpcoming,
-        pastAppointments: past,
+        upcomingAppointments: upcomingFiltered,
+        pastAppointments: [...past, ...expired],
         isLoading: false,
       ));
     } catch (e) {

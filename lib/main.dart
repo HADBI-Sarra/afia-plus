@@ -28,8 +28,6 @@ import 'package:afia_plus_app/data/repo/auth/db_auth_repository.dart';
 import 'package:afia_plus_app/data/repo/auth/auth_repository.dart';
 import 'package:afia_plus_app/data/repo/specialities/db_speciality_repository.dart';
 import 'package:afia_plus_app/data/repo/specialities/speciality_repository.dart';
-import 'package:afia_plus_app/utils/db_verification_screen.dart';
-import 'package:afia_plus_app/utils/db_seeder.dart';
 import 'package:afia_plus_app/data/db_helper.dart';
 
 Future<void> initMyApp() async {
@@ -48,15 +46,6 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),
   );
-
-  // Seed only if needed; do not wipe existing data on every restart
-  try {
-    print('🔄 Ensuring database is seeded (no wipe)...');
-    await DBSeeder.ensureDatabaseSeeded();
-    print('✅ Database ready (no forced reseed).');
-  } catch (e) {
-    print('❌ Error ensuring database seed: $e');
-  }
 }
 
 void main() async {
@@ -84,17 +73,18 @@ class MainApp extends StatelessWidget {
             doctorRepository: doctorRepo,
           ),
         ),
-        BlocProvider(
-          create: (_) => DoctorsCubit(),
-        ),
+        BlocProvider(create: (_) => DoctorsCubit()),
         BlocProvider(create: (_) => SignupCubit(authRepository: authRepo)),
         BlocProvider<AvailabilityCubit>(
-         create: (_) => AvailabilityCubit(repo: DoctorAvailabilityImpl()),
+          create: (_) => AvailabilityCubit(repo: DoctorAvailabilityImpl()),
         ),
 
-          BlocProvider<BookingCubit>(
-            create: (_) => BookingCubit(consultations: ConsultationsImpl(),availability: DoctorAvailabilityImpl(),)
+        BlocProvider<BookingCubit>(
+          create: (_) => BookingCubit(
+            consultations: ConsultationsImpl(),
+            availability: DoctorAvailabilityImpl(),
           ),
+        ),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -116,12 +106,14 @@ class MainApp extends StatelessWidget {
             //UpcomingAppointmentsPage(),
             //DoctorHomeScreen(),
             routes: {
-              UserProfileScreen.routename: (context) => const UserProfileScreen(),
+              UserProfileScreen.routename: (context) =>
+                  const UserProfileScreen(),
               // DoctorProfileScreen.routename: (context) => DoctorProfileScreen(),
-              DoctorViewDoctorProfileScreen.routename: (context) => const DoctorViewDoctorProfileScreen(),
-              DoctorViewUserProfileScreen.routename: (context) => const DoctorViewUserProfileScreen(),
+              DoctorViewDoctorProfileScreen.routename: (context) =>
+                  const DoctorViewDoctorProfileScreen(),
+              DoctorViewUserProfileScreen.routename: (context) =>
+                  const DoctorViewUserProfileScreen(),
               SearchScreen.routename: (context) => const SearchScreen(),
-              '/db-verify': (context) => const DBVerificationScreen(),
             },
           );
         },

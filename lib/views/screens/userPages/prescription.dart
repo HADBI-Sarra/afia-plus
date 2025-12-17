@@ -12,24 +12,43 @@ import 'package:afia_plus_app/cubits/prescription_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/pdf_service.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 
 class PrescriptionPage extends StatelessWidget {
   const PrescriptionPage({super.key});
 
-  // TODO: Replace with actual patient ID from authentication/session
-  static const int patientId = 1;
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => PrescriptionCubit()..loadPrescriptions(patientId),
-      child: const _PrescriptionPageView(),
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        if (authState is AuthLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (authState is! AuthenticatedPatient) {
+          return const Scaffold(
+            body: Center(
+              child: Text('Please log in as a patient to view prescriptions.'),
+            ),
+          );
+        }
+
+        final patientId = authState.patient.userId!;
+
+        return BlocProvider(
+          create: (context) => PrescriptionCubit()..loadPrescriptions(patientId),
+          child: _PrescriptionPageView(patientId: patientId),
+        );
+      },
     );
   }
 }
 
 class _PrescriptionPageView extends StatelessWidget {
-  const _PrescriptionPageView();
+  final int patientId;
+  const _PrescriptionPageView({required this.patientId});
 
   Widget _buildPrescriptionCard({
     required BuildContext context,
@@ -143,7 +162,7 @@ class _PrescriptionPageView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<PrescriptionCubit>().refreshPrescriptions(PrescriptionPage.patientId);
+                          context.read<PrescriptionCubit>().refreshPrescriptions(patientId);
                         },
                         child: Text(AppLocalizations.of(context)!.retry),
                       ),
@@ -193,7 +212,7 @@ class _PrescriptionPageView extends StatelessWidget {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  context.read<PrescriptionCubit>().refreshPrescriptions(PrescriptionPage.patientId);
+                  context.read<PrescriptionCubit>().refreshPrescriptions(patientId);
                   await Future.delayed(const Duration(milliseconds: 500));
                 },
                 color: darkGreenColor,
