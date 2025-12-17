@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:afia_plus_app/commons/config.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'firebase_options.dart';
+import 'utils/firebase.dart';
 import 'package:afia_plus_app/views/themes/style_simple/theme.dart';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/logic/cubits/availability cubit/availability_cubit.dart';
@@ -30,6 +34,10 @@ import 'package:afia_plus_app/data/repo/specialities/db_speciality_repository.da
 import 'package:afia_plus_app/data/repo/specialities/speciality_repository.dart';
 import 'package:afia_plus_app/data/db_helper.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 Future<void> initMyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -46,6 +54,9 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),
   );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  init_firebase_messaging();
 }
 
 void main() async {
@@ -115,6 +126,7 @@ class MainApp extends StatelessWidget {
                   const DoctorViewUserProfileScreen(),
               SearchScreen.routename: (context) => const SearchScreen(),
             },
+            navigatorKey: navigatorKey,
           );
         },
       ),
