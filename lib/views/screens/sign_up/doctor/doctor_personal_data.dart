@@ -23,12 +23,17 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
   @override
   void initState() {
     super.initState();
-    final state = context.read<SignupCubit>().state;
+    final cubit = context.read<SignupCubit>();
+    final state = cubit.state;
 
     _firstNameController = TextEditingController(text: state.firstName);
     _lastNameController = TextEditingController(text: state.lastName);
     _phoneNumberController = TextEditingController(text: state.phoneNumber);
     _ninController = TextEditingController(text: state.nin);
+    // Ensure the step is set to personal when this screen is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cubit.setCurrentStep(SignupStep.personal);
+    });
   }
 
   @override
@@ -47,8 +52,8 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (previous, current) => previous.message != current.message,
       listener: (context, state) {
-        // Show snackbar for error messages
-        if (state.message.isNotEmpty && state.message != 'NextStep') {
+        // Show snackbar for error messages (except email already in use, which shows as field errorText)
+        if (state.message.isNotEmpty && state.message != 'NextStep' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -58,7 +63,9 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
           );
         }
         if (state.message == 'NextStep') {
-          Navigator.push(
+          // Clear the message before navigating to avoid listener firing again
+          cubit.clearMessage();
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => const ProfessionalInfoScreen()),
           );
@@ -68,13 +75,25 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
           builder: (context, state) {
             return Container(
               decoration: gradientBackgroundDecoration,
-              child: Scaffold(
-                extendBodyBehindAppBar: true,
-                backgroundColor: Colors.transparent,
-                appBar: AppBar(
+              child: WillPopScope(
+                onWillPop: () async {
+                  // Ensure cubit step is reverted when user navigates back (system back)
+                  cubit.setCurrentStep(SignupStep.account);
+                  return true;
+                },
+                child: Scaffold(
+                  extendBodyBehindAppBar: true,
                   backgroundColor: Colors.transparent,
-                  leading: Icon(Icons.arrow_back_ios_new, color: greyColor),
-                ),
+                  appBar: AppBar(
+                    backgroundColor: Colors.transparent,
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new, color: greyColor),
+                      onPressed: () {
+                        cubit.setCurrentStep(SignupStep.account);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
                 body: SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
@@ -91,23 +110,22 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                           label: 'First name',
                           hint: 'Enter your first name',
                           controller: _firstNameController,
-                          onChanged: cubit.setFirstName,
                           errorText: state.firstNameError,
+                          textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 12),
                         LabeledTextFormField(
                           label: 'Last name',
                           hint: 'Enter your last name',
                           controller: _lastNameController,
-                          onChanged: cubit.setLastName,
                           errorText: state.lastNameError,
+                          textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 12),
                         LabeledTextFormField(
                           label: 'Phone number',
                           hint: 'e.g. 05123 45 67 89',
                           controller: _phoneNumberController,
-                          onChanged: cubit.setPhoneNumber,
                           errorText: state.phoneError,
                           keyboardType: TextInputType.phone,
                         ),
@@ -116,13 +134,21 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                           label: 'National Identification Number (NIN)',
                           hint: 'e.g. 198012345678901234',
                           controller: _ninController,
-                          onChanged: cubit.setNin,
                           errorText: state.ninError,
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 40),
                         ElevatedButton(
-                          onPressed: state.isLoading ? null : cubit.submitPersonalData,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  // Push latest controller values into Cubit, then validate/submit
+                                  cubit.setFirstName(_firstNameController.text);
+                                  cubit.setLastName(_lastNameController.text);
+                                  cubit.setPhoneNumber(_phoneNumberController.text);
+                                  cubit.setNin(_ninController.text);
+                                  cubit.submitPersonalData();
+                                },
                           style: greenButtonStyle,
                           child: state.isLoading
                               ? const CircularProgressIndicator(color: Colors.white)
@@ -133,7 +159,7 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                   ),
                 ),
               ),
-            );
+            ));
           },
         )
       );

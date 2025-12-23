@@ -109,7 +109,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: 'Enter your email',
                         controller: _emailController,
                         errorText: state.emailError,
-                        onChanged: cubit.validateEmail,
                       ),
                       const SizedBox(height: 12),
                       LabeledTextFormField(
@@ -118,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         isPassword: true,
                         controller: _passwordController,
                         errorText: state.passwordError,
-                        onChanged: cubit.validatePassword,
                       ),
                       const SizedBox(height: 12),
                       Align(

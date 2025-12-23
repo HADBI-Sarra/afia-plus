@@ -14,6 +14,7 @@ class LabeledTextFormField extends StatefulWidget {
   final bool greyLabel;
   final int? minlines;
   final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
 
   const LabeledTextFormField({
     required this.label,
@@ -26,6 +27,7 @@ class LabeledTextFormField extends StatefulWidget {
     this.greyLabel = false,
     this.minlines,
     this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
     super.key,
   });
 
@@ -62,7 +64,10 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-        DateTime tempPicked = DateTime.now();
+        // Start with the same date that is visually shown in the picker,
+        // so if the user doesn't scroll and just presses "Done",
+        // the field gets this initial date instead of today's date.
+        DateTime tempPicked = DateTime(2000, 1, 1);
 
         return Container(
           height: 300,
@@ -140,6 +145,7 @@ class _LabeledTextFormFieldState extends State<LabeledTextFormField> {
           minLines: widget.isPassword ? 1 : widget.minlines,
           maxLines: widget.isPassword ? 1 : widget.minlines,
           keyboardType: widget.keyboardType,
+          textCapitalization: widget.textCapitalization,
           decoration: InputDecoration(
             hintText: widget.hint,
             contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),

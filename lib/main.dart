@@ -22,6 +22,7 @@ import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_
 import 'package:afia_plus_app/views/screens/search/search.dart';
 import 'package:afia_plus_app/data/repo/doctor_availability/doctor_availability_impl.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
+import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/data/repo/users/db_user_repository.dart';
 import 'package:afia_plus_app/data/repo/users/user_repository.dart';
 import 'package:afia_plus_app/data/repo/patients/db_patient_repository.dart';
@@ -53,6 +54,9 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<AuthRepository>(() => DbAuthRepository(db));
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),
+  );
+  sl.registerLazySingleton<ConsultationsRepository>(
+    () => ConsultationsImpl(),
   );
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

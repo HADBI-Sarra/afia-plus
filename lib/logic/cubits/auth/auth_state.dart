@@ -9,7 +9,6 @@ class AuthLoading extends AuthState {}
 
 class Unauthenticated extends AuthState {}
 
-// Authenticated patient now holds a Patient object
 class AuthenticatedPatient extends AuthState {
   final Patient patient;
   AuthenticatedPatient(this.patient);
@@ -18,7 +17,6 @@ class AuthenticatedPatient extends AuthState {
   List<Object?> get props => [patient];
 }
 
-// Authenticated doctor now holds a Doctor object
 class AuthenticatedDoctor extends AuthState {
   final Doctor doctor;
   AuthenticatedDoctor(this.doctor);

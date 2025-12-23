@@ -33,6 +33,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
+    // Ensure the step is set to account when this screen is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SignupCubit>().setCurrentStep(SignupStep.account);
+    });
   }
 
   @override
@@ -48,8 +52,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.currentStep != curr.currentStep || prev.message != curr.message,
       listener: (context, state) {
-        // Show snackbar for error messages
-        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
+        // Show snackbar for error messages (except email already in use, which shows as errorText)
+        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -133,8 +137,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         label: 'Email',
                         hint: 'Enter your email',
                         controller: _emailController,
-                        errorText: state.emailError,
                         onChanged: cubit.setEmail,
+                        errorText: state.emailError,
                       ),
                       const SizedBox(height: 12),
 
@@ -144,15 +148,34 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         hint: 'Create password',
                         isPassword: true,
                         controller: _passwordController,
-                        errorText: state.passwordError,
                         onChanged: cubit.setPassword,
+                        // Never show an error when the password is strong.
+                        errorText: state.strongPassword ? null : state.passwordError,
                       ),
-                      Visibility(
-                        visible: !state.firstTry && !state.strongPassword,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 24),
+                      // Show criteria once the user has attempted the password at least once.
+                      // They remain visible (weak or strong) until the user presses "Next"
+                      // with a strong password, at which point validateAccountStep
+                      // will reset firstTry and hide them.
+                      if (!state.firstTry) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 24, top: 4),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Summary line: only show a green "Strong password" when all criteria are met.
+                              // For weak passwords we rely on the field's errorText ("Weak password")
+                              // to avoid showing two weak-password messages.
+                              if (state.strongPassword) ...[
+                                Text(
+                                  'Strong password',
+                                  style: TextStyle(
+                                    color: greenColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                              ],
                               PasswordErrorText(text: 'Min 8 characters length', control: state.long),
                               PasswordErrorText(text: 'Min 1 lowercase letter', control: state.hasLowercase),
                               PasswordErrorText(text: 'Min 1 uppercase letter', control: state.hasUppercase),
@@ -161,7 +184,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             ],
                           ),
                         ),
-                      ),
+                      ],
                       const SizedBox(height: 12),
 
                       /// CONFIRM PASSWORD
@@ -170,8 +193,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         hint: 'Repeat password',
                         isPassword: true,
                         controller: _confirmPasswordController,
-                        errorText: state.confirmPasswordError,
                         onChanged: cubit.setConfirmPassword,
+                        errorText: state.confirmPasswordError,
                       ),
                       const SizedBox(height: 30),
 
@@ -180,6 +203,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         onPressed: state.isLoading
                             ? null
                             : () {
+                                // Push latest controller values into Cubit, then validate/submit
+                                cubit.setEmail(_emailController.text);
+                                cubit.setPassword(_passwordController.text);
+                                cubit.setConfirmPassword(_confirmPasswordController.text);
                                 cubit.submitPersonalData();
                               },
                         style: greenButtonStyle,

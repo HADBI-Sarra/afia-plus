@@ -5,7 +5,6 @@ import '../../../data/repo/auth/auth_repository.dart';
 import '../../../data/models/user.dart';
 import '../../../data/models/patient.dart';
 import '../../../data/models/doctor.dart';
-import '../../../data/models/result.dart';
 import 'package:intl/intl.dart';
 
 class SignupCubit extends Cubit<SignupState> {
@@ -19,15 +18,46 @@ class SignupCubit extends Cubit<SignupState> {
     emit(SignupState());
   }
 
+  /// Sets the current step in the signup flow
+  void setCurrentStep(SignupStep step) {
+    emit(state.copyWith(currentStep: step));
+  }
+
+  /// Clears the message in the state
+  void clearMessage() {
+    emit(state.copyWith(message: ''));
+  }
+
   // ---------------- Account step ----------------
   void setEmail(String value) {
     final trimmed = value.trim();
-    emit(state.copyWith(email: trimmed, emailError: _validateEmail(trimmed)));
+    // Only update value here; validation happens in validateAccountStep.
+    // Preserve all existing errors so they stay until next validation.
+    emit(state.copyWith(
+      email: trimmed,
+      emailError: state.emailError,
+      passwordError: state.passwordError,
+      confirmPasswordError: state.confirmPasswordError,
+    ));
   }
 
   void setPassword(String value) {
     final flags = _passwordFlags(value);
     final strong = flags.values.every((v) => v);
+
+    // Live-update passwordError after the first submit attempt:
+    // - Before first try: no inline "Weak password" yet.
+    // - After first try: keep showing "Weak password" until the password becomes strong.
+    String? passwordError = state.passwordError;
+    if (!state.firstTry) {
+      if (value.isEmpty) {
+        passwordError = 'Password cannot be empty';
+      } else if (!strong) {
+        passwordError = 'Weak password';
+      } else {
+        passwordError = null;
+      }
+    }
 
     emit(state.copyWith(
       password: value,
@@ -37,31 +67,78 @@ class SignupCubit extends Cubit<SignupState> {
       hasNumber: flags['number'],
       hasSpecial: flags['special'],
       strongPassword: strong,
-      firstTry: state.firstTry ? state.firstTry : false,
-      passwordError: _validatePassword(value, strong),
+      // firstTry is controlled by validateAccountStep; do not flip it here
+      firstTry: state.firstTry,
+      emailError: state.emailError,
+      passwordError: passwordError,
+      confirmPasswordError: state.confirmPasswordError,
     ));
 
     if (state.confirmPassword.isNotEmpty) setConfirmPassword(state.confirmPassword);
   }
 
   void setConfirmPassword(String value) =>
-      emit(state.copyWith(confirmPassword: value, confirmPasswordError: _validateConfirmPassword(value)));
+      // Only store the value; confirmPasswordError is set during validateAccountStep.
+      // Preserve all existing errors so they stay until next validation.
+      emit(state.copyWith(
+        confirmPassword: value,
+        emailError: state.emailError,
+        passwordError: state.passwordError,
+        confirmPasswordError: state.confirmPasswordError,
+      ));
 
   void setRole(bool patient) => emit(state.copyWith(isPatient: patient));
 
   // ---------------- Personal data step ----------------
   void setFirstName(String value) =>
-      emit(state.copyWith(firstName: value, firstNameError: _validateFirstName(value)));
+      emit(state.copyWith(
+        firstName: value.trim(),
+        firstNameError: state.firstNameError,
+        lastNameError: state.lastNameError,
+        dobError: state.dobError,
+        phoneError: state.phoneError,
+        ninError: state.ninError,
+      ));
 
   void setLastName(String value) =>
-      emit(state.copyWith(lastName: value, lastNameError: _validateLastName(value)));
+      emit(state.copyWith(
+        lastName: value.trim(),
+        firstNameError: state.firstNameError,
+        lastNameError: state.lastNameError,
+        dobError: state.dobError,
+        phoneError: state.phoneError,
+        ninError: state.ninError,
+      ));
 
-  void setDob(String value) => emit(state.copyWith(dob: value, dobError: _validateDob(value)));
+  void setDob(String value) =>
+      emit(state.copyWith(
+        dob: value,
+        firstNameError: state.firstNameError,
+        lastNameError: state.lastNameError,
+        dobError: state.dobError,
+        phoneError: state.phoneError,
+        ninError: state.ninError,
+      ));
 
   void setPhoneNumber(String value) =>
-      emit(state.copyWith(phoneNumber: value, phoneError: _validatePhoneNumber(value)));
+      emit(state.copyWith(
+        phoneNumber: value.trim(),
+        firstNameError: state.firstNameError,
+        lastNameError: state.lastNameError,
+        dobError: state.dobError,
+        phoneError: state.phoneError,
+        ninError: state.ninError,
+      ));
 
-  void setNin(String value) => emit(state.copyWith(nin: value, ninError: _validateNin(value)));
+  void setNin(String value) =>
+      emit(state.copyWith(
+        nin: value.trim(),
+        firstNameError: state.firstNameError,
+        lastNameError: state.lastNameError,
+        dobError: state.dobError,
+        phoneError: state.phoneError,
+        ninError: state.ninError,
+      ));
 
   void toggleAgreeBox() => emit(state.copyWith(
       agreeBoxChecked: !state.agreeBoxChecked,
@@ -69,43 +146,82 @@ class SignupCubit extends Cubit<SignupState> {
 
   // ---------------- Professional info step ----------------
   void setBio(String value) =>
-      emit(state.copyWith(bio: value, bioError: _validateBio(value)));
+      emit(state.copyWith(
+        bio: value.trim(),
+        bioError: state.bioError,
+      ));
 
   void setSpeciality(String? value) =>
-      emit(state.copyWith(speciality: value ?? '', specialityError: _validateSpeciality(value)));
+      emit(state.copyWith(
+        speciality: (value ?? '').trim(),
+        specialityError: state.specialityError,
+      ));
 
   void setWorkingPlace(String value) =>
-      emit(state.copyWith(workingPlace: value, workingPlaceError: _validateWorkingPlace(value)));
+      emit(state.copyWith(
+        workingPlace: value.trim(),
+        workingPlaceError: state.workingPlaceError,
+      ));
 
   void setDegree(String value) =>
-      emit(state.copyWith(degree: value, degreeError: _validateDegree(value)));
+      emit(state.copyWith(
+        degree: value.trim(),
+        degreeError: state.degreeError,
+      ));
 
   void setUniversity(String value) =>
-      emit(state.copyWith(university: value, universityError: _validateUniversity(value)));
+      emit(state.copyWith(
+        university: value.trim(),
+        universityError: state.universityError,
+      ));
 
   void setCertification(String value) =>
-      emit(state.copyWith(certification: value, certificationError: _validateCertification(value)));
+      emit(state.copyWith(
+        certification: value.trim(),
+        certificationError: state.certificationError,
+      ));
 
   void setCertificationInstitution(String value) =>
-      emit(state.copyWith(certificationInstitution: value, certificationInstitutionError: _validateCertificationInstitution(value)));
+      emit(state.copyWith(
+        certificationInstitution: value.trim(),
+        certificationInstitutionError: state.certificationInstitutionError,
+      ));
 
   void setTraining(String value) =>
-      emit(state.copyWith(training: value, trainingError: _validateTraining(value)));
+      emit(state.copyWith(
+        training: value.trim(),
+        trainingError: state.trainingError,
+      ));
 
   void setLicenceNumber(String value) =>
-      emit(state.copyWith(licenceNumber: value, licenceNumberError: _validateLicenceNumber(value)));
+      emit(state.copyWith(
+        licenceNumber: value.trim(),
+        licenceNumberError: state.licenceNumberError,
+      ));
 
   void setLicenceDesc(String value) =>
-      emit(state.copyWith(licenceDesc: value, licenceDescError: _validateLicenceDesc(value)));
+      emit(state.copyWith(
+        licenceDesc: value.trim(),
+        licenceDescError: state.licenceDescError,
+      ));
 
   void setYearsOfExperience(String value) =>
-      emit(state.copyWith(yearsOfExperience: value, yearsOfExperienceError: _validateYearsOfExperience(value)));
+      emit(state.copyWith(
+        yearsOfExperience: value.trim(),
+        yearsOfExperienceError: state.yearsOfExperienceError,
+      ));
 
   void setAreasOfExperience(String value) =>
-      emit(state.copyWith(areasOfExperience: value, areasOfExperienceError: _validateAreasOfExperience(value)));
+      emit(state.copyWith(
+        areasOfExperience: value.trim(),
+        areasOfExperienceError: state.areasOfExperienceError,
+      ));
 
   void setConsultationPrice(String value) =>
-      emit(state.copyWith(consultationPrice: value, consultationPriceError: _validateConsultationPrice(value)));
+      emit(state.copyWith(
+        consultationPrice: value.trim(),
+        consultationPriceError: state.consultationPriceError,
+      ));
 
   void toggleProfessionalAgreeBox() => emit(state.copyWith(
       professionalAgreeBoxChecked: !state.professionalAgreeBoxChecked,
@@ -116,36 +232,73 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   void setSpecialityName(String name) {
+    final trimmed = name.trim();
     emit(state.copyWith(
-      specialityName: name,
-      specialityError: _validateSpeciality(name),
+      specialityName: trimmed,
+      specialityError: _validateSpeciality(trimmed),
     ));
   }
 
   // ---------------- Submission ----------------
-  /// Validates **account info only** for Step 1
+  /// Validates **account info only** for Step 1 (synchronous validation)
   bool validateAccountStep() {
     final emailError = _validateEmail(state.email);
-    final passwordError = _validatePassword(state.password, state.strongPassword);
+    // Recompute password strength flags on submit
+    final passwordFlags = _passwordFlags(state.password);
+    final isStrongPassword = passwordFlags.values.every((v) => v);
+    final passwordError = _validatePassword(state.password, isStrongPassword);
     final confirmError = _validateConfirmPassword(state.confirmPassword);
+
+    // Decide when to show / hide the detailed password criteria:
+    // - Once the user has attempted any non-empty password, show criteria (firstTry = false).
+    // - When the password is strong and the user presses Next, hide criteria again (firstTry = true).
+    final hasTypedPassword = state.password.isNotEmpty;
+    final shouldResetCriteria = hasTypedPassword && isStrongPassword;
 
     emit(state.copyWith(
       emailError: emailError,
       passwordError: passwordError,
       confirmPasswordError: confirmError,
+      long: passwordFlags['long'],
+      hasLowercase: passwordFlags['lower'],
+      hasUppercase: passwordFlags['upper'],
+      hasNumber: passwordFlags['number'],
+      hasSpecial: passwordFlags['special'],
+      strongPassword: isStrongPassword,
+      // If strong on submit: hide criteria. Otherwise, once the user typed something, show criteria.
+      firstTry: shouldResetCriteria
+          ? true
+          : (hasTypedPassword ? false : state.firstTry),
     ));
 
     return emailError == null && passwordError == null && confirmError == null;
   }
 
-  /// Validates **personal info only** for Step 2
-  bool validatePersonalStep() {
+  /// Async check for email existence; call this after validateAccountStep succeeds
+  Future<bool> checkEmailExists() async {
+    try {
+      final exists = await authRepository.emailExists(state.email);
+      if (exists) {
+        emit(state.copyWith(
+          emailError: 'Email already in use',
+          message: 'Email already in use',
+        ));
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Validates **personal info only** for Step 2 - Patient flow
+  bool validatePersonalPatientStep() {
     final firstError = _validateFirstName(state.firstName);
     final lastError = _validateLastName(state.lastName);
-    final dobError = state.isPatient ? _validateDob(state.dob) : null;
+    final dobError = _validateDob(state.dob);
     final phoneError = _validatePhoneNumber(state.phoneNumber);
     final ninError = _validateNin(state.nin);
-    final checkboxError = state.isPatient && !state.agreeBoxChecked;
+    final checkboxError = !state.agreeBoxChecked;
 
     emit(state.copyWith(
       firstNameError: firstError,
@@ -160,7 +313,28 @@ class SignupCubit extends Cubit<SignupState> {
         lastError == null &&
         phoneError == null &&
         ninError == null &&
-        (state.isPatient ? dobError == null && !checkboxError : true);
+        dobError == null &&
+        !checkboxError;
+  }
+
+  /// Validates **personal info only** for Step 2 - Doctor flow
+  bool validatePersonalDoctorStep() {
+    final firstError = _validateFirstName(state.firstName);
+    final lastError = _validateLastName(state.lastName);
+    final phoneError = _validatePhoneNumber(state.phoneNumber);
+    final ninError = _validateNin(state.nin);
+
+    emit(state.copyWith(
+      firstNameError: firstError,
+      lastNameError: lastError,
+      phoneError: phoneError,
+      ninError: ninError,
+    ));
+
+    return firstError == null &&
+        lastError == null &&
+        phoneError == null &&
+        ninError == null;
   }
 
   /// Validates **professional info only** for Step 3
@@ -205,6 +379,12 @@ class SignupCubit extends Cubit<SignupState> {
     if (state.currentStep == SignupStep.account) {
       if (!validateAccountStep()) return;
 
+      // Check if email already exists (async check)
+      final emailExists = await checkEmailExists();
+      if (emailExists) {
+        return;
+      }
+
       // Move to personal step
       emit(state.copyWith(
         message: '',
@@ -214,7 +394,11 @@ class SignupCubit extends Cubit<SignupState> {
     }
 
     if (state.currentStep == SignupStep.personal) {
-      if (!validatePersonalStep()) return;
+      // Choose the appropriate personal-step validator based on role
+      final isValid = state.isPatient
+          ? validatePersonalPatientStep()
+          : validatePersonalDoctorStep();
+      if (!isValid) return;
 
       emit(state.copyWith(isLoading: true, message: ''));
 
@@ -269,8 +453,8 @@ class SignupCubit extends Cubit<SignupState> {
 
   /// Dedicated method to submit personal data for patients
   Future<void> submitPatientPersonalData() async {
-    // Validate personal data first
-    if (!validatePersonalStep()) return;
+    // Validate personal data for patient flow
+    if (!validatePersonalPatientStep()) return;
 
     emit(state.copyWith(isLoading: true, message: ''));
 
@@ -375,9 +559,9 @@ class SignupCubit extends Cubit<SignupState> {
   }
 
   String? _validatePassword(String value, bool strongPassword) {
+    if (strongPassword) return null;
     if (value.isEmpty) return 'Password cannot be empty';
-    if (!strongPassword) return 'Weak password';
-    return null;
+    return 'Weak password';
   }
 
   String? _validateConfirmPassword(String value) {

@@ -358,8 +358,12 @@ class DoctorHomeScreen extends StatelessWidget {
 
         final doctorId = authState.doctor.userId!;
 
-        return BlocProvider(
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
           create: (context) => DoctorHomeCubit()..loadConsultations(doctorId),
+            ),
+          ],
           child: Container(
             decoration: gradientBackgroundDecoration,
             child: Scaffold(
@@ -386,15 +390,40 @@ class DoctorHomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                         Text(
+                          'Hello Dr. ${authState.doctor.lastname}!',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
                           'Quick overview',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: 20),
-                        specialityLink(context, 'Today', '2 appointments'),
+                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                                          builder: (context, state) {
+                                            if (state.isLoading) {
+                                              return Column(
+                                                children: [
+                                                  specialityLink(context, 'Today', 'Loading...'),
                         const SizedBox(height: 10),
-                        specialityLink(context, 'Pending Requests', '1 request'),
+                                                  specialityLink(context, 'Pending Requests', 'Loading...'),
                         const SizedBox(height: 10),
-                        specialityLink(context, 'Total patients', '48 patients'),
+                                                  specialityLink(context, 'Total patients', 'Loading...'),
+                                                ],
+                                              );
+                                            }
+                            
+                                            return Column(
+                                              children: [
+                                                specialityLink(context, 'Today', '${state.todayConsultations} appointments'),
+                                                const SizedBox(height: 10),
+                                                specialityLink(context, 'Pending Requests', '${state.pendingConsultationsCount} request${state.pendingConsultationsCount != 1 ? 's' : ''}'),
+                                                const SizedBox(height: 10),
+                                                specialityLink(context, 'Total patients', '${state.totalPatients} patients'),
+                                              ],
+                                            );
+                                          },
+                                        ),
                         const SizedBox(height: 20),
                         sectionTitle(context, 'Coming consultations'),
                         const SizedBox(height: 20),

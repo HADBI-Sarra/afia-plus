@@ -102,7 +102,15 @@ class DbAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<bool> emailExists(String email) async {
+    return await _emailExists(email);
+  }
+
+  @override
   Future<ReturnResult<User>> login(String email, String password) async {
+    // Always trim before any validation or query
+    email = email.trim();
+    password = password.trim();
     final emailError = _validateEmail(email);
     if (emailError != null) return ReturnResult(state: false, message: emailError);
 
@@ -129,22 +137,22 @@ class DbAuthRepository implements AuthRepository {
 
   @override
   Future<ReturnResult<User>> signup(User user, String password, {Patient? patientData, Doctor? doctorData}) async {
-    final emailError = _validateEmail(user.email);
+    final emailError = _validateEmail(user.email?.trim());
     if (emailError != null) return ReturnResult(state: false, message: emailError);
 
     final passwordError = _validatePassword(password);
     if (passwordError != null) return ReturnResult(state: false, message: passwordError);
 
-    final firstNameError = _validateName(user.firstname, 'First name');
+    final firstNameError = _validateName(user.firstname?.trim(), 'First name');
     if (firstNameError != null) return ReturnResult(state: false, message: firstNameError);
 
-    final lastNameError = _validateName(user.lastname, 'Last name');
+    final lastNameError = _validateName(user.lastname?.trim(), 'Last name');
     if (lastNameError != null) return ReturnResult(state: false, message: lastNameError);
 
-    final phoneError = _validatePhone(user.phoneNumber);
+    final phoneError = _validatePhone(user.phoneNumber?.trim());
     if (phoneError != null) return ReturnResult(state: false, message: phoneError);
 
-    final ninError = _validateNin(user.nin);
+    final ninError = _validateNin(user.nin?.trim());
     if (ninError != null) return ReturnResult(state: false, message: ninError);
 
     if (user.role == 'patient') {

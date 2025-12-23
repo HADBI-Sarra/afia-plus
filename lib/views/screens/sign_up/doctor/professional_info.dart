@@ -51,6 +51,9 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     
     // Schedule initialization after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final cubit = context.read<SignupCubit>();
+      // Ensure the step is set to professional when this screen is displayed
+      cubit.setCurrentStep(SignupStep.professional);
       _initControllers();
       _loadSpecialities();
     });
@@ -146,8 +149,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.message != curr.message,
       listener: (context, state) async {
-        // Show snackbar for error messages
-        if (state.message.isNotEmpty && state.message != 'Success') {
+        // Show snackbar for error messages (except email already in use, which shows as field errorText)
+        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -178,17 +181,26 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
 
           return Container(
             decoration: gradientBackgroundDecoration,
-            child: Scaffold(
-              extendBodyBehindAppBar: true,
-              backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInset: true,
-              appBar: AppBar(
+            child: WillPopScope(
+              onWillPop: () async {
+                // Revert cubit step to personal when user navigates back (system back)
+                cubit.setCurrentStep(SignupStep.personal);
+                return true;
+              },
+              child: Scaffold(
+                extendBodyBehindAppBar: true,
                 backgroundColor: Colors.transparent,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new, color: greyColor),
-                  onPressed: () => Navigator.of(context).pop(),
+                resizeToAvoidBottomInset: true,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios_new, color: greyColor),
+                    onPressed: () {
+                      cubit.setCurrentStep(SignupStep.personal);
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
-              ),
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
@@ -256,6 +268,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                 ),
               ),
             ),
+            ),
           );
         },
       ),
@@ -276,8 +289,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
               'Describe your medical background, specialties, and philosophy of care',
           controller: _bioController,
           errorText: state.bioError,
-          onChanged: cubit.setBio,
           minlines: 3,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -289,7 +302,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. Nour Clinic, Hydra, Algiers',
           controller: _workingPlaceController,
           errorText: state.workingPlaceError,
-          onChanged: cubit.setWorkingPlace,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -301,7 +314,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. Doctor of Medicine (MD)',
           controller: _degreeController,
           errorText: state.degreeError,
-          onChanged: cubit.setDegree,
+          textCapitalization: TextCapitalization.words,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
@@ -310,7 +323,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. University of Algiers 1',
           controller: _universityController,
           errorText: state.universityError,
-          onChanged: cubit.setUniversity,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -322,7 +335,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. Specialist in Cardiology',
           controller: _certificationController,
           errorText: state.certificationError,
-          onChanged: cubit.setCertification,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
@@ -331,7 +344,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. University of Oran 1',
           controller: _certificationInstitutionController,
           errorText: state.certificationInstitutionError,
-          onChanged: cubit.setCertificationInstitution,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -344,8 +357,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
               'e.g. Residency in internal Medicine, Fellowship in Cardiology',
           controller: _trainingController,
           errorText: state.trainingError,
-          onChanged: cubit.setTraining,
           minlines: 2,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -357,7 +370,6 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. 12345',
           controller: _licenceNumberController,
           errorText: state.licenceNumberError,
-          onChanged: cubit.setLicenceNumber,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
@@ -366,8 +378,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. Authorized to practice medicine in Algeria',
           controller: _licenceDescController,
           errorText: state.licenceDescError,
-          onChanged: cubit.setLicenceDesc,
           minlines: 2,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -379,7 +391,6 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. 16',
           controller: _yearsOfExperienceController,
           errorText: state.yearsOfExperienceError,
-          onChanged: cubit.setYearsOfExperience,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
@@ -389,8 +400,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
               'e.g. Cardiac imaging, hypertension, heart failure management',
           controller: _areasOfExperienceController,
           errorText: state.areasOfExperienceError,
-          onChanged: cubit.setAreasOfExperience,
           minlines: 2,
+          textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
@@ -402,14 +413,13 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           hint: 'e.g. 1000 DA',
           controller: _consultationPriceController,
           errorText: state.consultationPriceError,
-          onChanged: cubit.setConsultationPrice,
           keyboardType: TextInputType.number,
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
 
         // TERMS + BUTTON (wrap text to avoid overflow on small screens)
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(
               padding: EdgeInsets.zero,
@@ -424,8 +434,8 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                     : darkGreenColor,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
+            const SizedBox(width: 6),
+            Flexible(
               child: Text(
                 'I agree to the Terms and Conditions',
                 style: Theme.of(context).textTheme.bodyMedium,
@@ -437,7 +447,24 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
         const SizedBox(height: 13),
 
         ElevatedButton(
-          onPressed: state.isLoading ? null : cubit.submitProfessionalData,
+          onPressed: state.isLoading
+              ? null
+              : () {
+                  // Push latest controller values into Cubit, then validate/submit
+                  cubit.setBio(_bioController.text);
+                  cubit.setWorkingPlace(_workingPlaceController.text);
+                  cubit.setDegree(_degreeController.text);
+                  cubit.setUniversity(_universityController.text);
+                  cubit.setCertification(_certificationController.text);
+                  cubit.setCertificationInstitution(_certificationInstitutionController.text);
+                  cubit.setTraining(_trainingController.text);
+                  cubit.setLicenceNumber(_licenceNumberController.text);
+                  cubit.setLicenceDesc(_licenceDescController.text);
+                  cubit.setYearsOfExperience(_yearsOfExperienceController.text);
+                  cubit.setAreasOfExperience(_areasOfExperienceController.text);
+                  cubit.setConsultationPrice(_consultationPriceController.text);
+                  cubit.submitProfessionalData();
+                },
           style: greenButtonStyle,
           child: state.isLoading
               ? const CircularProgressIndicator(color: Colors.white)

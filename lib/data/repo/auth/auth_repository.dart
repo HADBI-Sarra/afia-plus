@@ -8,4 +8,5 @@ abstract class AuthRepository {
   Future<ReturnResult<User>> signup(User user, String password, {Patient? patientData, Doctor? doctorData});
   Future<ReturnResult> logout();
   Future<ReturnResult<User?>> getCurrentUser();
+  Future<bool> emailExists(String email);
 }

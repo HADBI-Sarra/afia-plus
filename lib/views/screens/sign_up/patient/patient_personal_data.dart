@@ -34,6 +34,10 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
     _phoneNumberController =
         TextEditingController(text: cubit.state.phoneNumber);
     _ninController = TextEditingController(text: cubit.state.nin);
+    // Ensure the step is set to personal when this screen is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cubit.setCurrentStep(SignupStep.personal);
+    });
   }
 
   @override
@@ -51,8 +55,8 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.message != curr.message,
       listener: (context, state) async {
-        // Show snackbar for error messages
-        if (state.message.isNotEmpty && state.message != 'Success') {
+        // Show snackbar for error messages (except email already in use, which shows as field errorText)
+        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -92,16 +96,26 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
 
           return Container(
             decoration: gradientBackgroundDecoration,
-            child: Scaffold(
+            child: WillPopScope(
+              onWillPop: () async {
+                // Ensure cubit step is reverted when user navigates back (system back)
+                cubit.setCurrentStep(SignupStep.account);
+                return true;
+              },
+              child: Scaffold(
               extendBodyBehindAppBar: true,
               backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios_new, color: greyColor),
-                  onPressed: () => Navigator.pop(context),
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back_ios_new, color: greyColor),
+                    onPressed: () {
+                      // Revert cubit step to account when user taps the back arrow
+                      cubit.setCurrentStep(SignupStep.account);
+                      Navigator.pop(context);
+                    },
+                  ),
                 ),
-              ),
               body: SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -120,8 +134,9 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                         label: 'First name',
                         hint: 'Enter your first name',
                         controller: _firstNameController,
-                        errorText: state.firstNameError,
                         onChanged: cubit.setFirstName,
+                        errorText: state.firstNameError,
+                        textCapitalization: TextCapitalization.words,
                       ),
                       const SizedBox(height: 12),
 
@@ -129,8 +144,9 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                         label: 'Last name',
                         hint: 'Enter your last name',
                         controller: _lastNameController,
-                        errorText: state.lastNameError,
                         onChanged: cubit.setLastName,
+                        errorText: state.lastNameError,
+                        textCapitalization: TextCapitalization.words,
                       ),
                       const SizedBox(height: 12),
 
@@ -139,8 +155,8 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                         hint: 'DD/MM/YYYY',
                         controller: _dobController,
                         isDate: true,
-                        errorText: state.dobError,
                         onChanged: cubit.setDob,
+                        errorText: state.dobError,
                       ),
                       const SizedBox(height: 12),
 
@@ -149,8 +165,8 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                         hint: 'e.g. 05123 45 67 89',
                         controller: _phoneNumberController,
                         keyboardType: TextInputType.phone,
-                        errorText: state.phoneError,
                         onChanged: cubit.setPhoneNumber,
+                        errorText: state.phoneError,
                       ),
                       const SizedBox(height: 12),
 
@@ -159,13 +175,13 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                         hint: 'e.g. 198012345678901234',
                         controller: _ninController,
                         keyboardType: TextInputType.number,
-                        errorText: state.ninError,
                         onChanged: cubit.setNin,
+                        errorText: state.ninError,
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 12),
 
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           IconButton(
                             padding: EdgeInsets.zero,
@@ -180,8 +196,8 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                                   : darkGreenColor,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
+                          const SizedBox(width: 6),
+                          Flexible(
                             child: Text(
                               'I agree to the Terms and Conditions',
                               style: Theme.of(context).textTheme.bodyMedium,
@@ -195,7 +211,15 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                       ElevatedButton(
                         onPressed: state.isLoading 
                             ? null 
-                            : cubit.submitPatientPersonalData,
+                            : () {
+                                // Push latest controller values into Cubit, then validate/submit
+                                cubit.setFirstName(_firstNameController.text);
+                                cubit.setLastName(_lastNameController.text);
+                                cubit.setDob(_dobController.text);
+                                cubit.setPhoneNumber(_phoneNumberController.text);
+                                cubit.setNin(_ninController.text);
+                                cubit.submitPatientPersonalData();
+                              },
                         style: greenButtonStyle,
                         child: state.isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
@@ -206,7 +230,7 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
                 ),
               ),
             ),
-          );
+          ));
         },
       ),
     );

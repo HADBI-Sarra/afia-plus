@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/models/user.dart';
-import '../../../data/models/result.dart';
 import '../../../data/repo/auth/auth_repository.dart';
 import '../auth/auth_cubit.dart';
 import 'login_state.dart';
@@ -52,9 +50,12 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> login(String email, String password) async {
+    // Always trim inputs before validation and backend call
+    final trimmedEmail = email.trim();
+    final trimmedPassword = password.trim();
     // Check validation synchronously first
-    final emailError = _validateEmailSync(email);
-    final passwordError = _validatePasswordSync(password);
+    final emailError = _validateEmailSync(trimmedEmail);
+    final passwordError = _validatePasswordSync(trimmedPassword);
 
     // Update UI validation errors
     emit(state.copyWith(
@@ -69,7 +70,7 @@ class LoginCubit extends Cubit<LoginState> {
 
     emit(state.copyWith(isLoading: true, message: '', emailError: null, passwordError: null));
 
-    final result = await authRepo.login(email, password);
+    final result = await authRepo.login(trimmedEmail, trimmedPassword);
 
     if (result.state) {
       emit(state.copyWith(isLoading: false, user: result.data, message: ''));

@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/data/repo/auth/auth_repository.dart';
-import 'package:afia_plus_app/data/models/user.dart';
 import 'package:afia_plus_app/data/models/patient.dart';
 import 'package:afia_plus_app/data/models/doctor.dart';
-import 'package:afia_plus_app/data/models/result.dart';
 import 'package:equatable/equatable.dart';
 import '../../../data/repo/patients/patient_repository.dart';
 import '../../../data/repo/doctors/doctor_repository.dart';
