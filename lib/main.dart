@@ -55,9 +55,7 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),
   );
-  sl.registerLazySingleton<ConsultationsRepository>(
-    () => ConsultationsImpl(),
-  );
+  sl.registerLazySingleton<ConsultationsRepository>(() => ConsultationsImpl());
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   init_firebase_messaging();
@@ -116,6 +114,7 @@ class MainApp extends StatelessWidget {
             supportedLocales: const [
               Locale('en'), // English
               Locale('ar'), // Arabic
+              Locale('fr'), // French
             ],
             home: const RootScreen(),
             //UpcomingAppointmentsPage(),

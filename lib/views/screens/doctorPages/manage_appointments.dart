@@ -75,7 +75,7 @@ class _SchedulePageView extends StatelessWidget {
                               .read<DoctorAppointmentsCubit>()
                               .refreshAppointments(doctorId);
                         },
-                        child: const Text('Retry'),
+                        child: Text(AppLocalizations.of(context)!.retry),
                       ),
                     ],
                   ),
@@ -281,8 +281,8 @@ class _SchedulePageView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'WhatsApp',
+                  child: Text(
+                    AppLocalizations.of(context)!.whatsapp,
                     style: TextStyle(color: whiteColor, fontSize: 12),
                   ),
                 );
@@ -890,8 +890,8 @@ class _SchedulePageView extends StatelessWidget {
                   vertical: 12,
                 ),
               ),
-              child: const Text(
-                'Reject',
+              child: Text(
+                AppLocalizations.of(context)!.reject,
                 style: TextStyle(
                   color: whiteColor,
                   fontSize: 15,

@@ -35,10 +35,22 @@ class LocaleCubit extends Cubit<Locale> {
 
   Future<void> toggleLocale() async {
     final currentCode = state.languageCode;
-    final newLocale = currentCode == 'ar' 
-        ? const Locale('en') 
-        : const Locale('ar');
+    Locale newLocale;
+
+    // Cycle through locales: en -> ar -> fr -> en
+    switch (currentCode) {
+      case 'ar':
+        newLocale = const Locale('fr');
+        break;
+      case 'fr':
+        newLocale = const Locale('en');
+        break;
+      case 'en':
+      default:
+        newLocale = const Locale('ar');
+        break;
+    }
+
     await changeLocale(newLocale);
   }
 }
-

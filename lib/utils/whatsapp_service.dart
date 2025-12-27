@@ -16,15 +16,15 @@ class WhatsAppService {
     try {
       // Clean phone number (remove spaces, dashes, parentheses, plus signs)
       String cleanPhone = phoneNumber.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
-      
-      // If phone number doesn't start with country code, assume it's local
-      // You may need to adjust this based on your country's format
-      // For Algeria, country code is 213
-      if (!cleanPhone.startsWith('213') && cleanPhone.length < 12) {
-        // Assume it's a local number, add country code if needed
-        // cleanPhone = '213$cleanPhone';
+
+      // Ensure number starts with country code (Algeria)
+      if (cleanPhone.startsWith('0') && cleanPhone.length == 10) {
+        cleanPhone = '213' + cleanPhone.substring(1);
+      } else if (!cleanPhone.startsWith('213')) {
+        // fallback: if user typed +213 or anything else, force to 213 prefix
+        cleanPhone = cleanPhone.replaceFirst(RegExp('^(\+)?'), '213');
       }
-      
+
       // Build WhatsApp URL
       String url = 'https://wa.me/$cleanPhone';
       if (message != null && message.isNotEmpty) {

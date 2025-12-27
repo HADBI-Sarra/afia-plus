@@ -19,6 +19,7 @@ class LanguageSwitcher extends StatelessWidget {
     return BlocBuilder<LocaleCubit, Locale>(
       builder: (context, locale) {
         final isArabic = locale.languageCode == 'ar';
+        final isFrench = locale.languageCode == 'fr';
         
         return PopupMenuButton<String>(
           icon: icon != null 
@@ -34,7 +35,7 @@ class LanguageSwitcher extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        isArabic ? 'العربية' : 'English',
+                        isArabic ? 'العربية' : isFrench ? 'Français' : 'English',
                         style: const TextStyle(
                           color: darkGreenColor,
                           fontWeight: FontWeight.w600,
@@ -71,7 +72,19 @@ class LanguageSwitcher extends StatelessWidget {
               child: Row(
                 children: [
                   const Text('English'),
-                  if (!isArabic) ...[
+                  if (!isArabic && !isFrench) ...[
+                    const Spacer(),
+                    const Icon(Icons.check, color: darkGreenColor, size: 18),
+                  ],
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'fr',
+              child: Row(
+                children: [
+                  const Text('Français'),
+                  if (isFrench) ...[
                     const Spacer(),
                     const Icon(Icons.check, color: darkGreenColor, size: 18),
                   ],

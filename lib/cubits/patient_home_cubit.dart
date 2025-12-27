@@ -60,7 +60,7 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
       consultation.consultation.startTime,
     );
     if (date == null) return false;
-    return date.isBefore(DateTime.now());
+    return !date.isAfter(DateTime.now()); // only consider "upcoming" if start time > now
   }
 
   Future<void> loadUpcomingConsultations(int patientId) async {
@@ -72,7 +72,8 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
 
       // Show both pending and scheduled as "coming" on home; limit to 2 for brevity
       final scheduled = confirmed.where((c) => c.consultation.status == 'scheduled');
-      final upcoming = [...pending, ...scheduled].where((c) => !_isPastAppointment(c)).take(2).toList();
+      // Only show scheduled (accepted) as coming consultations (not pending)
+      final upcoming = scheduled.where((c) => !_isPastAppointment(c)).take(2).toList();
       
       emit(state.copyWith(
         upcomingConsultations: upcoming,

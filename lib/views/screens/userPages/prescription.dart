@@ -38,7 +38,8 @@ class PrescriptionPage extends StatelessWidget {
         final patientId = authState.patient.userId!;
 
         return BlocProvider(
-          create: (context) => PrescriptionCubit()..loadPrescriptions(patientId),
+          create: (context) =>
+              PrescriptionCubit()..loadPrescriptions(patientId),
           child: _PrescriptionPageView(patientId: patientId),
         );
       },
@@ -95,7 +96,10 @@ class _PrescriptionPageView extends StatelessWidget {
                 final prescriptionPath = consultation.consultation.prescription;
                 if (prescriptionPath == null || prescriptionPath.isEmpty) {
                   if (context.mounted) {
-                    _showError(context, AppLocalizations.of(context)!.noPrescriptionAvailable);
+                    _showError(
+                      context,
+                      AppLocalizations.of(context)!.noPrescriptionAvailable,
+                    );
                   }
                   return;
                 }
@@ -110,7 +114,10 @@ class _PrescriptionPageView extends StatelessWidget {
                   }
                 } catch (e) {
                   if (context.mounted) {
-                    _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+                    _showError(
+                      context,
+                      AppLocalizations.of(context)!.pdfOpenFailed(e.toString()),
+                    );
                   }
                 }
               },
@@ -145,9 +152,7 @@ class _PrescriptionPageView extends StatelessWidget {
           child: BlocBuilder<PrescriptionCubit, PrescriptionState>(
             builder: (context, state) {
               if (state.isLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
 
               if (state.error != null) {
@@ -162,7 +167,9 @@ class _PrescriptionPageView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<PrescriptionCubit>().refreshPrescriptions(patientId);
+                          context
+                              .read<PrescriptionCubit>()
+                              .refreshPrescriptions(patientId);
                         },
                         child: Text(AppLocalizations.of(context)!.retry),
                       ),
@@ -173,7 +180,10 @@ class _PrescriptionPageView extends StatelessWidget {
 
               if (state.prescriptions.isEmpty) {
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12,
+                  ),
                   child: Column(
                     children: [
                       Row(
@@ -212,46 +222,53 @@ class _PrescriptionPageView extends StatelessWidget {
 
               return RefreshIndicator(
                 onRefresh: () async {
-                  context.read<PrescriptionCubit>().refreshPrescriptions(patientId);
+                  context.read<PrescriptionCubit>().refreshPrescriptions(
+                    patientId,
+                  );
                   await Future.delayed(const Duration(milliseconds: 500));
                 },
                 color: darkGreenColor,
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 12,
+                  ),
                   child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: darkGreenColor,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: darkGreenColor,
+                            ),
+                            onPressed: () => Navigator.pop(context),
                           ),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                        const Expanded(
-                          child: Center(
-                            child: Text(
-                              "My Prescriptions",
-                              style: TextStyle(
-                                color: blackColor,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                AppLocalizations.of(context)!.myPrescriptions,
+                                style: TextStyle(
+                                  color: blackColor,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 48),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    ...state.prescriptions.map((consultation) => _buildPrescriptionCard(
+                          const SizedBox(width: 48),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      ...state.prescriptions.map(
+                        (consultation) => _buildPrescriptionCard(
                           context: context,
                           consultation: consultation,
-                        )),
-                    const SizedBox(height: 80),
-                  ],
+                        ),
+                      ),
+                      const SizedBox(height: 80),
+                    ],
                   ),
                 ),
               );
@@ -285,7 +302,10 @@ class _PrescriptionPageView extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+        _showError(
+          context,
+          AppLocalizations.of(context)!.pdfOpenFailed(e.toString()),
+        );
       }
     }
   }
@@ -310,7 +330,10 @@ class _PrescriptionPageView extends StatelessWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(e.toString()));
+        _showError(
+          context,
+          AppLocalizations.of(context)!.pdfOpenFailed(e.toString()),
+        );
       }
     }
   }
