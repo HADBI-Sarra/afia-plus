@@ -24,13 +24,13 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       userId: map['user_id'],
-      role: map['role'],
-      firstname: map['firstname'],
-      lastname: map['lastname'],
-      email: map['email'],
-      password: map['password'],
-      phoneNumber: map['phone_number'],
-      nin: map['nin'],
+      role: map['role'] ?? '',
+      firstname: map['firstname'] ?? '',
+      lastname: map['lastname'] ?? '',
+      email: map['email'] ?? '',
+      password: map['password'] ?? '', // Password not stored in DB, use empty string
+      phoneNumber: map['phone_number'] ?? '',
+      nin: map['nin'] ?? '',
       profilePicture: map['profile_picture'],
     );
   }
