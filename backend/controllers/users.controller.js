@@ -1,9 +1,9 @@
-import { supabase } from '../src/config/supabase.js';
+import { supabaseAdmin } from '../src/config/supabase.js';
 
 export async function updateMe(req, res) {
   const { firstname, lastname, phone_number, profile_picture } = req.body;
 
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('users')
     .update({
       firstname,
@@ -19,27 +19,13 @@ export async function updateMe(req, res) {
 }
 
 export async function emailExists(req, res) {
-  try {
-    const { email } = req.query;
-    
-    if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
-    }
+  const { email } = req.query;
 
-    const { data, error } = await supabase
-      .from('users')
-      .select('user_id')
-      .eq('email', email)
-      .maybeSingle();
+  const { data } = await supabaseAdmin
+    .from('users')
+    .select('user_id')
+    .eq('email', email)
+    .maybeSingle();
 
-    if (error) {
-      console.error('Error checking if email exists:', error);
-      return res.status(500).json({ error: 'Failed to check email' });
-    }
-
-    res.json({ exists: !!data });
-  } catch (error) {
-    console.error('emailExists exception:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
+  res.json({ exists: !!data });
 }

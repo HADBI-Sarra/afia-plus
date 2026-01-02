@@ -22,6 +22,15 @@ class SupabaseAuthRepository implements AuthRepository {
       });
 
       final data = jsonDecode(response.body);
+      print('Login response status: ${response.statusCode}');
+      print('Login response keys: ${data.keys}');
+      print('Login response has user: ${data.containsKey('user')}');
+      if (data.containsKey('user')) {
+        print('Login response user type: ${data['user'].runtimeType}');
+        if (data['user'] is Map) {
+          print('Login response user keys: ${(data['user'] as Map).keys}');
+        }
+      }
 
       if (response.statusCode != 200) {
         return ReturnResult(
@@ -32,10 +41,50 @@ class SupabaseAuthRepository implements AuthRepository {
 
       // 🔑 STORE TOKEN GLOBALLY
       final accessToken = data['access_token'];
+      if (accessToken == null || accessToken is! String) {
+        print('ERROR: No access token in response');
+        return ReturnResult(
+          state: false,
+          message: 'Login failed: No access token received',
+        );
+      }
       _tokenProvider.setToken(accessToken);
+      print('Token stored successfully');
+
 
       // 🔁 FETCH CURRENT USER USING TOKEN
       final meResponse = await ApiClient.get('/auth/me', token: accessToken);
+
+      // Backend now returns user data directly in the login response
+      final userMap = data['user'];
+      print('User map from response: $userMap');
+      print('User map is Map: ${userMap is Map<String, dynamic>}');
+      
+      if (userMap != null && userMap is Map<String, dynamic>) {
+        try {
+          print('Attempting to parse user from login response...');
+          final user = User.fromMap(userMap);
+          print('User parsed successfully: ${user.email}');
+          return ReturnResult(
+            state: true,
+            message: 'Login successful',
+            data: user,
+          );
+        } catch (e, stackTrace) {
+          print('ERROR parsing user from login response: $e');
+          print('Stack trace: $stackTrace');
+          print('User map keys: ${userMap.keys}');
+          // Fall through to use /auth/me fallback
+        }
+      } else {
+        print('User map is null or not a Map, falling back to /auth/me');
+      }
+      
+      // Fallback: fetch user using /auth/me if not in response or parsing failed
+      final meResponse = await ApiClient.get(
+        '/auth/me',
+        token: accessToken,
+      );
 
       if (meResponse.statusCode != 200) {
         _tokenProvider.clear();
@@ -45,12 +94,18 @@ class SupabaseAuthRepository implements AuthRepository {
         );
       }
 
-      final userMap = jsonDecode(meResponse.body);
-
+      final meUserMap = jsonDecode(meResponse.body);
+      if (meUserMap is! Map<String, dynamic>) {
+        return ReturnResult(
+          state: false,
+          message: 'Invalid user data format',
+        );
+      }
+      
       return ReturnResult(
         state: true,
         message: 'Login successful',
-        data: User.fromMap(userMap),
+        data: User.fromMap(meUserMap),
       );
     } catch (e) {
       // Provide user-friendly error messages

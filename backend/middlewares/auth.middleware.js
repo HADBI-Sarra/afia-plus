@@ -1,9 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { supabaseAdmin } from '../src/config/supabase.js';
 
 export async function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
@@ -12,12 +7,12 @@ export async function authMiddleware(req, res, next) {
     return res.status(401).json({ message: 'Missing token' });
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
 
   if (error || !data.user) {
     return res.status(401).json({ message: 'Invalid token' });
   }
 
-  req.user = data.user; // auth.uid()
+  req.user = data.user; // contains uuid
   next();
 }

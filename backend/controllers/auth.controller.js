@@ -1,4 +1,4 @@
-import { supabase } from '../src/config/supabase.js';
+import { supabaseAdmin, supabaseAuth } from '../src/config/supabase.js';
 
 export async function signup(req, res) {
   const {
@@ -8,11 +8,12 @@ export async function signup(req, res) {
     lastname,
     phone_number,
     nin,
-    date_of_birth
+    date_of_birth,
   } = req.body;
 
+  // 1️⃣ Create auth user
   const { data: authUser, error } =
-    await supabase.auth.admin.createUser({
+    await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -22,108 +23,80 @@ export async function signup(req, res) {
     return res.status(400).json({ message: error.message });
   }
 
-  // Insert user record using upsert to bypass RLS issues
-  // Note: Upsert can sometimes bypass RLS restrictions that insert alone cannot
-  const { data: user, error: userError } = await supabase
+  // 2️⃣ Insert users row
+  const { data: user, error: userError } = await supabaseAdmin
     .from('users')
-    .upsert({
-      auth_uid: authUser.user.id,
+    .insert({
+      auth_uid: authUser.user.id, // UUID
       role: 'patient',
       firstname,
       lastname,
       email,
       phone_number,
       nin,
-    }, { onConflict: 'auth_uid' })
+    })
     .select()
     .single();
 
   if (userError) {
-    console.error('User upsert error:', userError);
-    console.error('User upsert error details:', {
-      code: userError.code,
-      message: userError.message,
-      details: userError.details,
-      hint: userError.hint,
-    });
-    return res.status(400).json({ 
-      message: 'Failed to create user record',
-      error: userError.message,
-      code: userError.code
-    });
+    return res.status(400).json({ message: userError.message });
   }
 
-  // Insert patient record
-  const { error: patientError } = await supabase.from('patients').insert({
+  // 3️⃣ Insert patient
+  await supabaseAdmin.from('patients').insert({
     patient_id: user.user_id,
     date_of_birth,
   });
 
-  if (patientError) {
-    console.error('Patient insert error:', patientError);
-    return res.status(400).json({ message: 'Failed to create patient record: ' + patientError.message });
-  }
-
-  // Sign in the user to get an access token
-  // Use the same supabase client as login (works for both admin and regular sign-in)
-  const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (signInError) {
-    console.error('Sign in error after signup:', signInError);
-    console.error('Sign in error details:', {
-      message: signInError.message,
-      status: signInError.status,
+  // 4️⃣ Login
+  const { data: signInData } =
+    await supabaseAuth.auth.signInWithPassword({
+      email,
+      password,
     });
-    // User was created but sign in failed - return user anyway
-    // Frontend can handle this by attempting login
-    return res.status(200).json({ user });
-  }
 
-  if (!signInData?.session?.access_token) {
-    console.error('No access token in sign-in response');
-    return res.status(200).json({ user });
-  }
-
-  // Return user and access token
-  res.status(200).json({
-    user,
+  res.json({
     access_token: signInData.session.access_token,
     refresh_token: signInData.session.refresh_token,
+    user,
   });
 }
 
 export async function login(req, res) {
   const { email, password } = req.body;
 
+  // 🔐 Authenticate
   const { data, error } =
-    await supabase.auth.signInWithPassword({
+    await supabaseAuth.auth.signInWithPassword({
       email,
       password,
     });
 
-  if (error) {
-    return res.status(401).json({ message: error.message });
+  if (error || !data.session) {
+    return res.status(401).json({ message: 'Invalid credentials' });
   }
 
+  // ✅ SAFE fetch profile
+  const { data: userProfile } = await supabaseAdmin
+    .from('users')
+    .select('*')
+    .eq('auth_uid', data.user.id)
+    .maybeSingle();
+
+  // 🚨 ALWAYS return user key
   res.json({
     access_token: data.session.access_token,
     refresh_token: data.session.refresh_token,
+    user: userProfile ?? null,
   });
 }
 
 export async function me(req, res) {
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('users')
     .select('*')
     .eq('auth_uid', req.user.id)
-    .single();
+    .maybeSingle();
 
   res.json(data);
-}
-
-export async function logout(req, res) {
-  res.json({ message: 'Logged out' });
 }
