@@ -25,7 +25,6 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
   // Loaded specialities from DB
   List<Speciality> _dbSpecialities = [];
   bool _loadingSpecialities = true;
-  String? _specialityError;
 
   // Controllers
   late TextEditingController _bioController;
@@ -48,7 +47,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     super.initState();
     // Initialize with empty controllers first
     _initializeEmptyControllers();
-    
+
     // Schedule initialization after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cubit = context.read<SignupCubit>();
@@ -90,7 +89,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     _yearsOfExperienceController.text = state.yearsOfExperience;
     _areasOfExperienceController.text = state.areasOfExperience;
     _consultationPriceController.text = state.consultationPrice;
-    
+
     _controllersInitialized = true;
   }
 
@@ -109,7 +108,6 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
       if (mounted) {
         setState(() {
           _loadingSpecialities = false;
-          _specialityError = 'Failed to load specialities';
         });
       }
     }
@@ -150,7 +148,9 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
       listenWhen: (prev, curr) => prev.message != curr.message,
       listener: (context, state) async {
         // Show snackbar for error messages (except email already in use, which shows as field errorText)
-        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Email already in use') {
+        if (state.message.isNotEmpty &&
+            state.message != 'Success' &&
+            state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -173,7 +173,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
       child: BlocBuilder<SignupCubit, SignupState>(
         builder: (context, state) {
           // Update controllers if not initialized yet
-          if (!_controllersInitialized && state is SignupState) {
+          if (!_controllersInitialized) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) _initControllers();
             });
@@ -201,73 +201,78 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                     },
                   ),
                 ),
-              body: SafeArea(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Professional info',
-                                  style: Theme.of(context).textTheme.titleLarge),
-                              const SizedBox(height: 10),
-                              const Text(
-                                'Provide your professional details to help patients learn about your qualifications and expertise.',
-                              ),
-                              const SizedBox(height: 20),
-
-                              // ========== SPECIALITY DROPDOWN ==========
-                              IconTitle(Icons.local_hospital, 'Main speciality', context),
-                              const SizedBox(height: 9),
-
-                              if (_loadingSpecialities)
-                                const Center(child: CircularProgressIndicator())
-
-                              else if (_dbSpecialities.isEmpty)
-                                const Text('No specialities found')
-
-                              else
-                                LabeledDropdownFormField<Speciality>(
-                                  label: 'Speciality',
-                                  greyLabel: true,
-                                  hint: 'Select your speciality',
-                                  items: _dbSpecialities,
-                                  itemLabel: (s) => s.name,
-                                  value: _dbSpecialities
-                                    .cast<Speciality?>()
-                                    .firstWhere(
-                                      (s) => s?.id == state.specialityId,
-                                      orElse: () => null,
-                                    ),
-                                  onChanged: (selected) {
-                                    if (selected != null) {
-                                      cubit.setSpecialityId(selected.id!);
-                                      cubit.setSpecialityName(selected.name);
-                                    }
-                                  },
-                                  errorText: state.specialityError,
+                body: SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Professional info',
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  'Provide your professional details to help patients learn about your qualifications and expertise.',
+                                ),
+                                const SizedBox(height: 20),
 
-                              const SizedBox(height: 20),
+                                // ========== SPECIALITY DROPDOWN ==========
+                                IconTitle(
+                                  Icons.local_hospital,
+                                  'Main speciality',
+                                  context,
+                                ),
+                                const SizedBox(height: 9),
 
+                                if (_loadingSpecialities)
+                                  const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                else if (_dbSpecialities.isEmpty)
+                                  const Text('No specialities found')
+                                else
+                                  LabeledDropdownFormField<Speciality>(
+                                    label: 'Speciality',
+                                    greyLabel: true,
+                                    hint: 'Select your speciality',
+                                    items: _dbSpecialities,
+                                    itemLabel: (s) => s.name,
+                                    value: _dbSpecialities
+                                        .cast<Speciality?>()
+                                        .firstWhere(
+                                          (s) => s?.id == state.specialityId,
+                                          orElse: () => null,
+                                        ),
+                                    onChanged: (selected) {
+                                      if (selected != null) {
+                                        cubit.setSpecialityId(selected.id);
+                                        cubit.setSpecialityName(selected.name);
+                                      }
+                                    },
+                                    errorText: state.specialityError,
+                                  ),
 
-                              // ========== ALL OTHER FIELDS ==========
-                              _buildAllFields(context, state, cubit),
-                            ],
+                                const SizedBox(height: 20),
+
+                                // ========== ALL OTHER FIELDS ==========
+                                _buildAllFields(context, state, cubit),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
             ),
           );
         },
@@ -276,7 +281,10 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
   }
 
   Widget _buildAllFields(
-      BuildContext context, SignupState state, SignupCubit cubit) {
+    BuildContext context,
+    SignupState state,
+    SignupCubit cubit,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -353,8 +361,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
         LabeledTextFormField(
           label: 'Residency / Fellowship details (Optional)',
           greyLabel: true,
-          hint:
-              'e.g. Residency in internal Medicine, Fellowship in Cardiology',
+          hint: 'e.g. Residency in internal Medicine, Fellowship in Cardiology',
           controller: _trainingController,
           errorText: state.trainingError,
           minlines: 2,
@@ -396,8 +403,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
         LabeledTextFormField(
           label: 'Specific areas of expertise',
           greyLabel: true,
-          hint:
-              'e.g. Cardiac imaging, hypertension, heart failure management',
+          hint: 'e.g. Cardiac imaging, hypertension, heart failure management',
           controller: _areasOfExperienceController,
           errorText: state.areasOfExperienceError,
           minlines: 2,
@@ -456,7 +462,9 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                   cubit.setDegree(_degreeController.text);
                   cubit.setUniversity(_universityController.text);
                   cubit.setCertification(_certificationController.text);
-                  cubit.setCertificationInstitution(_certificationInstitutionController.text);
+                  cubit.setCertificationInstitution(
+                    _certificationInstitutionController.text,
+                  );
                   cubit.setTraining(_trainingController.text);
                   cubit.setLicenceNumber(_licenceNumberController.text);
                   cubit.setLicenceDesc(_licenceDescController.text);

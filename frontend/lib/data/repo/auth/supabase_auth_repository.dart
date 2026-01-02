@@ -16,13 +16,10 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<ReturnResult<User>> login(String email, String password) async {
     try {
-      final response = await ApiClient.post(
-        '/auth/login',
-        {
-          'email': email,
-          'password': password,
-        },
-      );
+      final response = await ApiClient.post('/auth/login', {
+        'email': email,
+        'password': password,
+      });
 
       final data = jsonDecode(response.body);
 
@@ -38,10 +35,7 @@ class SupabaseAuthRepository implements AuthRepository {
       _tokenProvider.setToken(accessToken);
 
       // 🔁 FETCH CURRENT USER USING TOKEN
-      final meResponse = await ApiClient.get(
-        '/auth/me',
-        token: accessToken,
-      );
+      final meResponse = await ApiClient.get('/auth/me', token: accessToken);
 
       if (meResponse.statusCode != 200) {
         _tokenProvider.clear();
@@ -62,16 +56,16 @@ class SupabaseAuthRepository implements AuthRepository {
       // Provide user-friendly error messages
       String errorMessage;
       if (e.toString().contains('timeout')) {
-        errorMessage = 'Request timeout. Please check your connection and try again.';
-      } else if (e.toString().contains('SocketException') || e.toString().contains('Failed host lookup')) {
-        errorMessage = 'Network error. Please check your internet connection and try again.';
+        errorMessage =
+            'Request timeout. Please check your connection and try again.';
+      } else if (e.toString().contains('SocketException') ||
+          e.toString().contains('Failed host lookup')) {
+        errorMessage =
+            'Network error. Please check your internet connection and try again.';
       } else {
         errorMessage = 'Login failed: ${e.toString()}';
       }
-      return ReturnResult(
-        state: false,
-        message: errorMessage,
-      );
+      return ReturnResult(state: false, message: errorMessage);
     }
   }
 
@@ -83,18 +77,15 @@ class SupabaseAuthRepository implements AuthRepository {
     Doctor? doctorData,
   }) async {
     try {
-      final response = await ApiClient.post(
-        '/auth/signup',
-        {
-          'email': user.email,
-          'password': password,
-          'firstname': user.firstname,
-          'lastname': user.lastname,
-          'phone_number': user.phoneNumber,
-          'nin': user.nin,
-          'date_of_birth': patientData?.dateOfBirth,
-        },
-      );
+      final response = await ApiClient.post('/auth/signup', {
+        'email': user.email,
+        'password': password,
+        'firstname': user.firstname,
+        'lastname': user.lastname,
+        'phone_number': user.phoneNumber,
+        'nin': user.nin,
+        'date_of_birth': patientData?.dateOfBirth,
+      });
 
       final data = jsonDecode(response.body);
 
@@ -108,12 +99,14 @@ class SupabaseAuthRepository implements AuthRepository {
       // Backend returns { user: {...}, access_token: ..., refresh_token: ... }
       // Store the access token if provided (user is automatically logged in after signup)
       final accessToken = data['access_token'];
-      if (accessToken != null && accessToken is String && accessToken.isNotEmpty) {
+      if (accessToken != null &&
+          accessToken is String &&
+          accessToken.isNotEmpty) {
         _tokenProvider.setToken(accessToken);
       } else {
         // If no token was returned, try to login automatically as fallback
         try {
-          final loginResult = await login(user.email!, password);
+          final loginResult = await login(user.email, password);
           if (loginResult.state && loginResult.data != null) {
             // Token is now stored from login, return the user from login
             return ReturnResult(
@@ -136,7 +129,7 @@ class SupabaseAuthRepository implements AuthRepository {
         // Fallback: if structure is different, use data directly
         userMap = data as Map<String, dynamic>;
       }
-      
+
       // Add password to the user map since backend doesn't return it
       // but User.fromMap requires it (we use the password we already have)
       final userWithPassword = Map<String, dynamic>.from(userMap);
@@ -151,16 +144,16 @@ class SupabaseAuthRepository implements AuthRepository {
       // Provide user-friendly error messages
       String errorMessage;
       if (e.toString().contains('timeout')) {
-        errorMessage = 'Request timeout. Please check your connection and try again.';
-      } else if (e.toString().contains('SocketException') || e.toString().contains('Failed host lookup')) {
-        errorMessage = 'Network error. Please check your internet connection and try again.';
+        errorMessage =
+            'Request timeout. Please check your connection and try again.';
+      } else if (e.toString().contains('SocketException') ||
+          e.toString().contains('Failed host lookup')) {
+        errorMessage =
+            'Network error. Please check your internet connection and try again.';
       } else {
         errorMessage = 'Signup failed: ${e.toString()}';
       }
-      return ReturnResult(
-        state: false,
-        message: errorMessage,
-      );
+      return ReturnResult(state: false, message: errorMessage);
     }
   }
 
@@ -169,10 +162,7 @@ class SupabaseAuthRepository implements AuthRepository {
     // 🔥 CLEAR TOKEN GLOBALLY
     _tokenProvider.clear();
 
-    return ReturnResult(
-      state: true,
-      message: 'Logged out',
-    );
+    return ReturnResult(state: true, message: 'Logged out');
   }
 
   @override
@@ -188,10 +178,7 @@ class SupabaseAuthRepository implements AuthRepository {
         );
       }
 
-      final response = await ApiClient.get(
-        '/auth/me',
-        token: token,
-      );
+      final response = await ApiClient.get('/auth/me', token: token);
 
       if (response.statusCode != 200) {
         _tokenProvider.clear();
@@ -211,24 +198,23 @@ class SupabaseAuthRepository implements AuthRepository {
       // Provide user-friendly error messages
       String errorMessage;
       if (e.toString().contains('timeout')) {
-        errorMessage = 'Request timeout. Please check your connection and try again.';
-      } else if (e.toString().contains('SocketException') || e.toString().contains('Failed host lookup')) {
-        errorMessage = 'Network error. Please check your internet connection and try again.';
+        errorMessage =
+            'Request timeout. Please check your connection and try again.';
+      } else if (e.toString().contains('SocketException') ||
+          e.toString().contains('Failed host lookup')) {
+        errorMessage =
+            'Network error. Please check your internet connection and try again.';
       } else {
         errorMessage = 'Failed to fetch user: ${e.toString()}';
       }
-      return ReturnResult(
-        state: false,
-        message: errorMessage,
-      );
+      return ReturnResult(state: false, message: errorMessage);
     }
   }
 
   @override
   Future<bool> emailExists(String email) async {
     try {
-      final response =
-          await ApiClient.get('/users/email-exists?email=$email');
+      final response = await ApiClient.get('/users/email-exists?email=$email');
 
       final data = jsonDecode(response.body);
       return data['exists'] ?? false;

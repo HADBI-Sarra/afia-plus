@@ -16,13 +16,17 @@ class DbAuthRepository implements AuthRepository {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) return 'Email cannot be empty';
-    if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(value)) return 'Enter a valid email';
+    if (!RegExp(
+      r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+    ).hasMatch(value))
+      return 'Enter a valid email';
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Password cannot be empty';
-    final strong = value.length >= 8 &&
+    final strong =
+        value.length >= 8 &&
         RegExp(r'[a-z]').hasMatch(value) &&
         RegExp(r'[A-Z]').hasMatch(value) &&
         RegExp(r'[0-9]').hasMatch(value) &&
@@ -33,13 +37,15 @@ class DbAuthRepository implements AuthRepository {
 
   String? _validateName(String? value, String fieldName) {
     if (value == null || value.isEmpty) return '$fieldName cannot be empty';
-    if (!RegExp(r"^[A-Za-z'-]{2,}$").hasMatch(value)) return 'Enter a valid $fieldName';
+    if (!RegExp(r"^[A-Za-z'-]{2,}$").hasMatch(value))
+      return 'Enter a valid $fieldName';
     return null;
   }
 
   String? _validatePhone(String? value) {
     if (value == null || value.isEmpty) return 'Phone number cannot be empty';
-    if (!RegExp(r'^0[567][0-9]{8}$').hasMatch(value)) return 'Enter a valid phone number';
+    if (!RegExp(r'^0[567][0-9]{8}$').hasMatch(value))
+      return 'Enter a valid phone number';
     return null;
   }
 
@@ -55,11 +61,16 @@ class DbAuthRepository implements AuthRepository {
       DateTime parsed;
       if (dob.contains('/')) {
         final parts = dob.split('/');
-        parsed = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+        parsed = DateTime(
+          int.parse(parts[2]),
+          int.parse(parts[1]),
+          int.parse(parts[0]),
+        );
       } else {
         parsed = DateTime.parse(dob);
       }
-      if (parsed.year >= DateTime.now().year - 16) return 'You must be at least 16 years old';
+      if (parsed.year >= DateTime.now().year - 16)
+        return 'You must be at least 16 years old';
     } catch (_) {
       return 'Invalid date format';
     }
@@ -70,34 +81,63 @@ class DbAuthRepository implements AuthRepository {
     if (doctor.bio == null || doctor.bio!.isEmpty) return 'Bio cannot be empty';
     if (doctor.bio!.length < 15) return 'Bio must be at least 15 characters';
 
-    if (doctor.locationOfWork == null || doctor.locationOfWork!.isEmpty) return 'Location of work cannot be empty';
-    if (doctor.locationOfWork!.length < 5) return 'Location of work must be at least 5 characters';
+    if (doctor.locationOfWork == null || doctor.locationOfWork!.isEmpty)
+      return 'Location of work cannot be empty';
+    if (doctor.locationOfWork!.length < 5)
+      return 'Location of work must be at least 5 characters';
 
-    if (doctor.degree == null || doctor.degree!.isEmpty) return 'Degree cannot be empty';
-    if (doctor.degree!.length < 5) return 'Degree must be at least 5 characters';
+    if (doctor.degree == null || doctor.degree!.isEmpty)
+      return 'Degree cannot be empty';
+    if (doctor.degree!.length < 5)
+      return 'Degree must be at least 5 characters';
 
-    if (doctor.university == null || doctor.university!.isEmpty) return 'University cannot be empty';
-    if (doctor.university!.length < 5) return 'University must be at least 5 characters';
+    if (doctor.university == null || doctor.university!.isEmpty)
+      return 'University cannot be empty';
+    if (doctor.university!.length < 5)
+      return 'University must be at least 5 characters';
 
-    if (doctor.certification != null && doctor.certification!.isNotEmpty && doctor.certification!.length < 5) return 'Certification too short';
-    if (doctor.institution != null && doctor.institution!.isNotEmpty && doctor.institution!.length < 5) return 'Institution too short';
+    if (doctor.certification != null &&
+        doctor.certification!.isNotEmpty &&
+        doctor.certification!.length < 5)
+      return 'Certification too short';
+    if (doctor.institution != null &&
+        doctor.institution!.isNotEmpty &&
+        doctor.institution!.length < 5)
+      return 'Institution too short';
 
-    if (doctor.residency != null && doctor.residency!.isNotEmpty && doctor.residency!.length < 10) return 'Residency too short';
+    if (doctor.residency != null &&
+        doctor.residency!.isNotEmpty &&
+        doctor.residency!.length < 10)
+      return 'Residency too short';
 
-    if (doctor.licenseNumber == null || doctor.licenseNumber!.isEmpty) return 'License number required';
-    if (!RegExp(r'^\d{4,6}$').hasMatch(doctor.licenseNumber!)) return 'Invalid license number';
+    if (doctor.licenseNumber == null || doctor.licenseNumber!.isEmpty)
+      return 'License number required';
+    if (!RegExp(r'^\d{4,6}$').hasMatch(doctor.licenseNumber!))
+      return 'Invalid license number';
 
-    if (doctor.licenseDescription != null && doctor.licenseDescription!.isNotEmpty && doctor.licenseDescription!.length < 10) return 'License description too short';
+    if (doctor.licenseDescription != null &&
+        doctor.licenseDescription!.isNotEmpty &&
+        doctor.licenseDescription!.length < 10)
+      return 'License description too short';
 
-    if (doctor.yearsExperience != null && (doctor.yearsExperience! < 0 || doctor.yearsExperience! > 60)) return 'Years of experience invalid';
+    if (doctor.yearsExperience != null &&
+        (doctor.yearsExperience! < 0 || doctor.yearsExperience! > 60))
+      return 'Years of experience invalid';
 
-    if (doctor.areasOfExpertise == null || doctor.areasOfExpertise!.isEmpty) return 'Areas of expertise cannot be empty';
-    if (doctor.areasOfExpertise!.length < 10) return 'Areas of expertise too short';
+    if (doctor.areasOfExpertise == null || doctor.areasOfExpertise!.isEmpty)
+      return 'Areas of expertise cannot be empty';
+    if (doctor.areasOfExpertise!.length < 10)
+      return 'Areas of expertise too short';
     return null;
   }
 
   Future<bool> _emailExists(String email) async {
-    final result = await db.query(usersTable, where: 'email = ?', whereArgs: [email], limit: 1);
+    final result = await db.query(
+      usersTable,
+      where: 'email = ?',
+      whereArgs: [email],
+      limit: 1,
+    );
     return result.isNotEmpty;
   }
 
@@ -112,9 +152,11 @@ class DbAuthRepository implements AuthRepository {
     email = email.trim();
     password = password.trim();
     final emailError = _validateEmail(email);
-    if (emailError != null) return ReturnResult(state: false, message: emailError);
+    if (emailError != null)
+      return ReturnResult(state: false, message: emailError);
 
-    if (password.isEmpty) return ReturnResult(state: false, message: 'Password cannot be empty');
+    if (password.isEmpty)
+      return ReturnResult(state: false, message: 'Password cannot be empty');
 
     try {
       final List<Map<String, dynamic>> maps = await db.query(
@@ -123,7 +165,8 @@ class DbAuthRepository implements AuthRepository {
         whereArgs: [email, password],
       );
 
-      if (maps.isEmpty) return ReturnResult(state: false, message: 'Invalid email or password');
+      if (maps.isEmpty)
+        return ReturnResult(state: false, message: 'Invalid email or password');
 
       final user = User.fromMap(maps.first);
       final prefs = await SharedPreferences.getInstance();
@@ -136,36 +179,51 @@ class DbAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<ReturnResult<User>> signup(User user, String password, {Patient? patientData, Doctor? doctorData}) async {
-    final emailError = _validateEmail(user.email?.trim());
-    if (emailError != null) return ReturnResult(state: false, message: emailError);
+  Future<ReturnResult<User>> signup(
+    User user,
+    String password, {
+    Patient? patientData,
+    Doctor? doctorData,
+  }) async {
+    final emailError = _validateEmail(user.email.trim());
+    if (emailError != null)
+      return ReturnResult(state: false, message: emailError);
 
     final passwordError = _validatePassword(password);
-    if (passwordError != null) return ReturnResult(state: false, message: passwordError);
+    if (passwordError != null)
+      return ReturnResult(state: false, message: passwordError);
 
-    final firstNameError = _validateName(user.firstname?.trim(), 'First name');
-    if (firstNameError != null) return ReturnResult(state: false, message: firstNameError);
+    final firstNameError = _validateName(user.firstname.trim(), 'First name');
+    if (firstNameError != null)
+      return ReturnResult(state: false, message: firstNameError);
 
-    final lastNameError = _validateName(user.lastname?.trim(), 'Last name');
-    if (lastNameError != null) return ReturnResult(state: false, message: lastNameError);
+    final lastNameError = _validateName(user.lastname.trim(), 'Last name');
+    if (lastNameError != null)
+      return ReturnResult(state: false, message: lastNameError);
 
-    final phoneError = _validatePhone(user.phoneNumber?.trim());
-    if (phoneError != null) return ReturnResult(state: false, message: phoneError);
+    final phoneError = _validatePhone(user.phoneNumber.trim());
+    if (phoneError != null)
+      return ReturnResult(state: false, message: phoneError);
 
-    final ninError = _validateNin(user.nin?.trim());
+    final ninError = _validateNin(user.nin.trim());
     if (ninError != null) return ReturnResult(state: false, message: ninError);
 
     if (user.role == 'patient') {
-      if (patientData == null) return ReturnResult(state: false, message: 'Patient data required');
+      if (patientData == null)
+        return ReturnResult(state: false, message: 'Patient data required');
       final dobError = _validateDob(patientData.dateOfBirth);
-      if (dobError != null) return ReturnResult(state: false, message: dobError);
+      if (dobError != null)
+        return ReturnResult(state: false, message: dobError);
     } else if (user.role == 'doctor') {
-      if (doctorData == null) return ReturnResult(state: false, message: 'Doctor data required');
+      if (doctorData == null)
+        return ReturnResult(state: false, message: 'Doctor data required');
       final doctorError = _validateDoctorFields(doctorData);
-      if (doctorError != null) return ReturnResult(state: false, message: doctorError);
+      if (doctorError != null)
+        return ReturnResult(state: false, message: doctorError);
     }
 
-    if (await _emailExists(user.email)) return ReturnResult(state: false, message: 'Email already in use');
+    if (await _emailExists(user.email))
+      return ReturnResult(state: false, message: 'Email already in use');
 
     try {
       final userId = await db.insert(usersTable, {
@@ -212,7 +270,11 @@ class DbAuthRepository implements AuthRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(prefCurrentUserId, newUser.userId!);
 
-      return ReturnResult(state: true, message: 'Signup successful', data: newUser);
+      return ReturnResult(
+        state: true,
+        message: 'Signup successful',
+        data: newUser,
+      );
     } catch (e) {
       return ReturnResult(state: false, message: 'Signup failed: $e');
     }
@@ -234,14 +296,27 @@ class DbAuthRepository implements AuthRepository {
     try {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getInt(prefCurrentUserId);
-      if (userId == null) return ReturnResult(state: true, message: '', data: null);
+      if (userId == null)
+        return ReturnResult(state: true, message: '', data: null);
 
-      final maps = await db.query(usersTable, where: 'user_id = ?', whereArgs: [userId]);
-      if (maps.isEmpty) return ReturnResult(state: true, message: '', data: null);
+      final maps = await db.query(
+        usersTable,
+        where: 'user_id = ?',
+        whereArgs: [userId],
+      );
+      if (maps.isEmpty)
+        return ReturnResult(state: true, message: '', data: null);
 
-      return ReturnResult(state: true, message: '', data: User.fromMap(maps.first));
+      return ReturnResult(
+        state: true,
+        message: '',
+        data: User.fromMap(maps.first),
+      );
     } catch (e) {
-      return ReturnResult(state: false, message: 'Failed to fetch current user: $e');
+      return ReturnResult(
+        state: false,
+        message: 'Failed to fetch current user: $e',
+      );
     }
   }
 }

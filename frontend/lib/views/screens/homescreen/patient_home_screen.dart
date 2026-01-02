@@ -436,12 +436,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       final String address =
                           doctor['location_of_work'] ?? 'Address not available';
                       final int doctorId = doctor['doctor_id'];
-                      final String specialty =
-                          doctor['speciality_name'] ??
-                          selectedSpecialityName ??
-                          '';
-                      final double rating =
-                          (doctor['average_rating'] as num?)?.toDouble() ?? 0.0;
 
                       return InkWell(
                         onTap: () {
