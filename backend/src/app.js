@@ -4,6 +4,7 @@ import cors from 'cors';
 import authRoutes from '../routes/auth.routes.js';
 import userRoutes from '../routes/users.routes.js';
 import patientRoutes from '../routes/patients.routes.js';
+import doctorRoutes from '../routes/doctors.routes.js';
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/patients', patientRoutes);
+app.use('/doctors', doctorRoutes);
 
 export default app;

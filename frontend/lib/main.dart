@@ -30,6 +30,7 @@ import 'package:afia_plus_app/data/repo/patients/db_patient_repository.dart';
 import 'package:afia_plus_app/data/repo/patients/supabase_patient_repository.dart';
 import 'package:afia_plus_app/data/repo/patients/patient_repository.dart';
 import 'package:afia_plus_app/data/repo/doctors/db_doctor_repository.dart';
+import 'package:afia_plus_app/data/repo/doctors/supabase_doctor_repository.dart';
 import 'package:afia_plus_app/data/repo/doctors/doctor_repository.dart';
 import 'package:afia_plus_app/data/repo/auth/db_auth_repository.dart';
 import 'package:afia_plus_app/data/repo/auth/supabase_auth_repository.dart';
@@ -55,7 +56,7 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
   sl.registerLazySingleton<UserRepository>(() => SupabaseUserRepository());
   sl.registerLazySingleton<PatientRepository>(() => SupabasePatientRepository());
-  sl.registerLazySingleton<DoctorRepository>(() => DBDoctorRepository());
+  sl.registerLazySingleton<DoctorRepository>(() => SupabaseDoctorRepository());
   sl.registerLazySingleton<AuthRepository>(() => SupabaseAuthRepository());
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),

@@ -131,17 +131,55 @@ class SupabaseAuthRepository implements AuthRepository {
     Doctor? doctorData,
   }) async {
     try {
+      // Validate role is set
+      if (user.role == null || user.role.isEmpty) {
+        return ReturnResult(
+          state: false,
+          message: 'User role is required',
+        );
+      }
+
+      final Map<String, dynamic> body = {
+        'email': user.email,
+        'password': password,
+        'firstname': user.firstname,
+        'lastname': user.lastname,
+        'phone_number': user.phoneNumber,
+        'nin': user.nin,
+        'role': user.role, // Explicitly set role
+      };
+
+      // Add patient-specific fields ONLY for patients
+      if (user.role == 'patient' && patientData != null) {
+        body['date_of_birth'] = patientData.dateOfBirth;
+      }
+
+      // Explicit safeguard: Ensure date_of_birth is NEVER sent for doctors
+      // This prevents any accidental patient creation
+      if (user.role == 'doctor') {
+        body.remove('date_of_birth'); // Remove if somehow present
+      }
+
+      // Add doctor-specific fields ONLY for doctors
+      if (user.role == 'doctor' && doctorData != null) {
+        body['speciality_id'] = doctorData.specialityId;
+        body['bio'] = doctorData.bio;
+        body['location_of_work'] = doctorData.locationOfWork;
+        body['degree'] = doctorData.degree;
+        body['university'] = doctorData.university;
+        body['certification'] = doctorData.certification;
+        body['institution'] = doctorData.institution;
+        body['residency'] = doctorData.residency;
+        body['license_number'] = doctorData.licenseNumber;
+        body['license_description'] = doctorData.licenseDescription;
+        body['years_experience'] = doctorData.yearsExperience;
+        body['areas_of_expertise'] = doctorData.areasOfExpertise;
+        body['price_per_hour'] = doctorData.pricePerHour;
+      }
+
       final response = await ApiClient.post(
         '/auth/signup',
-        {
-          'email': user.email,
-          'password': password,
-          'firstname': user.firstname,
-          'lastname': user.lastname,
-          'phone_number': user.phoneNumber,
-          'nin': user.nin,
-          'date_of_birth': patientData?.dateOfBirth,
-        },
+        body,
       );
 
       final data = jsonDecode(response.body);

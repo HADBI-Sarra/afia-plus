@@ -10,7 +10,38 @@ export async function signup(req, res) {
     phone_number,
     nin,
     date_of_birth,
+    role,
+    // Doctor-specific fields
+    speciality_id,
+    bio,
+    location_of_work,
+    degree,
+    university,
+    certification,
+    institution,
+    residency,
+    license_number,
+    license_description,
+    years_experience,
+    areas_of_expertise,
+    price_per_hour,
   } = req.body;
+
+  // Validate role - must be 'patient' or 'doctor'
+  const userRole = role?.toLowerCase().trim();
+  
+  if (!userRole || (userRole !== 'patient' && userRole !== 'doctor')) {
+    return res.status(400).json({ 
+      message: 'Invalid role. Must be "patient" or "doctor"' 
+    });
+  }
+
+  // Explicit validation: date_of_birth should NOT be present for doctors
+  if (userRole === 'doctor' && date_of_birth) {
+    return res.status(400).json({ 
+      message: 'Date of birth should not be provided for doctor signup' 
+    });
+  }
 
   const { data: authUser, error } =
     await supabaseAdmin.auth.admin.createUser({
@@ -27,7 +58,7 @@ export async function signup(req, res) {
     .from('users')
     .insert({
       auth_uid: authUser.user.id,
-      role: 'patient',
+      role: userRole,
       firstname,
       lastname,
       email,
@@ -41,10 +72,82 @@ export async function signup(req, res) {
     return res.status(400).json({ message: userError.message });
   }
 
-  await supabaseAdmin.from('patients').insert({
-    patient_id: user.user_id,
-    date_of_birth,
-  });
+  // Handle patient signup
+  if (userRole === 'patient') {
+    if (!date_of_birth) {
+      return res.status(400).json({ message: 'Date of birth is required for patients' });
+    }
+    
+    const { error: patientError } = await supabaseAdmin.from('patients').insert({
+      patient_id: user.user_id,
+      date_of_birth,
+    });
+
+    if (patientError) {
+      return res.status(400).json({ message: patientError.message });
+    }
+  }
+  // Handle doctor signup - explicitly prevent patient creation
+  else if (userRole === 'doctor') {
+    // First, check if a patient record was accidentally created (e.g., by a database trigger)
+    // and delete it if it exists
+    const { data: existingPatient } = await supabaseAdmin
+      .from('patients')
+      .select('patient_id')
+      .eq('patient_id', user.user_id)
+      .maybeSingle();
+
+    if (existingPatient) {
+      // Delete any accidentally created patient record
+      await supabaseAdmin
+        .from('patients')
+        .delete()
+        .eq('patient_id', user.user_id);
+    }
+
+    const { error: doctorError } = await supabaseAdmin.from('doctors').insert({
+      doctor_id: user.user_id,
+      speciality_id: speciality_id || null,
+      bio: bio || null,
+      location_of_work: location_of_work || null,
+      degree: degree || null,
+      university: university || null,
+      certification: certification || null,
+      institution: institution || null,
+      residency: residency || null,
+      license_number: license_number || null,
+      license_description: license_description || null,
+      years_experience: years_experience || null,
+      areas_of_expertise: areas_of_expertise || null,
+      price_per_hour: price_per_hour || null,
+      average_rating: 0,
+      reviews_count: 0,
+    });
+
+    if (doctorError) {
+      // If doctor creation fails, we should clean up the user record
+      await supabaseAdmin.from('users').delete().eq('user_id', user.user_id);
+      return res.status(400).json({ message: doctorError.message });
+    }
+
+    // Final safeguard: verify no patient record exists after doctor creation
+    const { data: patientCheck } = await supabaseAdmin
+      .from('patients')
+      .select('patient_id')
+      .eq('patient_id', user.user_id)
+      .maybeSingle();
+
+    if (patientCheck) {
+      // If a patient record was created (e.g., by a trigger), delete it
+      await supabaseAdmin
+        .from('patients')
+        .delete()
+        .eq('patient_id', user.user_id);
+    }
+  } else {
+    // This should never happen due to validation above, but just in case
+    return res.status(400).json({ message: 'Invalid role specified' });
+  }
 
   const { data: signInData } =
     await supabaseAuth.auth.signInWithPassword({
