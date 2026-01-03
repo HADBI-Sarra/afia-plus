@@ -1,3 +1,4 @@
+// controllers/auth.controller.js
 import { supabaseAdmin, supabaseAuth } from '../src/config/supabase.js';
 
 export async function signup(req, res) {
@@ -11,7 +12,6 @@ export async function signup(req, res) {
     date_of_birth,
   } = req.body;
 
-  // 1️⃣ Create auth user
   const { data: authUser, error } =
     await supabaseAdmin.auth.admin.createUser({
       email,
@@ -23,11 +23,10 @@ export async function signup(req, res) {
     return res.status(400).json({ message: error.message });
   }
 
-  // 2️⃣ Insert users row
   const { data: user, error: userError } = await supabaseAdmin
     .from('users')
     .insert({
-      auth_uid: authUser.user.id, // UUID
+      auth_uid: authUser.user.id,
       role: 'patient',
       firstname,
       lastname,
@@ -42,61 +41,74 @@ export async function signup(req, res) {
     return res.status(400).json({ message: userError.message });
   }
 
-  // 3️⃣ Insert patient
   await supabaseAdmin.from('patients').insert({
     patient_id: user.user_id,
     date_of_birth,
   });
 
-  // 4️⃣ Login
   const { data: signInData } =
     await supabaseAuth.auth.signInWithPassword({
       email,
       password,
     });
 
-  res.json({
+  res.status(200).json({
+    user,
     access_token: signInData.session.access_token,
     refresh_token: signInData.session.refresh_token,
-    user,
   });
 }
 
 export async function login(req, res) {
   const { email, password } = req.body;
 
-  // 🔐 Authenticate
   const { data, error } =
     await supabaseAuth.auth.signInWithPassword({
       email,
       password,
     });
 
-  if (error || !data.session) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+  if (error || !data.session || !data.user) {
+    return res.status(401).json({
+      message: error?.message || 'Invalid credentials',
+    });
   }
 
-  // ✅ SAFE fetch profile
-  const { data: userProfile } = await supabaseAdmin
+  const { data: userProfile, error: userError } = await supabaseAdmin
     .from('users')
     .select('*')
     .eq('auth_uid', data.user.id)
-    .maybeSingle();
+    .single();
 
-  // 🚨 ALWAYS return user key
+  if (userError || !userProfile) {
+    return res.status(404).json({
+      message: 'User profile not found',
+    });
+  }
+
   res.json({
     access_token: data.session.access_token,
     refresh_token: data.session.refresh_token,
-    user: userProfile ?? null,
+    user: userProfile,
   });
 }
 
 export async function me(req, res) {
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from('users')
     .select('*')
     .eq('auth_uid', req.user.id)
-    .maybeSingle();
+    .single();
+
+  if (error || !data) {
+    return res.status(404).json({
+      message: 'User profile not found',
+    });
+  }
 
   res.json(data);
+}
+
+export async function logout(req, res) {
+  res.json({ message: 'Logged out' });
 }

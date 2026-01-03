@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiClient {
   // For real phone on same network, use your computer's IP address
-  static const String baseUrl = 'http://192.168.1.7:3000'; // Your PC IP address
+  static const String baseUrl = 'http://10.28.198.117:3000'; // Your PC IP address
   // static const String baseUrl = 'http://10.0.2.2:3000'; // Android emulator
   // static const String baseUrl = 'http://localhost:3000'; // Web
   static const Duration timeout = Duration(seconds: 30);

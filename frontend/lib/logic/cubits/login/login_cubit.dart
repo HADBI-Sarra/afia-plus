@@ -73,15 +73,14 @@ class LoginCubit extends Cubit<LoginState> {
     final result = await authRepo.login(trimmedEmail, trimmedPassword);
 
     if (result.state) {
+      print('Login successful, setting user in LoginCubit: ${result.data?.email}');
       emit(state.copyWith(isLoading: false, user: result.data, message: ''));
-      // Refresh AuthCubit to update the authentication state and wait for it
+      // Refresh AuthCubit to update the authentication state
+      // Navigation will be handled by listener in login screen
       if (authCubit != null) {
+        print('Calling checkLoginStatus...');
         await authCubit!.checkLoginStatus();
-        // Verify that we're actually authenticated before signaling navigation
-        final authState = authCubit!.state;
-        if (authState is AuthenticatedPatient || authState is AuthenticatedDoctor) {
-          emit(state.copyWith(user: result.data, message: ''));
-        }
+        print('checkLoginStatus completed. Auth state: ${authCubit!.state.runtimeType}');
       }
     } else {
       emit(state.copyWith(isLoading: false, message: result.message));
