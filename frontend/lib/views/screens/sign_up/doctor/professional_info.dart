@@ -149,8 +149,11 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.message != curr.message,
       listener: (context, state) async {
-        // Show snackbar for error messages (except email already in use, which shows as field errorText)
-        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Email already in use') {
+        // Show snackbar for error messages only (exclude success messages and email already in use)
+        if (state.message.isNotEmpty && 
+            state.message != 'Success' && 
+            state.message != 'Signup successful' &&
+            state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -159,7 +162,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
             ),
           );
         }
-        if (state.message == 'Success') {
+        if (state.message == 'Success' || state.message == 'Signup successful') {
           final authCubit = context.read<AuthCubit>();
           await authCubit.checkLoginStatus();
 
