@@ -13,7 +13,7 @@ export async function getMe(req, res) {
 
   const { data: doctor } = await supabaseAdmin
     .from('doctors')
-    .select('*')
+    .select('speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count')
     .eq('doctor_id', user.user_id)
     .maybeSingle();
 

@@ -13,6 +13,23 @@ import '../auth/token_provider.dart';
 class SupabaseAuthRepository implements AuthRepository {
   final TokenProvider _tokenProvider = GetIt.instance<TokenProvider>();
 
+  // Helper function to parse User/Patient/Doctor from map based on role
+  User _parseUserFromMap(Map<String, dynamic> userMap, String password) {
+    final role = (userMap['role'] as String?)?.toLowerCase() ?? '';
+    
+    // Add password to the map since backend doesn't return it
+    final userWithPassword = Map<String, dynamic>.from(userMap);
+    userWithPassword['password'] = password;
+
+    if (role == 'patient') {
+      return Patient.fromMap(userWithPassword);
+    } else if (role == 'doctor') {
+      return Doctor.fromMap(userWithPassword);
+    } else {
+      return User.fromMap(userWithPassword);
+    }
+  }
+
   @override
   Future<ReturnResult<User>> login(String email, String password) async {
     try {
@@ -62,8 +79,18 @@ class SupabaseAuthRepository implements AuthRepository {
       if (userMap != null && userMap is Map<String, dynamic>) {
         try {
           print('Attempting to parse user from login response...');
-          final user = User.fromMap(userMap);
+          print('User role: ${userMap['role']}');
+          print('User has date_of_birth: ${userMap.containsKey('date_of_birth')}');
+          print('date_of_birth value: ${userMap['date_of_birth']}');
+          print('User has speciality_id: ${userMap.containsKey('speciality_id')}');
+          print('speciality_id value: ${userMap['speciality_id']}');
+          final user = _parseUserFromMap(userMap, password);
           print('User parsed successfully: ${user.email}');
+          if (user is Patient) {
+            print('Parsed as Patient, dateOfBirth: ${user.dateOfBirth}');
+          } else if (user is Doctor) {
+            print('Parsed as Doctor, specialityId: ${user.specialityId}');
+          }
           return ReturnResult(
             state: true,
             message: 'Login successful',
@@ -104,7 +131,7 @@ class SupabaseAuthRepository implements AuthRepository {
       return ReturnResult(
         state: true,
         message: 'Login successful',
-        data: User.fromMap(meUserMap),
+        data: _parseUserFromMap(meUserMap, password),
       );
     } catch (e) {
       // Provide user-friendly error messages
@@ -222,16 +249,11 @@ class SupabaseAuthRepository implements AuthRepository {
         // Fallback: if structure is different, use data directly
         userMap = data as Map<String, dynamic>;
       }
-      
-      // Add password to the user map since backend doesn't return it
-      // but User.fromMap requires it (we use the password we already have)
-      final userWithPassword = Map<String, dynamic>.from(userMap);
-      userWithPassword['password'] = password;
 
       return ReturnResult(
         state: true,
         message: 'Signup successful',
-        data: User.fromMap(userWithPassword),
+        data: _parseUserFromMap(userMap, password),
       );
     } catch (e) {
       // Provide user-friendly error messages
@@ -288,10 +310,33 @@ class SupabaseAuthRepository implements AuthRepository {
         );
       }
 
+      final userMap = jsonDecode(response.body);
+      if (userMap is! Map<String, dynamic>) {
+        return ReturnResult(
+          state: false,
+          message: 'Invalid user data format',
+          data: null,
+        );
+      }
+
+      print('getCurrentUser - User role: ${userMap['role']}');
+      print('getCurrentUser - User has date_of_birth: ${userMap.containsKey('date_of_birth')}');
+      print('getCurrentUser - date_of_birth value: ${userMap['date_of_birth']}');
+      print('getCurrentUser - User has speciality_id: ${userMap.containsKey('speciality_id')}');
+      print('getCurrentUser - speciality_id value: ${userMap['speciality_id']}');
+
+      // Use empty password since we don't have it in getCurrentUser
+      // The password field is required but won't be used for authentication
+      final user = _parseUserFromMap(userMap, '');
+      if (user is Patient) {
+        print('getCurrentUser - Parsed as Patient, dateOfBirth: ${user.dateOfBirth}');
+      } else if (user is Doctor) {
+        print('getCurrentUser - Parsed as Doctor, specialityId: ${user.specialityId}');
+      }
       return ReturnResult(
         state: true,
         message: 'User loaded',
-        data: User.fromMap(jsonDecode(response.body)),
+        data: user,
       );
     } catch (e) {
       // Provide user-friendly error messages

@@ -13,7 +13,7 @@ export async function getMe(req, res) {
 
   const { data: patient } = await supabaseAdmin
     .from('patients')
-    .select('*')
+    .select('date_of_birth')
     .eq('patient_id', user.user_id)
     .maybeSingle();
 
