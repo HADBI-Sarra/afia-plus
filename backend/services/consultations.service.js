@@ -1,4 +1,4 @@
-import { supabase } from '../src/config/supabase.js';
+import { supabaseAdmin } from '../src/config/supabase.js';
 
 /**
  * Consultations Service

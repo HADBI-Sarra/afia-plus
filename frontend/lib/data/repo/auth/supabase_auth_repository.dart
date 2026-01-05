@@ -51,15 +51,11 @@ class SupabaseAuthRepository implements AuthRepository {
       _tokenProvider.setToken(accessToken);
       print('Token stored successfully');
 
-
-      // 🔁 FETCH CURRENT USER USING TOKEN
-      final meResponse = await ApiClient.get('/auth/me', token: accessToken);
-
       // Backend now returns user data directly in the login response
       final userMap = data['user'];
       print('User map from response: $userMap');
       print('User map is Map: ${userMap is Map<String, dynamic>}');
-      
+
       if (userMap != null && userMap is Map<String, dynamic>) {
         try {
           print('Attempting to parse user from login response...');
@@ -79,12 +75,9 @@ class SupabaseAuthRepository implements AuthRepository {
       } else {
         print('User map is null or not a Map, falling back to /auth/me');
       }
-      
+
       // Fallback: fetch user using /auth/me if not in response or parsing failed
-      final meResponse = await ApiClient.get(
-        '/auth/me',
-        token: accessToken,
-      );
+      final meResponse = await ApiClient.get('/auth/me', token: accessToken);
 
       if (meResponse.statusCode != 200) {
         _tokenProvider.clear();
@@ -96,12 +89,9 @@ class SupabaseAuthRepository implements AuthRepository {
 
       final meUserMap = jsonDecode(meResponse.body);
       if (meUserMap is! Map<String, dynamic>) {
-        return ReturnResult(
-          state: false,
-          message: 'Invalid user data format',
-        );
+        return ReturnResult(state: false, message: 'Invalid user data format');
       }
-      
+
       return ReturnResult(
         state: true,
         message: 'Login successful',
