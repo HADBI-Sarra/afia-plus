@@ -4,8 +4,7 @@ import cors from 'cors';
 import authRoutes from '../routes/auth.routes.js';
 import userRoutes from '../routes/users.routes.js';
 import patientRoutes from '../routes/patients.routes.js';
-import doctorAvailabilityRoutes from '../routes/doctor_availability.routes.js';
-import consultationsRoutes from '../routes/consultations.routes.js';
+import doctorRoutes from '../routes/doctors.routes.js';
 
 const app = express();
 
@@ -15,7 +14,6 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/patients', patientRoutes);
-app.use('/availability', doctorAvailabilityRoutes);
-app.use('/consultations', consultationsRoutes);
+app.use('/doctors', doctorRoutes);
 
 export default app;

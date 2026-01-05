@@ -50,9 +50,25 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
     final cubit = context.read<SignupCubit>();
 
     return BlocListener<SignupCubit, SignupState>(
-      listenWhen: (previous, current) => previous.message != current.message,
+      listenWhen: (previous, current) => previous.message != current.message || previous.currentStep != current.currentStep,
       listener: (context, state) {
-        // Show snackbar for error messages (except email already in use, which shows as field errorText)
+        // Navigate back to account screen if step changes to account (e.g., email error)
+        if (state.currentStep == SignupStep.account) {
+          // Show error snackbar before navigating back
+          if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+          Navigator.pop(context);
+          return;
+        }
+        
+        // Show snackbar for error messages
         if (state.message.isNotEmpty && state.message != 'NextStep' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

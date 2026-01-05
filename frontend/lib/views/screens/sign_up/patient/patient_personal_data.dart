@@ -53,9 +53,25 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignupCubit, SignupState>(
-      listenWhen: (prev, curr) => prev.message != curr.message,
+      listenWhen: (prev, curr) => prev.message != curr.message || prev.currentStep != curr.currentStep,
       listener: (context, state) async {
-        // Show snackbar for error messages (except email already in use, which shows as field errorText)
+        // Navigate back to account screen if step changes to account (e.g., email error)
+        if (state.currentStep == SignupStep.account) {
+          // Show error snackbar before navigating back
+          if (state.message.isNotEmpty && state.message != 'Success') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+          Navigator.pop(context);
+          return;
+        }
+        
+        // Show snackbar for error messages
         if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Email already in use') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

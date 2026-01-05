@@ -37,7 +37,7 @@ class Patient extends User {
       phoneNumber: map['phone_number'],
       nin: map['nin'],
       profilePicture: map['profile_picture'],
-      dateOfBirth: map['date_of_birth'],
+      dateOfBirth: map['date_of_birth'] ?? '',
     );
   }
 

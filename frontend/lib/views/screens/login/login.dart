@@ -58,25 +58,70 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           BlocListener<LoginCubit, LoginState>(
             listenWhen: (previous, current) {
-              // Fire navigation when user is authenticated and not loading
-              return current.user != null &&
-                     !current.isLoading &&
-                     previous.user != current.user;
+              // Listen for successful login - user changed from null to non-null and not loading
+              final wasNull = previous.user == null;
+              final isNotNull = current.user != null;
+              final notLoading = !current.isLoading;
+              
+              print('Login listener check: wasNull=$wasNull, isNotNull=$isNotNull, notLoading=$notLoading');
+              
+              return wasNull && isNotNull && notLoading;
             },
             listener: (context, state) async {
-              // Wait a moment to ensure RootScreen has rebuilt
-              await Future.delayed(const Duration(milliseconds: 300));
-              if (context.mounted) {
-                // Verify auth state one more time before navigating
-                final authCubit = context.read<AuthCubit>();
-                final authState = authCubit.state;
-                if (authState is AuthenticatedPatient || authState is AuthenticatedDoctor) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RootScreen()),
-                    (route) => false,
-                  );
-                }
+              print('Login listener triggered! User: ${state.user?.email}');
+              
+              // Wait for AuthCubit to update (checkLoginStatus is async)
+              await Future.delayed(const Duration(milliseconds: 800));
+              
+              if (!context.mounted) {
+                print('Context not mounted, skipping navigation');
+                return;
+              }
+              
+              // Check AuthCubit state before navigating
+              final authCubit = context.read<AuthCubit>();
+              final authState = authCubit.state;
+              
+              print('AuthCubit state after login: ${authState.runtimeType}');
+              
+              if (authState is AuthenticatedPatient || authState is AuthenticatedDoctor) {
+                print('Navigating to RootScreen...');
+                // Navigate to home screen after successful login
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RootScreen()),
+                  (route) => false,
+                );
+              } else {
+                print('Auth state is not authenticated: ${authState.runtimeType}');
+              }
+            },
+          ),
+          // Backup listener: Listen to AuthCubit state changes directly
+          BlocListener<AuthCubit, AuthState>(
+            listenWhen: (previous, current) {
+              // Only trigger when transitioning from Unauthenticated/AuthLoading to Authenticated
+              final wasUnauthenticated = previous is Unauthenticated || previous is AuthLoading;
+              final isNowAuthenticated = current is AuthenticatedPatient || current is AuthenticatedDoctor;
+              
+              print('AuthCubit listener check: wasUnauthenticated=$wasUnauthenticated, isNowAuthenticated=$isNowAuthenticated');
+              
+              return wasUnauthenticated && isNowAuthenticated;
+            },
+            listener: (context, state) {
+              // Check if we're on login screen (LoginCubit has a user from recent login)
+              final loginCubit = context.read<LoginCubit>();
+              final loginState = loginCubit.state;
+              
+              // Only navigate if LoginCubit has a user (meaning we just logged in)
+              if (loginState.user != null && !loginState.isLoading) {
+                print('AuthCubit listener triggered! Navigating to RootScreen...');
+                // Navigate to home screen
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const RootScreen()),
+                  (route) => false,
+                );
               }
             },
           ),

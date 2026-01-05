@@ -55,6 +55,33 @@ class Doctor extends User {
   );
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
+    // Handle speciality_id conversion - it might come as int, string, or null
+    int? parseSpecialityId(dynamic value) {
+      if (value == null) return null;
+      if (value is int) return value;
+      if (value is String) {
+        final parsed = int.tryParse(value);
+        return parsed != null && parsed > 0 ? parsed : null;
+      }
+      return null;
+    }
+
+    // Handle years_experience conversion
+    int? parseYearsExperience(dynamic value) {
+      if (value == null) return null;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value);
+      return null;
+    }
+
+    // Handle price_per_hour conversion
+    int? parsePricePerHour(dynamic value) {
+      if (value == null) return null;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value);
+      return null;
+    }
+
     return Doctor(
       userId: map['user_id'],
       role: map['role'] ?? 'doctor',
@@ -65,7 +92,7 @@ class Doctor extends User {
       phoneNumber: map['phone_number'],
       nin: map['nin'],
       profilePicture: map['profile_picture'],
-      specialityId: map['speciality_id'],
+      specialityId: parseSpecialityId(map['speciality_id']),
       bio: map['bio'],
       locationOfWork: map['location_of_work'],
       degree: map['degree'],
@@ -75,9 +102,9 @@ class Doctor extends User {
       residency: map['residency'],
       licenseNumber: map['license_number'],
       licenseDescription: map['license_description'],
-      yearsExperience: map['years_experience'],
+      yearsExperience: parseYearsExperience(map['years_experience']),
       areasOfExpertise: map['areas_of_expertise'],
-      pricePerHour: map['price_per_hour'],
+      pricePerHour: parsePricePerHour(map['price_per_hour']),
       averageRating: map['average_rating']?.toDouble() ?? 0.0,
       reviewsCount: map['reviews_count'] ?? 0,
     );

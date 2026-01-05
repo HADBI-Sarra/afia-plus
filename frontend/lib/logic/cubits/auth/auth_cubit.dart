@@ -32,55 +32,63 @@ class AuthCubit extends Cubit<AuthState> {
 
     final user = result.data!;
 
-    if (user.role == 'doctor') {
-      // Fetch full doctor data
-      final doctorResult = await doctorRepository.getDoctorById(user.userId!);
-      if (doctorResult.state && doctorResult.data != null) {
-        emit(AuthenticatedDoctor(doctorResult.data!));
-      } else {
-        // fallback: create Doctor object from User
-        final doctor = Doctor(
-          userId: user.userId,
-          role: user.role,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          password: user.password,
-          phoneNumber: user.phoneNumber,
-          nin: user.nin,
-          bio: '',
-          locationOfWork: '',
-          degree: '',
-          university: '',
-          certification: '',
-          institution: '',
-          licenseNumber: '',
-          licenseDescription: '',
-          yearsExperience: null,
-          areasOfExpertise: '',
-          pricePerHour: null,
-        );
-        emit(AuthenticatedDoctor(doctor));
-      }
+    // The repository now returns Patient/Doctor objects with full data
+    // from the backend, so we can use them directly
+    if (user is Doctor) {
+      emit(AuthenticatedDoctor(user));
+    } else if (user is Patient) {
+      emit(AuthenticatedPatient(user));
     } else {
-      // Fetch full patient data
-      final patientResult = await patientRepository.getPatientById(user.userId!);
-      if (patientResult.state && patientResult.data != null) {
-        emit(AuthenticatedPatient(patientResult.data!));
+      // Fallback: if somehow we get a basic User object, try to fetch full data
+      if (user.role == 'doctor') {
+        final doctorResult = await doctorRepository.getDoctorById(user.userId!);
+        if (doctorResult.state && doctorResult.data != null) {
+          emit(AuthenticatedDoctor(doctorResult.data!));
+        } else {
+          // fallback: create Doctor object from User
+          final doctor = Doctor(
+            userId: user.userId,
+            role: user.role,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            password: user.password,
+            phoneNumber: user.phoneNumber,
+            nin: user.nin,
+            bio: '',
+            locationOfWork: '',
+            degree: '',
+            university: '',
+            certification: '',
+            institution: '',
+            licenseNumber: '',
+            licenseDescription: '',
+            yearsExperience: null,
+            areasOfExpertise: '',
+            pricePerHour: null,
+          );
+          emit(AuthenticatedDoctor(doctor));
+        }
       } else {
-        // fallback: create Patient object from User
-        final patient = Patient(
-          userId: user.userId,
-          role: user.role,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          password: user.password,
-          phoneNumber: user.phoneNumber,
-          nin: user.nin,
-          dateOfBirth: '',
-        );
-        emit(AuthenticatedPatient(patient));
+        // Fetch full patient data
+        final patientResult = await patientRepository.getPatientById(user.userId!);
+        if (patientResult.state && patientResult.data != null) {
+          emit(AuthenticatedPatient(patientResult.data!));
+        } else {
+          // fallback: create Patient object from User
+          final patient = Patient(
+            userId: user.userId,
+            role: user.role,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            password: user.password,
+            phoneNumber: user.phoneNumber,
+            nin: user.nin,
+            dateOfBirth: '',
+          );
+          emit(AuthenticatedPatient(patient));
+        }
       }
     }
   }
