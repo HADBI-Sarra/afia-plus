@@ -1,4 +1,4 @@
-enum SignupStep { account, personal, professional }
+enum SignupStep { account, personal, professional, profilePicture }
 
 class SignupState {
   final SignupStep currentStep; // NEW: track current step
