@@ -852,3 +852,108 @@ export async function me(req, res) {
 export async function logout(req, res) {
   res.json({ message: 'Logged out' });
 }
+
+export async function uploadProfilePicture(req, res) {
+  try {
+    console.log('Upload profile picture - req.file:', req.file ? 'exists' : 'missing');
+    console.log('Upload profile picture - req.user:', req.user ? 'exists' : 'missing');
+    
+    if (!req.file) {
+      console.error('No file in request');
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    if (!req.user || !req.user.id) {
+      console.error('No user in request');
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    // Get user from auth middleware
+    const userId = req.user.id;
+
+    // Get user_id from users table
+    const { data: user, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('user_id')
+      .eq('auth_uid', userId)
+      .single();
+
+    if (userError || !user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate unique filename
+    const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
+    const fileName = `${user.user_id}_${Date.now()}.${fileExtension}`;
+    const filePath = `profile-pictures/${fileName}`;
+
+    // Convert buffer to base64 or use buffer directly
+    const fileBuffer = req.file.buffer;
+
+    // Determine content type from file extension (more reliable than mimetype from mobile)
+    const contentTypeMap = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'bmp': 'image/bmp'
+    };
+    const contentType = contentTypeMap[fileExtension] || req.file.mimetype || 'image/jpeg';
+
+    console.log('Uploading file - extension:', fileExtension, 'contentType:', contentType, 'original mimetype:', req.file.mimetype);
+
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      .from('profile-pictures')
+      .upload(filePath, fileBuffer, {
+        contentType: contentType,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      return res.status(500).json({ 
+        message: 'Failed to upload profile picture: ' + uploadError.message 
+      });
+    }
+
+    // Get public URL
+    const { data: urlData } = supabaseAdmin.storage
+      .from('profile-pictures')
+      .getPublicUrl(filePath);
+
+    const profilePictureUrl = urlData.publicUrl;
+
+    // Update user record with profile picture URL
+    const { error: updateError } = await supabaseAdmin
+      .from('users')
+      .update({ profile_picture: profilePictureUrl })
+      .eq('user_id', user.user_id);
+
+    if (updateError) {
+      console.error('Update error:', updateError);
+      // Try to delete the uploaded file
+      await supabaseAdmin.storage
+        .from('profile-pictures')
+        .remove([filePath]);
+      
+      return res.status(500).json({ 
+        message: 'Failed to update user profile: ' + updateError.message 
+      });
+    }
+
+    res.status(200).json({
+      message: 'Profile picture uploaded successfully',
+      profile_picture_url: profilePictureUrl,
+    });
+  } catch (error) {
+    console.error('Upload profile picture error:', error);
+    // Ensure we always return JSON
+    if (!res.headersSent) {
+      res.status(500).json({ 
+        message: 'Internal server error: ' + (error.message || 'Unknown error')
+      });
+    }
+  }
+}

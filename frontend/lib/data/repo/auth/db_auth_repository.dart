@@ -244,4 +244,38 @@ class DbAuthRepository implements AuthRepository {
       return ReturnResult(state: false, message: 'Failed to fetch current user: $e');
     }
   }
+
+  @override
+  Future<ReturnResult<String>> uploadProfilePicture(String imagePath) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getInt(prefCurrentUserId);
+      if (userId == null) {
+        return ReturnResult(
+          state: false,
+          message: 'Not authenticated',
+        );
+      }
+
+      // For local DB, we just store the file path
+      // In a real app, you might want to copy the file to a specific directory
+      await db.update(
+        usersTable,
+        {'profile_picture': imagePath},
+        where: 'user_id = ?',
+        whereArgs: [userId],
+      );
+
+      return ReturnResult(
+        state: true,
+        message: 'Profile picture saved successfully',
+        data: imagePath,
+      );
+    } catch (e) {
+      return ReturnResult(
+        state: false,
+        message: 'Failed to save profile picture: ${e.toString()}',
+      );
+    }
+  }
 }

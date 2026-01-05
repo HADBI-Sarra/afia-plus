@@ -111,6 +111,9 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
         setState(() {
           _selectedImage = File(image.path);
         });
+        // Store the path in cubit
+        final cubit = context.read<SignupCubit>();
+        cubit.setProfilePicture(image.path);
       }
     } catch (e) {
       if (mounted) {
@@ -128,23 +131,58 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     _completeSignup();
   }
 
-  void _completeSignup() {
+  Future<void> _completeSignup() async {
     final cubit = context.read<SignupCubit>();
     final state = cubit.state;
     
-    // For now, just complete the signup without uploading the image
-    // The image will be handled later when backend integration is added
+    // Upload profile picture if one was selected
+    if (_selectedImage != null) {
+      try {
+        // Use the actual file path from the selected image
+        final imagePath = _selectedImage!.path;
+        print('Uploading profile picture from path: $imagePath');
+        
+        final result = await cubit.uploadProfilePicture(imagePath);
+        
+        // Check if upload was successful
+        if (result.state && result.data != null) {
+          print('Profile picture uploaded successfully: ${result.data}');
+          // Upload successful, proceed to home
+        } else {
+          // Show error but still allow navigation
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result.message),
+                backgroundColor: Colors.orange,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        print('Exception during upload: $e');
+        // Show error but still allow navigation
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error uploading profile picture: $e'),
+              backgroundColor: Colors.orange,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    }
+    
+    // Navigate to home screen
     if (state.isPatient) {
-      // Patient signup was already completed in patient_personal_data.dart
-      // Just navigate to home
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
         (route) => false,
       );
     } else {
-      // Doctor signup was already completed in professional_info.dart
-      // Just navigate to home
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
