@@ -147,13 +147,35 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
     final cubit = context.read<SignupCubit>();
 
     return BlocListener<SignupCubit, SignupState>(
-      listenWhen: (prev, curr) => prev.message != curr.message,
+      listenWhen: (prev, curr) => prev.message != curr.message || prev.currentStep != curr.currentStep,
       listener: (context, state) async {
-        // Show snackbar for error messages only (exclude success messages and email already in use)
+        // Navigate back to account screen if step changes to account (e.g., email error)
+        // For professional screen, we need to pop twice (professional -> personal -> account)
+        if (state.currentStep == SignupStep.account) {
+          // Show error snackbar before navigating back
+          if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Signup successful') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 4),
+              ),
+            );
+          }
+          // Pop twice to get back to account screen: professional -> personal -> account
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context); // Pop professional -> personal
+          }
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context); // Pop personal -> account
+          }
+          return;
+        }
+        
+        // Show snackbar for error messages only (exclude success messages)
         if (state.message.isNotEmpty && 
             state.message != 'Success' && 
-            state.message != 'Signup successful' &&
-            state.message != 'Email already in use') {
+            state.message != 'Signup successful') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),

@@ -438,6 +438,17 @@ export async function signup(req, res) {
     });
 
   if (error) {
+    let msg = error.message?.toLowerCase() || '';
+    if (
+      msg.includes('already') && (
+        msg.includes('email') ||
+        msg.includes('registered') ||
+        msg.includes('exists') ||
+        msg.includes('duplicate')
+      )
+    ) {
+      return res.status(400).json({ message: 'Email already in use' });
+    }
     return res.status(400).json({ message: error.message });
   }
 

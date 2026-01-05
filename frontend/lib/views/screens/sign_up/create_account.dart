@@ -52,13 +52,13 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return BlocListener<SignupCubit, SignupState>(
       listenWhen: (prev, curr) => prev.currentStep != curr.currentStep || prev.message != curr.message,
       listener: (context, state) {
-        // Show snackbar for error messages (except email already in use, which shows as errorText)
-        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep' && state.message != 'Email already in use') {
+        // Show snackbar for all error messages (including email already in use)
+        if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
               backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
+              duration: const Duration(seconds: 4),
             ),
           );
         }

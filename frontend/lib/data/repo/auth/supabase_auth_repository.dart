@@ -209,14 +209,24 @@ class SupabaseAuthRepository implements AuthRepository {
         body,
       );
 
-      final data = jsonDecode(response.body);
-
+      // Handle non-200 status codes
       if (response.statusCode != 200) {
+        String errorMessage = 'Signup failed';
+        try {
+          final data = jsonDecode(response.body);
+          errorMessage = data['message'] ?? errorMessage;
+        } catch (e) {
+          // If JSON decode fails, try to use response body as string
+          errorMessage = response.body.isNotEmpty ? response.body : errorMessage;
+        }
+        print('Signup error: $errorMessage (status: ${response.statusCode})');
         return ReturnResult(
           state: false,
-          message: data['message'] ?? 'Signup failed',
+          message: errorMessage,
         );
       }
+
+      final data = jsonDecode(response.body);
 
       // Backend returns { user: {...}, access_token: ..., refresh_token: ... }
       // Store the access token if provided (user is automatically logged in after signup)
