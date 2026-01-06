@@ -68,7 +68,7 @@ class SupabaseAuthRepository implements AuthRepository {
           message: 'Login failed: No access token received',
         );
       }
-      _tokenProvider.setToken(accessToken);
+      await _tokenProvider.setToken(accessToken);
       print('Token stored successfully');
 
       // Backend now returns user data directly in the login response
@@ -113,7 +113,7 @@ class SupabaseAuthRepository implements AuthRepository {
       );
 
       if (meResponse.statusCode != 200) {
-        _tokenProvider.clear();
+        await _tokenProvider.clear();
         return ReturnResult(
           state: false,
           message: 'Failed to fetch user profile',
@@ -232,7 +232,7 @@ class SupabaseAuthRepository implements AuthRepository {
       // Store the access token if provided (user is automatically logged in after signup)
       final accessToken = data['access_token'];
       if (accessToken != null && accessToken is String && accessToken.isNotEmpty) {
-        _tokenProvider.setToken(accessToken);
+        await _tokenProvider.setToken(accessToken);
       } else {
         // If no token was returned, try to login automatically as fallback
         try {
@@ -285,7 +285,7 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<ReturnResult> logout() async {
     // 🔥 CLEAR TOKEN GLOBALLY
-    _tokenProvider.clear();
+    await _tokenProvider.clear();
 
     return ReturnResult(
       state: true,
@@ -312,7 +312,7 @@ class SupabaseAuthRepository implements AuthRepository {
       );
 
       if (response.statusCode != 200) {
-        _tokenProvider.clear();
+        await _tokenProvider.clear();
         return ReturnResult(
           state: false,
           message: 'Session expired',
