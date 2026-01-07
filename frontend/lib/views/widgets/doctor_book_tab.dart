@@ -108,51 +108,36 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
                   orElse: () =>
                       AvailabilityModel(date: DateTime.now(), times: []),
                 );
-<<<<<<< HEAD
 
-                // If selected day is today, filter out past time slots
-                final isToday = selectedDate.isAtSameMomentAs(todayOnly);
-                if (isToday) {
-                  final currentTime = TimeOfDay.now();
-                  final currentMinutes =
-                      currentTime.hour * 60 + currentTime.minute;
-
-                  return matching.times.where((timeString) {
-                    // Parse time string (e.g., "18:00")
-                    final parts = timeString.split(':');
-                    if (parts.length != 2) return true;
-                    final hour = int.tryParse(parts[0]) ?? 0;
-                    final minute = int.tryParse(parts[1]) ?? 0;
-                    final slotMinutes = hour * 60 + minute;
-
-                    // Only show slots that are in the future
-                    return slotMinutes > currentMinutes;
-                  }).toList();
-                }
-
-=======
-                
                 // Filter out past time slots if the selected day is today
                 final now = DateTime.now();
                 final today = DateTime(now.year, now.month, now.day);
                 final isToday = selectedDate.isAtSameMomentAs(today);
-                
+
                 if (isToday) {
                   // Filter out times that have already passed
                   return matching.times.where((timeString) {
                     try {
                       // Parse time string (format: "HH:MM" or "H:MM")
                       final timeParts = timeString.split(':');
-                      if (timeParts.length != 2) return true; // Keep if format is unexpected
-                      
+                      if (timeParts.length != 2)
+                        return true; // Keep if format is unexpected
+
                       final hour = int.tryParse(timeParts[0]);
                       final minute = int.tryParse(timeParts[1]);
-                      
-                      if (hour == null || minute == null) return true; // Keep if parsing fails
-                      
+
+                      if (hour == null || minute == null)
+                        return true; // Keep if parsing fails
+
                       // Create DateTime for the slot time today
-                      final slotTime = DateTime(now.year, now.month, now.day, hour, minute);
-                      
+                      final slotTime = DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        hour,
+                        minute,
+                      );
+
                       // Keep only if slot time is in the future (not in the past)
                       // If it's exactly the current time, we remove it as the slot has started
                       return slotTime.isAfter(now);
@@ -162,8 +147,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
                     }
                   }).toList();
                 }
-                
->>>>>>> 15a72efebdc315570cae29f662caaf8a949252e5
+
                 return matching.times;
               })()
             : [];
