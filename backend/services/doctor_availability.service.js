@@ -16,6 +16,7 @@ export class DoctorAvailabilityService {
             .from('doctor_availability')
             .select('*')
             .eq('doctor_id', doctorId)
+            .eq('status', 'free')
             .order('available_date', { ascending: true })
             .order('start_time', { ascending: true });
 

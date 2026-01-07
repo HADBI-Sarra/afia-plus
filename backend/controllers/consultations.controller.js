@@ -1,5 +1,6 @@
 import { ConsultationsService } from '../services/consultations.service.js';
 import { sendResponse, sendError } from '../utils/response.js';
+import { logger } from '../utils/logger.js';
 
 /**
  * Consultations Controller
@@ -21,7 +22,7 @@ export async function getPatientConsultations(req, res) {
         const consultations = await ConsultationsService.getPatientConsultations(patientId);
         return sendResponse(res, 200, 'Patient consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching patient consultations:', error);
+        logger.error('Error fetching patient consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -33,15 +34,17 @@ export async function getPatientConsultations(req, res) {
 export async function getConfirmedPatientConsultations(req, res) {
     try {
         const { patientId } = req.params;
+        logger.log('📋 Getting confirmed consultations for patient:', patientId);
 
         if (!patientId) {
             return sendError(res, 400, 'Patient ID is required');
         }
 
         const consultations = await ConsultationsService.getConfirmedPatientConsultations(patientId);
+        logger.log('✅ Found consultations:', consultations?.length || 0);
         return sendResponse(res, 200, 'Confirmed consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching confirmed consultations:', error);
+        logger.error('❌ Error fetching confirmed consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -53,15 +56,17 @@ export async function getConfirmedPatientConsultations(req, res) {
 export async function getNotConfirmedPatientConsultations(req, res) {
     try {
         const { patientId } = req.params;
+        logger.log('📋 Getting pending consultations for patient:', patientId);
 
         if (!patientId) {
             return sendError(res, 400, 'Patient ID is required');
         }
 
         const consultations = await ConsultationsService.getNotConfirmedPatientConsultations(patientId);
+        logger.log('✅ Found pending consultations:', consultations?.length || 0);
         return sendResponse(res, 200, 'Pending consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching pending consultations:', error);
+        logger.error('❌ Error fetching pending consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -81,7 +86,7 @@ export async function getDoctorConsultations(req, res) {
         const consultations = await ConsultationsService.getDoctorConsultations(doctorId);
         return sendResponse(res, 200, 'Doctor consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching doctor consultations:', error);
+        logger.error('Error fetching doctor consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -93,15 +98,18 @@ export async function getDoctorConsultations(req, res) {
 export async function getUpcomingDoctorConsultations(req, res) {
     try {
         const { doctorId } = req.params;
+        logger.log('📋 Getting upcoming consultations for doctor:', doctorId);
 
         if (!doctorId) {
             return sendError(res, 400, 'Doctor ID is required');
         }
 
         const consultations = await ConsultationsService.getUpcomingDoctorConsultations(doctorId);
+        logger.log('✅ Found consultations:', consultations?.length || 0);
+        logger.log('📄 Data:', JSON.stringify(consultations, null, 2));
         return sendResponse(res, 200, 'Upcoming consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching upcoming consultations:', error);
+        logger.error('❌ Error fetching upcoming consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -121,7 +129,7 @@ export async function getPastDoctorConsultations(req, res) {
         const consultations = await ConsultationsService.getPastDoctorConsultations(doctorId);
         return sendResponse(res, 200, 'Past consultations retrieved successfully', consultations);
     } catch (error) {
-        console.error('Error fetching past consultations:', error);
+        logger.error('Error fetching past consultations:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -133,15 +141,22 @@ export async function getPastDoctorConsultations(req, res) {
 export async function getPatientPrescriptions(req, res) {
     try {
         const { patientId } = req.params;
+        logger.log('📋 Getting prescriptions for patient:', patientId);
 
         if (!patientId) {
             return sendError(res, 400, 'Patient ID is required');
         }
 
         const prescriptions = await ConsultationsService.getPatientPrescriptions(patientId);
+        logger.log('✅ Found prescriptions:', prescriptions?.length || 0);
+        if (prescriptions && prescriptions.length > 0) {
+            prescriptions.forEach(p => {
+                logger.log(`  - Consultation ${p.consultation_id}: ${p.prescription}`);
+            });
+        }
         return sendResponse(res, 200, 'Prescriptions retrieved successfully', prescriptions);
     } catch (error) {
-        console.error('Error fetching prescriptions:', error);
+        logger.error('❌ Error fetching prescriptions:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -153,7 +168,16 @@ export async function getPatientPrescriptions(req, res) {
  */
 export async function bookConsultation(req, res) {
     try {
+        logger.log('📅 Booking consultation request received:');
+        logger.log('  Body:', req.body);
+
         const { patientId, doctorId, availabilityId, consultationDate, startTime } = req.body;
+
+        logger.log('  Patient ID:', patientId);
+        logger.log('  Doctor ID:', doctorId);
+        logger.log('  Availability ID:', availabilityId);
+        logger.log('  Date:', consultationDate);
+        logger.log('  Time:', startTime);
 
         const consultation = await ConsultationsService.bookConsultation(
             patientId,
@@ -163,9 +187,10 @@ export async function bookConsultation(req, res) {
             startTime
         );
 
+        logger.log('✅ Consultation booked successfully:', consultation);
         return sendResponse(res, 201, 'Consultation booked successfully', consultation);
     } catch (error) {
-        console.error('Error booking consultation:', error);
+        logger.error('❌ Error booking consultation:', error.message);
         return sendError(res, 500, error.message);
     }
 }
@@ -187,7 +212,7 @@ export async function updateConsultationStatus(req, res) {
         const consultation = await ConsultationsService.updateConsultationStatus(id, status);
         return sendResponse(res, 200, 'Consultation status updated successfully', consultation);
     } catch (error) {
-        console.error('Error updating consultation status:', error);
+        logger.error('Error updating consultation status:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -203,7 +228,7 @@ export async function cancelConsultation(req, res) {
         const consultation = await ConsultationsService.cancelConsultation(id);
         return sendResponse(res, 200, 'Consultation cancelled successfully', consultation);
     } catch (error) {
-        console.error('Error cancelling consultation:', error);
+        logger.error('Error cancelling consultation:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -219,7 +244,7 @@ export async function completeConsultation(req, res) {
         const consultation = await ConsultationsService.completeConsultation(id);
         return sendResponse(res, 200, 'Consultation completed successfully', consultation);
     } catch (error) {
-        console.error('Error completing consultation:', error);
+        logger.error('Error completing consultation:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -241,7 +266,7 @@ export async function addPrescription(req, res) {
         const consultation = await ConsultationsService.addPrescription(id, prescription);
         return sendResponse(res, 200, 'Prescription added successfully', consultation);
     } catch (error) {
-        console.error('Error adding prescription:', error);
+        logger.error('Error adding prescription:', error);
         return sendError(res, 500, error.message);
     }
 }
@@ -257,7 +282,7 @@ export async function deleteConsultation(req, res) {
         await ConsultationsService.deleteConsultation(id);
         return sendResponse(res, 200, 'Consultation deleted successfully', {});
     } catch (error) {
-        console.error('Error deleting consultation:', error);
+        logger.error('Error deleting consultation:', error);
         return sendError(res, 500, error.message);
     }
 }
