@@ -37,3 +37,32 @@ export async function getMe(req, res) {
   });
 }
 
+// Returns all specialities for popular specializations on home
+export async function getSpecialities(req, res) {
+  // Get all specialities
+  const { data, error } = await supabaseAdmin
+    .from('specialities')
+    .select('speciality_id, speciality_name');
+  if (error) {
+    return res.status(500).json({ message: error.message });
+  }
+  res.json(data ?? []);
+}
+
+// Returns all doctors for a given speciality (for home specializations section)
+export async function getDoctorsBySpeciality(req, res) {
+  const { speciality_id } = req.query;
+  if (!speciality_id) {
+    return res.status(400).json({ message: 'Missing speciality_id' });
+  }
+  const { data, error } = await supabaseAdmin
+    .from('doctors')
+    .select('doctor_id, speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count, user:user_id(firstname, lastname, email, phone_number, profile_picture)')
+    .eq('speciality_id', speciality_id);
+
+  if (error) {
+    return res.status(500).json({ message: error.message });
+  }
+  res.json(data ?? []);
+}
+

@@ -16,6 +16,9 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  bool _imageError = false;
+  String? _lastProfilePictureUrl;
+
   // Show logout confirmation dialog
   void _showLogoutConfirmationDialog(BuildContext context) {
     showDialog(
@@ -127,11 +130,46 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ? patient.dateOfBirth
                       : "DOB not set";
 
-                  if (patient.profilePicture != null &&
-                      patient.profilePicture!.isNotEmpty) {
+                  // Display profile picture if available
+                  final profilePictureUrl = patient.profilePicture;
+                  
+                  // Reset error state if profile picture URL changes
+                  if (_lastProfilePictureUrl != profilePictureUrl) {
+                    _imageError = false;
+                    _lastProfilePictureUrl = profilePictureUrl;
+                  }
+                  
+                  if (profilePictureUrl != null &&
+                      profilePictureUrl.isNotEmpty &&
+                      profilePictureUrl.trim().isNotEmpty &&
+                      !_imageError) {
+                    try {
+                      profilePic = CircleAvatar(
+                        radius: 50,
+                        backgroundColor: greyColor.withOpacity(0.3),
+                        backgroundImage: NetworkImage(profilePictureUrl),
+                        onBackgroundImageError: (exception, stackTrace) {
+                          // If image fails to load, use default icon
+                          if (mounted && _lastProfilePictureUrl == profilePictureUrl) {
+                            setState(() {
+                              _imageError = true;
+                            });
+                          }
+                        },
+                      );
+                    } catch (e) {
+                      // If there's an error creating the NetworkImage, use default
+                      profilePic = CircleAvatar(
+                        radius: 50,
+                        backgroundColor: greyColor.withOpacity(0.3),
+                        child: const Icon(Icons.person, size: 50, color: whiteColor),
+                      );
+                    }
+                  } else {
                     profilePic = CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(patient.profilePicture!),
+                      backgroundColor: greyColor.withOpacity(0.3),
+                      child: const Icon(Icons.person, size: 50, color: whiteColor),
                     );
                   }
                 }
