@@ -68,6 +68,38 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
                   },
                   orElse: () => AvailabilityModel(date: DateTime.now(), times: []),
                 );
+                
+                // Filter out past time slots if the selected day is today
+                final now = DateTime.now();
+                final today = DateTime(now.year, now.month, now.day);
+                final isToday = selectedDate.isAtSameMomentAs(today);
+                
+                if (isToday) {
+                  // Filter out times that have already passed
+                  return matching.times.where((timeString) {
+                    try {
+                      // Parse time string (format: "HH:MM" or "H:MM")
+                      final timeParts = timeString.split(':');
+                      if (timeParts.length != 2) return true; // Keep if format is unexpected
+                      
+                      final hour = int.tryParse(timeParts[0]);
+                      final minute = int.tryParse(timeParts[1]);
+                      
+                      if (hour == null || minute == null) return true; // Keep if parsing fails
+                      
+                      // Create DateTime for the slot time today
+                      final slotTime = DateTime(now.year, now.month, now.day, hour, minute);
+                      
+                      // Keep only if slot time is in the future (not in the past)
+                      // If it's exactly the current time, we remove it as the slot has started
+                      return slotTime.isAfter(now);
+                    } catch (e) {
+                      // If parsing fails, keep the time slot
+                      return true;
+                    }
+                  }).toList();
+                }
+                
                 return matching.times;
               })()
             : [];
