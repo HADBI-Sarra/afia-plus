@@ -23,13 +23,8 @@ class SupabaseDoctorRepository implements DoctorRepository {
   @override
   Future<ReturnResult<Doctor?>> getDoctorById(int id) async {
     try {
-      _ensureAuthenticated();
-
-      // ID ignored — backend derives doctor from token
-      final response = await ApiClient.get(
-        '/doctors/me',
-        token: _token,
-      );
+      // For patient view: fetch doctor profile by id (token optional)
+      final response = await ApiClient.get('/doctors/profile/$id', token: _token);
 
       if (response.statusCode != 200) {
         return ReturnResult(
