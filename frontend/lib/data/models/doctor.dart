@@ -85,12 +85,13 @@ class Doctor extends User {
     return Doctor(
       userId: map['user_id'],
       role: map['role'] ?? 'doctor',
-      firstname: map['firstname'],
-      lastname: map['lastname'],
-      email: map['email'],
-      password: map['password'],
-      phoneNumber: map['phone_number'],
-      nin: map['nin'],
+      firstname: map['firstname'] ?? '',
+      lastname: map['lastname'] ?? '',
+      email: map['email'] ?? '',
+      // Password is not returned by backend for safety; keep empty string if missing
+      password: map['password'] ?? '',
+      phoneNumber: map['phone_number'] ?? '',
+      nin: map['nin'] ?? '',
       profilePicture: map['profile_picture'],
       specialityId: parseSpecialityId(map['speciality_id']),
       bio: map['bio'],
@@ -105,7 +106,7 @@ class Doctor extends User {
       yearsExperience: parseYearsExperience(map['years_experience']),
       areasOfExpertise: map['areas_of_expertise'],
       pricePerHour: parsePricePerHour(map['price_per_hour']),
-      averageRating: map['average_rating']?.toDouble() ?? 0.0,
+      averageRating: (map['average_rating'] as num?)?.toDouble() ?? 0.0,
       reviewsCount: map['reviews_count'] ?? 0,
     );
   }

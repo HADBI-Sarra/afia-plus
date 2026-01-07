@@ -177,3 +177,65 @@ export async function getDoctorsBySpeciality(req, res) {
   }
 }
 
+// Returns doctor profile info by doctor_id (used for patient viewing doctor profile)
+export async function getDoctorProfileById(req, res) {
+  const { doctor_id } = req.params;
+  const doctorIdInt = parseInt(doctor_id, 10);
+  if (isNaN(doctorIdInt)) {
+    return res.status(400).json({ message: 'Invalid doctor_id' });
+  }
+
+  try {
+    // Fetch user info (avoid returning password)
+    const { data: user, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('user_id, role, firstname, lastname, email, phone_number, nin, profile_picture')
+      .eq('user_id', doctorIdInt)
+      .maybeSingle();
+
+    if (userError) {
+      return res.status(500).json({ message: userError.message });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    // Fetch doctor details
+    const { data: doctor, error: doctorError } = await supabaseAdmin
+      .from('doctors')
+      .select('speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count')
+      .eq('doctor_id', doctorIdInt)
+      .maybeSingle();
+
+    if (doctorError) {
+      return res.status(500).json({ message: doctorError.message });
+    }
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    return res.json({
+      ...user,
+      speciality_id: doctor?.speciality_id ?? null,
+      bio: doctor?.bio ?? null,
+      location_of_work: doctor?.location_of_work ?? null,
+      degree: doctor?.degree ?? null,
+      university: doctor?.university ?? null,
+      certification: doctor?.certification ?? null,
+      institution: doctor?.institution ?? null,
+      residency: doctor?.residency ?? null,
+      license_number: doctor?.license_number ?? null,
+      license_description: doctor?.license_description ?? null,
+      years_experience: doctor?.years_experience ?? null,
+      areas_of_expertise: doctor?.areas_of_expertise ?? null,
+      price_per_hour: doctor?.price_per_hour ?? null,
+      average_rating: doctor?.average_rating ?? 0,
+      reviews_count: doctor?.reviews_count ?? 0,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
+
