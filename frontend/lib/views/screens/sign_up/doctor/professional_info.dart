@@ -14,6 +14,8 @@ import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../homescreen/doctor_home_screen.dart';
 import '../profile_picture.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class ProfessionalInfoScreen extends StatefulWidget {
   const ProfessionalInfoScreen({super.key});
@@ -108,9 +110,10 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         setState(() {
           _loadingSpecialities = false;
-          _specialityError = 'Failed to load specialities';
+          _specialityError = 'failedToLoadSpecialities';
         });
       }
     }
@@ -157,7 +160,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'Signup successful') {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(getLocalizedError(state.message, context) ?? state.message),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 4),
               ),
@@ -179,7 +182,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
             state.message != 'Signup successful') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(getLocalizedError(state.message, context) ?? state.message),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
@@ -240,29 +243,31 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Professional info',
+                              Text(AppLocalizations.of(context)!.professionalInfo,
                                   style: Theme.of(context).textTheme.titleLarge),
                               const SizedBox(height: 10),
-                              const Text(
-                                'Provide your professional details to help patients learn about your qualifications and expertise.',
+                              Text(
+                                AppLocalizations.of(context)!.provideProfessionalDetails,
                               ),
                               const SizedBox(height: 20),
 
                               // ========== SPECIALITY DROPDOWN ==========
-                              IconTitle(Icons.local_hospital, 'Main speciality', context),
+                              IconTitle(Icons.local_hospital, AppLocalizations.of(context)!.mainSpeciality, context),
                               const SizedBox(height: 9),
 
                               if (_loadingSpecialities)
                                 const Center(child: CircularProgressIndicator())
 
                               else if (_dbSpecialities.isEmpty)
-                                const Text('No specialities found')
+                                Text(_specialityError != null 
+                                    ? getLocalizedError(_specialityError, context) ?? AppLocalizations.of(context)!.noSpecialitiesFound
+                                    : AppLocalizations.of(context)!.noSpecialitiesFound)
 
                               else
                                 LabeledDropdownFormField<Speciality>(
-                                  label: 'Speciality',
+                                  label: AppLocalizations.of(context)!.speciality,
                                   greyLabel: true,
-                                  hint: 'Select your speciality',
+                                  hint: AppLocalizations.of(context)!.selectYourSpeciality,
                                   items: _dbSpecialities,
                                   itemLabel: (s) => s.name,
                                   value: _dbSpecialities
@@ -277,7 +282,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
                                       cubit.setSpecialityName(selected.name);
                                     }
                                   },
-                                  errorText: state.specialityError,
+                                  errorText: getLocalizedError(state.specialityError, context),
                                 ),
 
                               const SizedBox(height: 20),
@@ -303,142 +308,140 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
 
   Widget _buildAllFields(
       BuildContext context, SignupState state, SignupCubit cubit) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IconTitle(Icons.info, 'General information', context),
+        IconTitle(Icons.info, l10n.generalInformation, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Bio / Specialization',
+          label: l10n.bioSpecialization,
           greyLabel: true,
-          hint:
-              'Describe your medical background, specialties, and philosophy of care',
+          hint: l10n.describeMedicalBackground,
           controller: _bioController,
-          errorText: state.bioError,
+          errorText: getLocalizedError(state.bioError, context),
           minlines: 3,
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.location_on, 'Current working place', context),
+        IconTitle(Icons.location_on, l10n.currentWorkingPlace, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Name / Address',
+          label: l10n.nameAddress,
           greyLabel: true,
-          hint: 'e.g. Nour Clinic, Hydra, Algiers',
+          hint: l10n.workingPlaceExample,
           controller: _workingPlaceController,
-          errorText: state.workingPlaceError,
+          errorText: getLocalizedError(state.workingPlaceError, context),
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.school, 'Education', context),
+        IconTitle(Icons.school, l10n.education, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Degree',
+          label: l10n.degree,
           greyLabel: true,
-          hint: 'e.g. Doctor of Medicine (MD)',
+          hint: l10n.degreeExample,
           controller: _degreeController,
-          errorText: state.degreeError,
+          errorText: getLocalizedError(state.degreeError, context),
           textCapitalization: TextCapitalization.words,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
-          label: 'University',
+          label: l10n.university,
           greyLabel: true,
-          hint: 'e.g. University of Algiers 1',
+          hint: l10n.universityExample,
           controller: _universityController,
-          errorText: state.universityError,
+          errorText: getLocalizedError(state.universityError, context),
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.card_membership, 'Certification', context),
+        IconTitle(Icons.card_membership, l10n.certification, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Certification (Optional)',
+          label: l10n.certificationOptional,
           greyLabel: true,
-          hint: 'e.g. Specialist in Cardiology',
+          hint: l10n.certificationExample,
           controller: _certificationController,
-          errorText: state.certificationError,
+          errorText: getLocalizedError(state.certificationError, context),
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
-          label: 'Institution (Optional)',
+          label: l10n.institutionOptional,
           greyLabel: true,
-          hint: 'e.g. University of Oran 1',
+          hint: l10n.institutionExample,
           controller: _certificationInstitutionController,
-          errorText: state.certificationInstitutionError,
+          errorText: getLocalizedError(state.certificationInstitutionError, context),
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.medical_services, 'Training', context),
+        IconTitle(Icons.medical_services, l10n.training, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Residency / Fellowship details (Optional)',
+          label: l10n.residencyFellowshipOptional,
           greyLabel: true,
-          hint:
-              'e.g. Residency in internal Medicine, Fellowship in Cardiology',
+          hint: l10n.trainingExample,
           controller: _trainingController,
-          errorText: state.trainingError,
+          errorText: getLocalizedError(state.trainingError, context),
           minlines: 2,
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.verified, 'Licensure', context),
+        IconTitle(Icons.verified, l10n.licensure, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'License number',
+          label: l10n.licenseNumber,
           greyLabel: true,
-          hint: 'e.g. 12345',
+          hint: l10n.licenseNumberExample,
           controller: _licenceNumberController,
-          errorText: state.licenceNumberError,
+          errorText: getLocalizedError(state.licenceNumberError, context),
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
-          label: 'Description (Optional)',
+          label: l10n.descriptionOptional,
           greyLabel: true,
-          hint: 'e.g. Authorized to practice medicine in Algeria',
+          hint: l10n.licenseDescriptionExample,
           controller: _licenceDescController,
-          errorText: state.licenceDescError,
+          errorText: getLocalizedError(state.licenceDescError, context),
           minlines: 2,
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.history, 'Experience', context),
+        IconTitle(Icons.history, l10n.experience, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Years of practice',
+          label: l10n.yearsOfPractice,
           greyLabel: true,
-          hint: 'e.g. 16',
+          hint: l10n.yearsOfPracticeExample,
           controller: _yearsOfExperienceController,
-          errorText: state.yearsOfExperienceError,
+          errorText: getLocalizedError(state.yearsOfExperienceError, context),
         ),
         const SizedBox(height: 12),
         LabeledTextFormField(
-          label: 'Specific areas of expertise',
+          label: l10n.specificAreasOfExpertise,
           greyLabel: true,
-          hint:
-              'e.g. Cardiac imaging, hypertension, heart failure management',
+          hint: l10n.areasOfExpertiseExample,
           controller: _areasOfExperienceController,
-          errorText: state.areasOfExperienceError,
+          errorText: getLocalizedError(state.areasOfExperienceError, context),
           minlines: 2,
           textCapitalization: TextCapitalization.sentences,
         ),
         const SizedBox(height: 20),
 
-        IconTitle(Icons.payments, 'Consultation fees', context),
+        IconTitle(Icons.payments, l10n.consultationFees, context),
         const SizedBox(height: 9),
         LabeledTextFormField(
-          label: 'Price for 1-hour consultation',
+          label: l10n.priceForOneHourConsultation,
           greyLabel: true,
-          hint: 'e.g. 1000 DA',
+          hint: l10n.consultationPriceExample,
           controller: _consultationPriceController,
-          errorText: state.consultationPriceError,
+          errorText: getLocalizedError(state.consultationPriceError, context),
           keyboardType: TextInputType.number,
         ),
         const SizedBox(height: 24),
@@ -463,7 +466,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
             const SizedBox(width: 6),
             Flexible(
               child: Text(
-                'I agree to the Terms and Conditions',
+                l10n.iAgreeToTermsAndConditions,
                 style: Theme.of(context).textTheme.bodyMedium,
                 softWrap: true,
               ),
@@ -494,7 +497,7 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           style: greenButtonStyle,
           child: state.isLoading
               ? const CircularProgressIndicator(color: Colors.white)
-              : Text('Create an account', style: whiteButtonText),
+              : Text(l10n.createAnAccount, style: whiteButtonText),
         ),
       ],
     );

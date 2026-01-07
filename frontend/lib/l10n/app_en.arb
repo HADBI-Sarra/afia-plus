@@ -317,6 +317,575 @@
         "type": "String"
       }
     }
+  },
+  "forgotPassword": "Forgot password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+  "areYouNewHere": "Are you new here? ",
+  "@areYouNewHere": {
+    "description": "Text asking if user is new, shown before create account link"
+  },
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "Create account link text"
+  },
+  "createAnAccount": "Create an account",
+  "@createAnAccount": {
+    "description": "Create account screen title"
+  },
+  "excitedToHaveYouOnBoard": "Excited to have you on board!",
+  "@excitedToHaveYouOnBoard": {
+    "description": "Welcome message on signup screen"
+  },
+  "registerAs": "Register as",
+  "@registerAs": {
+    "description": "Label for role selection on signup"
+  },
+  "doctor": "Doctor",
+  "@doctor": {
+    "description": "Doctor role label"
+  },
+  "patient": "Patient",
+  "@patient": {
+    "description": "Patient role label"
+  },
+  "createPassword": "Create password",
+  "@createPassword": {
+    "description": "Password creation hint text"
+  },
+  "strongPassword": "Strong password",
+  "@strongPassword": {
+    "description": "Message shown when password meets all criteria"
+  },
+  "min8CharactersLength": "Min 8 characters length",
+  "@min8CharactersLength": {
+    "description": "Password requirement: minimum 8 characters"
+  },
+  "min1LowercaseLetter": "Min 1 lowercase letter",
+  "@min1LowercaseLetter": {
+    "description": "Password requirement: minimum 1 lowercase letter"
+  },
+  "min1UppercaseLetter": "Min 1 uppercase letter",
+  "@min1UppercaseLetter": {
+    "description": "Password requirement: minimum 1 uppercase letter"
+  },
+  "min1Digit": "Min 1 digit",
+  "@min1Digit": {
+    "description": "Password requirement: minimum 1 digit"
+  },
+  "min1SpecialCharacter": "Min 1 special character",
+  "@min1SpecialCharacter": {
+    "description": "Password requirement: minimum 1 special character"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "repeatPassword": "Repeat password",
+  "@repeatPassword": {
+    "description": "Confirm password field hint"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "alreadyHaveAnAccount": "Already have an account? ",
+  "@alreadyHaveAnAccount": {
+    "description": "Text asking if user already has account, shown before login link"
+  },
+  "french": "French",
+  "@french": {
+    "description": "French language label"
+  },
+  "dateFormatHint": "DD/MM/YYYY",
+  "@dateFormatHint": {
+    "description": "Date format hint for date of birth"
+  },
+  "phoneNumber": "Phone number",
+  "@phoneNumber": {
+    "description": "Phone number field label"
+  },
+  "phoneNumberExample": "e.g. 05123 45 67 89",
+  "@phoneNumberExample": {
+    "description": "Phone number input hint example"
+  },
+  "nationalIdentificationNumber": "National Identification Number (NIN)",
+  "@nationalIdentificationNumber": {
+    "description": "NIN field label"
+  },
+  "ninExample": "e.g. 198012345678901234",
+  "@ninExample": {
+    "description": "NIN input hint example"
+  },
+  "iAgreeToTermsAndConditions": "I agree to the Terms and Conditions",
+  "@iAgreeToTermsAndConditions": {
+    "description": "Terms and conditions agreement checkbox text"
+  },
+  "providePersonalDataDoctor": "Provide your personal data to offer online consultations quickly and securely.",
+  "@providePersonalDataDoctor": {
+    "description": "Description for doctor personal data form"
+  },
+  "professionalInfo": "Professional info",
+  "@professionalInfo": {
+    "description": "Professional info screen title"
+  },
+  "provideProfessionalDetails": "Provide your professional details to help patients learn about your qualifications and expertise.",
+  "@provideProfessionalDetails": {
+    "description": "Description for professional info form"
+  },
+  "mainSpeciality": "Main speciality",
+  "@mainSpeciality": {
+    "description": "Main speciality section label"
+  },
+  "speciality": "Speciality",
+  "@speciality": {
+    "description": "Speciality dropdown label"
+  },
+  "selectYourSpeciality": "Select your speciality",
+  "@selectYourSpeciality": {
+    "description": "Speciality dropdown hint"
+  },
+  "noSpecialitiesFound": "No specialities found",
+  "@noSpecialitiesFound": {
+    "description": "Message when no specialities are available"
+  },
+  "failedToLoadSpecialities": "Failed to load specialities",
+  "@failedToLoadSpecialities": {
+    "description": "Error message when specialities fail to load"
+  },
+  "generalInformation": "General information",
+  "@generalInformation": {
+    "description": "General information section label"
+  },
+  "bioSpecialization": "Bio / Specialization",
+  "@bioSpecialization": {
+    "description": "Bio field label"
+  },
+  "describeMedicalBackground": "Describe your medical background, specialties, and philosophy of care",
+  "@describeMedicalBackground": {
+    "description": "Bio field hint text"
+  },
+  "currentWorkingPlace": "Current working place",
+  "@currentWorkingPlace": {
+    "description": "Current working place section label"
+  },
+  "nameAddress": "Name / Address",
+  "@nameAddress": {
+    "description": "Working place field label"
+  },
+  "workingPlaceExample": "e.g. Nour Clinic, Hydra, Algiers",
+  "@workingPlaceExample": {
+    "description": "Working place input hint example"
+  },
+  "education": "Education",
+  "@education": {
+    "description": "Education section label"
+  },
+  "degree": "Degree",
+  "@degree": {
+    "description": "Degree field label"
+  },
+  "degreeExample": "e.g. Doctor of Medicine (MD)",
+  "@degreeExample": {
+    "description": "Degree input hint example"
+  },
+  "university": "University",
+  "@university": {
+    "description": "University field label"
+  },
+  "universityExample": "e.g. University of Algiers 1",
+  "@universityExample": {
+    "description": "University input hint example"
+  },
+  "certification": "Certification",
+  "@certification": {
+    "description": "Certification section label"
+  },
+  "certificationOptional": "Certification (Optional)",
+  "@certificationOptional": {
+    "description": "Certification field label"
+  },
+  "certificationExample": "e.g. Specialist in Cardiology",
+  "@certificationExample": {
+    "description": "Certification input hint example"
+  },
+  "institutionOptional": "Institution (Optional)",
+  "@institutionOptional": {
+    "description": "Certification institution field label"
+  },
+  "institutionExample": "e.g. University of Oran 1",
+  "@institutionExample": {
+    "description": "Institution input hint example"
+  },
+  "training": "Training",
+  "@training": {
+    "description": "Training section label"
+  },
+  "residencyFellowshipOptional": "Residency / Fellowship details (Optional)",
+  "@residencyFellowshipOptional": {
+    "description": "Training field label"
+  },
+  "trainingExample": "e.g. Residency in internal Medicine, Fellowship in Cardiology",
+  "@trainingExample": {
+    "description": "Training input hint example"
+  },
+  "licensure": "Licensure",
+  "@licensure": {
+    "description": "Licensure section label"
+  },
+  "licenseNumber": "License number",
+  "@licenseNumber": {
+    "description": "License number field label"
+  },
+  "licenseNumberExample": "e.g. 12345",
+  "@licenseNumberExample": {
+    "description": "License number input hint example"
+  },
+  "descriptionOptional": "Description (Optional)",
+  "@descriptionOptional": {
+    "description": "License description field label"
+  },
+  "licenseDescriptionExample": "e.g. Authorized to practice medicine in Algeria",
+  "@licenseDescriptionExample": {
+    "description": "License description input hint example"
+  },
+  "experience": "Experience",
+  "@experience": {
+    "description": "Experience section label"
+  },
+  "yearsOfPractice": "Years of practice",
+  "@yearsOfPractice": {
+    "description": "Years of experience field label"
+  },
+  "yearsOfPracticeExample": "e.g. 16",
+  "@yearsOfPracticeExample": {
+    "description": "Years of practice input hint example"
+  },
+  "specificAreasOfExpertise": "Specific areas of expertise",
+  "@specificAreasOfExpertise": {
+    "description": "Areas of experience field label"
+  },
+  "areasOfExpertiseExample": "e.g. Cardiac imaging, hypertension, heart failure management",
+  "@areasOfExpertiseExample": {
+    "description": "Areas of expertise input hint example"
+  },
+  "consultationFees": "Consultation fees",
+  "@consultationFees": {
+    "description": "Consultation fees section label"
+  },
+  "priceForOneHourConsultation": "Price for 1-hour consultation",
+  "@priceForOneHourConsultation": {
+    "description": "Consultation price field label"
+  },
+  "consultationPriceExample": "e.g. 1000 DA",
+  "@consultationPriceExample": {
+    "description": "Consultation price input hint example"
+  },
+  "profilePicture": "Profile picture",
+  "@profilePicture": {
+    "description": "Profile picture screen title"
+  },
+  "helpPeopleRecognizeYou": "Help people recognize you with a professional headshot.",
+  "@helpPeopleRecognizeYou": {
+    "description": "Profile picture subtitle for patients"
+  },
+  "helpPatientsRecognizeYou": "Help patients recognize you with a professional headshot.",
+  "@helpPatientsRecognizeYou": {
+    "description": "Profile picture subtitle for doctors"
+  },
+  "moreOptions": "More options",
+  "@moreOptions": {
+    "description": "Image source modal title"
+  },
+  "uploadFromGallery": "Upload from Gallery",
+  "@uploadFromGallery": {
+    "description": "Upload from gallery option"
+  },
+  "takePhoto": "Take photo",
+  "@takePhoto": {
+    "description": "Take photo option"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  "addAProfilePicture": "Add a profile picture",
+  "@addAProfilePicture": {
+    "description": "Add profile picture button text"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button text"
+  },
+  "changePhoto": "Change photo",
+  "@changePhoto": {
+    "description": "Change photo button text"
+  },
+  "errorPickingImage": "Error picking image: {error}",
+  "@errorPickingImage": {
+    "description": "Error message when image picking fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorUploadingProfilePicture": "Error uploading profile picture: {error}",
+  "@errorUploadingProfilePicture": {
+    "description": "Error message when profile picture upload fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorEmailEmpty": "Email cannot be empty",
+  "@errorEmailEmpty": {"description":"Shown when email field is empty"},
+  "errorEmailInvalid": "Enter a valid email",
+  "@errorEmailInvalid": {"description":"Shown when email field has invalid format"},
+  "errorPasswordEmpty": "Password cannot be empty",
+  "@errorPasswordEmpty": {"description":"Shown when password field is empty"},
+  "errorPasswordShort": "Password must be at least 8 characters",
+  "@errorPasswordShort": {"description":"Shown when password length is less than 8"},
+  "errorPasswordWeak": "Weak password",
+  "@errorPasswordWeak": {"description":"Shown when password doesn't pass strength requirements"},
+  "errorPasswordConfirmationEmpty": "Password confirmation cannot be empty",
+  "@errorPasswordConfirmationEmpty": {"description": "Shown when password confirmation field is empty"},
+  "errorPasswordsDoNotMatch": "Passwords do not match",
+  "@errorPasswordsDoNotMatch": {"description": "Shown when password and confirmation do not match"},
+  "errorEmailTaken": "Email already in use",
+  "@errorEmailTaken": {"description": "Shown when an email is already registered"},
+  "errorFirstNameEmpty": "First name cannot be empty",
+  "@errorFirstNameEmpty": {"description": "First name field is empty"},
+  "errorFirstNameInvalid": "Enter a valid first name",
+  "@errorFirstNameInvalid": {"description": "First name field is invalid"},
+  "errorLastNameEmpty": "Last name cannot be empty",
+  "@errorLastNameEmpty": {"description": "Last name field is empty"},
+  "errorLastNameInvalid": "Enter a valid last name",
+  "@errorLastNameInvalid": {"description": "Last name field is invalid"},
+  "errorDobEmpty": "Date of birth cannot be empty",
+  "@errorDobEmpty": {"description": "DOB field empty"},
+  "errorDobMinor": "You must be at least 16 years old to create an account",
+  "@errorDobMinor": {"description": "User under 16"},
+  "errorDobFormat": "Invalid date format (use DD/MM/YYYY)",
+  "@errorDobFormat": {"description": "Date is in wrong format"},
+  "errorPhoneEmpty": "Phone number cannot be empty",
+  "@errorPhoneEmpty": {"description": "Phone field empty"},
+  "errorPhoneInvalid": "Enter a valid phone number in the format +213XXXXXXXXX",
+  "@errorPhoneInvalid": {"description": "Phone field invalid format/message"},
+  "errorNinEmpty": "NIN cannot be empty",
+  "@errorNinEmpty": {"description": "NIN field empty"},
+  "errorNinInvalid": "Enter a valid NIN",
+  "@errorNinInvalid": {"description": "NIN validation failed"},
+  "errorFieldEmpty": "Field cannot be empty",
+  "@errorFieldEmpty": {"description": "General empty field error"},
+  "errorMinCharacters": "Enter at least {num} characters",
+  "@errorMinCharacters": {"description": "Require N min chars","placeholders": {"num": {"type": "int"}}},
+  "errorSpecialityNotSelected": "Please select your speciality",
+  "@errorSpecialityNotSelected": {"description": "When speciality is not selected"},
+  "errorLicenceInvalid": "Enter a valid licence number",
+  "@errorLicenceInvalid": {"description": "Licence number is invalid"},
+  "errorYearsInvalid": "Enter a valid number of years",
+  "@errorYearsInvalid": {"description": "Years field is invalid"},
+  "errorPriceInvalid": "Enter a valid price in DA",
+  "@errorPriceInvalid": {"description": "Consultation price field is invalid"},
+  "errorTimeout": "Request timeout. Please check your connection and try again.",
+  "@errorTimeout": {"description": "General timeout error"},
+  "errorEmailCheckFailed": "Failed to check email. Please try again.",
+  "@errorEmailCheckFailed": {"description": "Email async check failed"},
+  "errorSignupFailed": "Signup failed",
+  "@errorSignupFailed": {"description": "General signup failure"},
+  "errorOccurred": "An error occurred: {error}",
+  "@errorOccurred": {"description": "General error with details","placeholders": {"error": {"type": "String"}}},
+  "doctorNotFound": "Doctor not found",
+  "@doctorNotFound": {
+    "description": "Error message when doctor profile cannot be found"
+  },
+  "helloPatient": "Hello {name}!",
+  "@helloPatient": {
+    "description": "Greeting message for patient",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "helloDoctor": "Hello Dr. {name}!",
+  "@helloDoctor": {
+    "description": "Greeting message for doctor",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "doctorsCount": "{count} doctors",
+  "@doctorsCount": {
+    "description": "Number of doctors",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "doctorsForSpeciality": "Doctors - {speciality}",
+  "@doctorsForSpeciality": {
+    "description": "Title for doctors by speciality overlay",
+    "placeholders": {
+      "speciality": {
+        "type": "String"
+      }
+    }
+  },
+  "userNotLoggedIn": "User not logged in",
+  "@userNotLoggedIn": {
+    "description": "Message when user is not authenticated"
+  },
+  "pleaseLogInAsDoctor": "Please log in as a doctor to view your home screen.",
+  "@pleaseLogInAsDoctor": {
+    "description": "Message when doctor authentication is required"
+  },
+  "noUpcomingConsultations": "No upcoming consultations",
+  "@noUpcomingConsultations": {
+    "description": "Message when there are no upcoming consultations"
+  },
+  "noPendingConsultations": "No pending consultations",
+  "@noPendingConsultations": {
+    "description": "Message when there are no pending consultations"
+  },
+  "popularSpecializations": "Popular specializations",
+  "@popularSpecializations": {
+    "description": "Title for popular specializations section"
+  },
+  "popularDoctors": "Popular doctors",
+  "@popularDoctors": {
+    "description": "Title for popular doctors section"
+  },
+  "services": "Services",
+  "@services": {
+    "description": "Title for services section"
+  },
+  "appointments": "Appointments",
+  "@appointments": {
+    "description": "Appointments service link"
+  },
+  "availability": "Availability",
+  "@availability": {
+    "description": "Availability service link"
+  },
+  "faq": "FAQ",
+  "@faq": {
+    "description": "FAQ service link"
+  },
+  "today": "Today",
+  "@today": {
+    "description": "Today label"
+  },
+  "pendingRequests": "Pending Requests",
+  "@pendingRequests": {
+    "description": "Pending requests label"
+  },
+  "totalPatients": "Total patients",
+  "@totalPatients": {
+    "description": "Total patients label"
+  },
+  "appointmentsCount": "{count} appointments",
+  "@appointmentsCount": {
+    "description": "Number of appointments",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsCount": "{count} request",
+  "@requestsCount": {
+    "description": "Number of requests (singular)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requestsCountPlural": "{count} requests",
+  "@requestsCountPlural": {
+    "description": "Number of requests (plural)",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientsCount": "{count} patients",
+  "@patientsCount": {
+    "description": "Number of patients",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addressNotAvailable": "Address not available",
+  "@addressNotAvailable": {
+    "description": "Message when address is not available"
+  },
+  "whatsappErrorDoctor": "Could not open WhatsApp. Please make sure WhatsApp is installed.",
+  "@whatsappErrorDoctor": {
+    "description": "Error message when WhatsApp cannot be opened for doctor"
+  },
+  "phoneNumberNotAvailableDoctor": "Phone number not available",
+  "@phoneNumberNotAvailableDoctor": {
+    "description": "Message when phone number is not available for doctor"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "appointmentAcceptedSuccessfully": "Appointment accepted successfully",
+  "@appointmentAcceptedSuccessfully": {
+    "description": "Success message when appointment is accepted"
+  },
+  "appointmentRejectedSuccessfully": "Appointment rejected successfully",
+  "@appointmentRejectedSuccessfully": {
+    "description": "Success message when appointment is rejected"
+  },
+  "areYouSureRejectAppointment": "Are you sure you want to reject this appointment?",
+  "@areYouSureRejectAppointment": {
+    "description": "Confirmation message for rejecting appointment"
+  },
+  "patientWillBeNotified": "The patient will be notified of the rejection.",
+  "@patientWillBeNotified": {
+    "description": "Message that patient will be notified of rejection"
+  },
+  "keepAppointment": "Keep Appointment",
+  "@keepAppointment": {
+    "description": "Button to keep/not cancel appointment"
+  },
+  "quickOverview": "Quick overview",
+  "@quickOverview": {
+    "description": "Quick overview section title"
+  },
+  "atTime": "{date} at {time}",
+  "@atTime": {
+    "description": "Date and time format",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsappMessageDoctorToPatient": "Hello, I would like to discuss our appointment on {dateTime}.",
+  "@whatsappMessageDoctorToPatient": {
+    "description": "WhatsApp message from doctor to patient",
+    "placeholders": {
+      "dateTime": {
+        "type": "String"
+      }
+    }
   }
 }
 

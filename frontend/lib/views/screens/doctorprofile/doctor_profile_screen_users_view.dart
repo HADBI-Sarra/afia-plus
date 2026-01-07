@@ -16,6 +16,8 @@ import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/logic/cubits/booking/booking_cubit.dart';
 import 'package:afia_plus_app/views/screens/homescreen/patient_home_screen.dart';
 import 'package:equatable/equatable.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 
 // inside class DoctorProfileScreen:
@@ -69,9 +71,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
     if (loading)
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     if (error != null)
-      return Scaffold(body: Center(child: Text(error!)));
+      return Scaffold(body: Center(child: Text(getLocalizedError(error, context) ?? error ?? '')));
     if (doctor == null)
-      return Scaffold(body: Center(child: Text("Doctor not found")));
+      return Scaffold(body: Center(child: Text(AppLocalizations.of(context)!.doctorNotFound)));
 
     return BlocProvider<BookingCubit>(
       create: (_) => BookingCubit(),

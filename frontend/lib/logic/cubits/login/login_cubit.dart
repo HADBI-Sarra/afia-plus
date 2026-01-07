@@ -12,9 +12,9 @@ class LoginCubit extends Cubit<LoginState> {
   void validateEmail(String email) {
     final trimmed = email.trim();
     if (trimmed.isEmpty) {
-      emit(state.copyWith(emailError: 'Email cannot be empty'));
+      emit(state.copyWith(emailError: 'errorEmailEmpty'));
     } else if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(trimmed)) {
-      emit(state.copyWith(emailError: 'Enter a valid email'));
+      emit(state.copyWith(emailError: 'errorEmailInvalid'));
     } else {
       emit(state.copyWith(emailError: null));
     }
@@ -22,9 +22,9 @@ class LoginCubit extends Cubit<LoginState> {
 
   void validatePassword(String password) {
     if (password.isEmpty) {
-      emit(state.copyWith(passwordError: 'Password cannot be empty'));
+      emit(state.copyWith(passwordError: 'errorPasswordEmpty'));
     } else if (password.length < 8) {
-      emit(state.copyWith(passwordError: 'Password must be at least 8 characters'));
+      emit(state.copyWith(passwordError: 'errorPasswordShort'));
     } else {
       emit(state.copyWith(passwordError: null));
     }
@@ -33,18 +33,18 @@ class LoginCubit extends Cubit<LoginState> {
   String? _validateEmailSync(String email) {
     final trimmed = email.trim();
     if (trimmed.isEmpty) {
-      return 'Email cannot be empty';
+      return 'errorEmailEmpty';
     } else if (!RegExp(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$').hasMatch(trimmed)) {
-      return 'Enter a valid email';
+      return 'errorEmailInvalid';
     }
     return null;
   }
 
   String? _validatePasswordSync(String password) {
     if (password.isEmpty) {
-      return 'Password cannot be empty';
+      return 'errorPasswordEmpty';
     } else if (password.length < 8) {
-      return 'Password must be at least 8 characters';
+      return 'errorPasswordShort';
     }
     return null;
   }
