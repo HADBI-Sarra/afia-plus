@@ -5,6 +5,8 @@ import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/search_text_fields.dart';
 import 'package:afia_plus_app/views/widgets/footer_user.dart';
 import 'package:afia_plus_app/data/db_helper.dart';
+import 'package:afia_plus_app/data/api/api_client.dart';
+import 'dart:convert';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_users_view.dart';
 import 'package:afia_plus_app/views/widgets/doctor_card.dart';
@@ -43,18 +45,38 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // -----------------------
   Future<void> _loadSpecialities() async {
     try {
-      final db = DBHelper();
-      final top = await db.getTopSpecialities(4); // first 4 default
-      final all = await db.getSpecialitiesWithDoctorCount(); // all specialities
+      // Call backend API to get top 4 specialities
+      final response = await ApiClient.get('/doctors/specialities');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final List<Map<String, dynamic>> specialities = data
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
 
-      if (!mounted) return;
-      setState(() {
-        topSpecialities = top;
-        allSpecialities = all;
-      });
+        if (!mounted) return;
+        setState(() {
+          topSpecialities = specialities;
+        });
+
+        // Load all specialities for "See all" functionality
+        final allResponse = await ApiClient.get('/doctors/specialities?all=true');
+        if (allResponse.statusCode == 200) {
+          final List<dynamic> allData = jsonDecode(allResponse.body);
+          final List<Map<String, dynamic>> allSpecialitiesList = allData
+              .map((item) => Map<String, dynamic>.from(item))
+              .toList();
+
+          if (!mounted) return;
+          setState(() {
+            allSpecialities = allSpecialitiesList;
+          });
+        }
+      } else {
+        print('Error loading specialities: ${response.statusCode} - ${response.body}');
+      }
     } catch (e) {
-      // ignore or log
-      // print('Error loading specialities: $e');
+      print('Error loading specialities: $e');
     }
   }
 
@@ -73,15 +95,35 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     String specialityName,
   ) async {
     try {
-      final db = DBHelper();
-      final docs = await db.getDoctorsBySpeciality(specialityId);
+      // Call backend API to get doctors by speciality
+      final response = await ApiClient.get('/doctors/by-speciality?speciality_id=$specialityId');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final List<Map<String, dynamic>> doctors = data
+            .map((item) => Map<String, dynamic>.from(item))
+            .toList();
+
+        if (!mounted) return;
+        setState(() {
+          doctorsForSpeciality = doctors;
+          selectedSpecialityName = specialityName;
+        });
+      } else {
+        print('Error loading doctors: ${response.statusCode}');
+        if (!mounted) return;
+        setState(() {
+          doctorsForSpeciality = [];
+          selectedSpecialityName = specialityName;
+        });
+      }
+    } catch (e) {
+      print('Error loading doctors: $e');
       if (!mounted) return;
       setState(() {
-        doctorsForSpeciality = docs;
+        doctorsForSpeciality = [];
         selectedSpecialityName = specialityName;
       });
-    } catch (e) {
-      // print('Error loading doctors: $e');
     }
   }
 
@@ -124,8 +166,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // speciality button from DB map
   Widget specialityButtonFromMap(Map<String, dynamic> speciality) {
     final String name = speciality['speciality_name'] ?? '';
-    final int doctorCount = speciality['doctor_count'] ?? 0;
-    final int specialityId = speciality['speciality_id'];
+    final int doctorCount = (speciality['doctor_count'] as num?)?.toInt() ?? 0;
+    final int specialityId = (speciality['speciality_id'] as num?)?.toInt() ?? 0;
     return specialityButton(name, doctorCount, specialityId: specialityId);
   }
 

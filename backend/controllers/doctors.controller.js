@@ -38,8 +38,12 @@ export async function getMe(req, res) {
 }
 
 // Returns top 4 specialities with doctor counts for popular specializations on home
+// If ?all=true is passed, returns all specialities with doctor counts
 export async function getSpecialities(req, res) {
   try {
+    const { all } = req.query;
+    const limit = all === 'true' ? undefined : 4;
+
     // Get all doctors with their speciality_id
     const { data: doctors, error: doctorsError } = await supabaseAdmin
       .from('doctors')
@@ -47,6 +51,10 @@ export async function getSpecialities(req, res) {
 
     if (doctorsError) {
       return res.status(500).json({ message: doctorsError.message });
+    }
+
+    if (!doctors || doctors.length === 0) {
+      return res.json([]);
     }
 
     // Count doctors per speciality
@@ -58,10 +66,14 @@ export async function getSpecialities(req, res) {
     });
 
     // Get speciality IDs that have doctors, sorted by count (descending)
-    const specialityIds = Object.keys(specialityCounts)
+    let specialityIds = Object.keys(specialityCounts)
       .map(id => parseInt(id))
-      .sort((a, b) => specialityCounts[b] - specialityCounts[a])
-      .slice(0, 4); // Limit to top 4
+      .sort((a, b) => specialityCounts[b] - specialityCounts[a]);
+
+    // Limit to top 4 if not requesting all
+    if (limit) {
+      specialityIds = specialityIds.slice(0, limit);
+    }
 
     if (specialityIds.length === 0) {
       return res.json([]);
@@ -100,12 +112,29 @@ export async function getDoctorsBySpeciality(req, res) {
     return res.status(400).json({ message: 'Missing speciality_id' });
   }
 
+  // Parse speciality_id to integer
+  const specialityIdInt = parseInt(speciality_id, 10);
+  if (isNaN(specialityIdInt)) {
+    return res.status(400).json({ message: 'Invalid speciality_id' });
+  }
+
   try {
+    // Get speciality name first
+    const { data: specialityData, error: specialityError } = await supabaseAdmin
+      .from('specialities')
+      .select('speciality_name')
+      .eq('speciality_id', specialityIdInt)
+      .maybeSingle();
+
+    if (specialityError) {
+      return res.status(500).json({ message: specialityError.message });
+    }
+
     // Get all doctors with the given speciality_id
     const { data: doctors, error: doctorsError } = await supabaseAdmin
       .from('doctors')
       .select('doctor_id, speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count')
-      .eq('speciality_id', speciality_id);
+      .eq('speciality_id', specialityIdInt);
 
     if (doctorsError) {
       return res.status(500).json({ message: doctorsError.message });
@@ -137,7 +166,8 @@ export async function getDoctorsBySpeciality(req, res) {
         lastname: user?.lastname || null,
         email: user?.email || null,
         phone_number: user?.phone_number || null,
-        profile_picture: user?.profile_picture || null
+        profile_picture: user?.profile_picture || null,
+        speciality_name: specialityData?.speciality_name || null
       };
     });
 
