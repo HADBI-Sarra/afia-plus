@@ -229,16 +229,21 @@ class DBHelper {
   }
 
   /// Get all doctors by speciality
-  Future<List<Map<String, dynamic>>> getDoctorsBySpeciality(int specialityId) async {
+  Future<List<Map<String, dynamic>>> getDoctorsBySpeciality(
+    int specialityId,
+  ) async {
     final db = await getDatabase();
-    final result = await db.rawQuery('''
+    final result = await db.rawQuery(
+      '''
       SELECT d.doctor_id, u.firstname, u.lastname, d.location_of_work, 
              s.speciality_name, COALESCE(d.average_rating, 0.0) AS average_rating
       FROM doctors d
       JOIN users u ON d.doctor_id = u.user_id
       JOIN specialities s ON d.speciality_id = s.speciality_id
       WHERE d.speciality_id = ?
-    ''', [specialityId]);
+    ''',
+      [specialityId],
+    );
     return result;
   }
 }

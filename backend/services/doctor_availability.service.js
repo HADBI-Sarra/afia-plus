@@ -12,7 +12,7 @@ export class DoctorAvailabilityService {
      * @returns {Promise<Array>} List of availability slots
      */
     static async getDoctorAvailability(doctorId) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .select('*')
             .eq('doctor_id', doctorId)
@@ -31,7 +31,7 @@ export class DoctorAvailabilityService {
      * @returns {Promise<Array>} List of availability slots
      */
     static async getDoctorAvailabilityByDateRange(doctorId, startDate, endDate) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .select('*')
             .eq('doctor_id', doctorId)
@@ -59,7 +59,7 @@ export class DoctorAvailabilityService {
         }
 
         // Check if doctor exists
-        const { data: doctor, error: doctorError } = await supabase
+        const { data: doctor, error: doctorError } = await supabaseAdmin
             .from('doctors')
             .select('doctor_id')
             .eq('doctor_id', doctorId)
@@ -70,7 +70,7 @@ export class DoctorAvailabilityService {
         }
 
         // Check if slot already exists (prevent duplicates)
-        const { data: existingSlot } = await supabase
+        const { data: existingSlot } = await supabaseAdmin
             .from('doctor_availability')
             .select('availability_id')
             .eq('doctor_id', doctorId)
@@ -83,7 +83,7 @@ export class DoctorAvailabilityService {
         }
 
         // Create new slot
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .insert([{
                 doctor_id: doctorId,
@@ -109,7 +109,7 @@ export class DoctorAvailabilityService {
             throw new Error('Invalid status. Must be "free" or "booked"');
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .update({ status })
             .eq('availability_id', availabilityId)
@@ -127,7 +127,7 @@ export class DoctorAvailabilityService {
      */
     static async deleteAvailabilitySlot(availabilityId) {
         // Check if slot is booked
-        const { data: slot } = await supabase
+        const { data: slot } = await supabaseAdmin
             .from('doctor_availability')
             .select('status')
             .eq('availability_id', availabilityId)
@@ -137,7 +137,7 @@ export class DoctorAvailabilityService {
             throw new Error('Cannot delete a booked slot');
         }
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from('doctor_availability')
             .delete()
             .eq('availability_id', availabilityId);
@@ -152,7 +152,7 @@ export class DoctorAvailabilityService {
      * @returns {Promise<Array>} List of free slots
      */
     static async getFreeSlots(doctorId, date) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .select('*')
             .eq('doctor_id', doctorId)
@@ -182,7 +182,7 @@ export class DoctorAvailabilityService {
             status: 'free'
         }));
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('doctor_availability')
             .insert(slotsToInsert)
             .select();
