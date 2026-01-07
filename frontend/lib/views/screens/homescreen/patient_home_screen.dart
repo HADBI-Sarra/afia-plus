@@ -33,6 +33,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   List<Map<String, dynamic>> allSpecialities = [];
   List<Map<String, dynamic>> doctorsForSpeciality = [];
   String? selectedSpecialityName;
+  bool isLoadingSpecialities = false;
 
   @override
   void initState() {
@@ -45,6 +46,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // -----------------------
   Future<void> _loadSpecialities() async {
     try {
+      if (mounted) {
+        setState(() {
+          isLoadingSpecialities = true;
+        });
+      }
       // Call backend API to get top 4 specialities
       final response = await ApiClient.get('/doctors/specialities');
       
@@ -77,6 +83,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       }
     } catch (e) {
       print('Error loading specialities: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingSpecialities = false;
+        });
+      }
     }
   }
 
@@ -95,6 +107,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     String specialityName,
   ) async {
     try {
+      // Close the "See all" overlay if open
+      if (mounted) {
+        setState(() {
+          showAllSpecialities = false;
+        });
+      }
       // Call backend API to get doctors by speciality
       final response = await ApiClient.get('/doctors/by-speciality?speciality_id=$specialityId');
       
@@ -563,6 +581,86 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
+  // overlay panel that lists all specialities (See all)
+  Widget _buildSpecialitiesOverlay() {
+    if (!showAllSpecialities) {
+      return const SizedBox.shrink();
+    }
+
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.5),
+        child: SafeArea(
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: whiteColor,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: greyColor.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Header with back arrow
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: greyColor.withOpacity(0.2)),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: darkGreenColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            showAllSpecialities = false;
+                          });
+                        },
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'All specialities',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: blackColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Specialities list
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: allSpecialities.length,
+                    itemBuilder: (context, index) {
+                      final item = allSpecialities[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: specialityButtonFromMap(item),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // -----------------------
   // Main build
   // -----------------------
@@ -681,21 +779,31 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                 },
                               ),
                               const SizedBox(height: 20),
-                              // Show first 4 specialities (or less)
-                              ...topSpecialities.map(
-                                (s) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: specialityButtonFromMap(s),
+                              // Loading indicator while fetching specialities
+                              if (isLoadingSpecialities) ...[
+                                const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 20),
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
-                              ),
-                              // Show remaining specialities when "See all" is clicked
-                              if (showAllSpecialities)
-                                ...remainingSpecialities.map(
+                              ] else ...[
+                                // Show first 4 specialities (or less)
+                                ...topSpecialities.map(
                                   (s) => Padding(
                                     padding: const EdgeInsets.only(bottom: 10),
                                     child: specialityButtonFromMap(s),
                                   ),
                                 ),
+                                if (topSpecialities.isEmpty)
+                                  const Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      'No specialities available',
+                                      style: TextStyle(color: greyColor),
+                                    ),
+                                  ),
+                              ],
                               const SizedBox(height: 20),
                               sectionTitle(context, 'Popular doctors'),
                               const SizedBox(height: 20),
@@ -774,7 +882,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   },
                 ),
 
-                // doctors overlay (on top)
+                // specialities overlay (on top of main content)
+                _buildSpecialitiesOverlay(),
+                // doctors overlay (topmost)
                 _buildDoctorsCardOverlay(),
               ],
             ),
