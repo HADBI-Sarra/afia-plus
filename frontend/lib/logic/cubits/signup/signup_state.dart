@@ -1,4 +1,4 @@
-enum SignupStep { account, personal, professional }
+enum SignupStep { account, personal, professional, profilePicture }
 
 class SignupState {
   final SignupStep currentStep; // NEW: track current step
@@ -65,6 +65,8 @@ class SignupState {
   final int specialityId;
   final String specialityName;
 
+  // ---------------- Profile Picture step ----------------
+  final String? profilePicturePath;
 
   // ---------------- General ----------------
   final bool isLoading;
@@ -134,6 +136,9 @@ class SignupState {
     this.professionalRedCheckBox = false,
     this.specialityId = 0,
     this.specialityName = '',
+
+    // Profile Picture
+    this.profilePicturePath,
 
     // General
     this.isLoading = false,
@@ -205,6 +210,9 @@ class SignupState {
     int? specialityId,
     String? specialityName,
 
+    // Profile Picture
+    String? profilePicturePath,
+
     // General
     bool? isLoading,
     String? message,
@@ -273,6 +281,9 @@ class SignupState {
       professionalRedCheckBox: professionalRedCheckBox ?? this.professionalRedCheckBox,
       specialityId: specialityId ?? this.specialityId,
       specialityName: specialityName ?? this.specialityName,
+
+      // Profile Picture
+      profilePicturePath: profilePicturePath ?? this.profilePicturePath,
 
       // General
       isLoading: isLoading ?? this.isLoading,

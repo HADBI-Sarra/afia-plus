@@ -9,4 +9,5 @@ abstract class AuthRepository {
   Future<ReturnResult> logout();
   Future<ReturnResult<User?>> getCurrentUser();
   Future<bool> emailExists(String email);
+  Future<ReturnResult<String>> uploadProfilePicture(String imagePath);
 }

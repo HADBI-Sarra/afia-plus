@@ -68,7 +68,7 @@ class SupabaseAuthRepository implements AuthRepository {
           message: 'Login failed: No access token received',
         );
       }
-      _tokenProvider.setToken(accessToken);
+      await _tokenProvider.setToken(accessToken);
       print('Token stored successfully');
 
       // Backend now returns user data directly in the login response
@@ -113,7 +113,7 @@ class SupabaseAuthRepository implements AuthRepository {
       );
 
       if (meResponse.statusCode != 200) {
-        _tokenProvider.clear();
+        await _tokenProvider.clear();
         return ReturnResult(
           state: false,
           message: 'Failed to fetch user profile',
@@ -232,7 +232,7 @@ class SupabaseAuthRepository implements AuthRepository {
       // Store the access token if provided (user is automatically logged in after signup)
       final accessToken = data['access_token'];
       if (accessToken != null && accessToken is String && accessToken.isNotEmpty) {
-        _tokenProvider.setToken(accessToken);
+        await _tokenProvider.setToken(accessToken);
       } else {
         // If no token was returned, try to login automatically as fallback
         try {
@@ -285,7 +285,7 @@ class SupabaseAuthRepository implements AuthRepository {
   @override
   Future<ReturnResult> logout() async {
     // 🔥 CLEAR TOKEN GLOBALLY
-    _tokenProvider.clear();
+    await _tokenProvider.clear();
 
     return ReturnResult(
       state: true,
@@ -312,7 +312,7 @@ class SupabaseAuthRepository implements AuthRepository {
       );
 
       if (response.statusCode != 200) {
-        _tokenProvider.clear();
+        await _tokenProvider.clear();
         return ReturnResult(
           state: false,
           message: 'Session expired',
@@ -376,6 +376,95 @@ class SupabaseAuthRepository implements AuthRepository {
     } catch (e) {
       // Re-throw the exception so it can be handled in the cubit
       rethrow;
+    }
+  }
+
+  @override
+  Future<ReturnResult<String>> uploadProfilePicture(String imagePath) async {
+    try {
+      final token = _tokenProvider.accessToken;
+      if (token == null) {
+        return ReturnResult(
+          state: false,
+          message: 'Not authenticated',
+        );
+      }
+
+      final response = await ApiClient.postMultipart(
+        '/auth/upload-profile-picture',
+        imagePath,
+        token: token,
+        fieldName: 'profile_picture',
+      );
+
+      // Log response for debugging
+      print('Upload response status: ${response.statusCode}');
+      print('Upload response body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        String errorMessage = 'Failed to upload profile picture';
+        try {
+          if (response.body.isNotEmpty) {
+            final data = jsonDecode(response.body);
+            errorMessage = data['message'] ?? errorMessage;
+          }
+        } catch (e) {
+          // If response is not JSON, use the raw body or status code
+          if (response.body.isNotEmpty) {
+            errorMessage = response.body;
+          } else {
+            errorMessage = 'Server error (${response.statusCode})';
+          }
+        }
+        return ReturnResult(
+          state: false,
+          message: errorMessage,
+        );
+      }
+
+      // Parse successful response
+      String? profilePictureUrl;
+      try {
+        if (response.body.isNotEmpty) {
+          final data = jsonDecode(response.body);
+          profilePictureUrl = data['profile_picture_url'] as String?;
+        }
+      } catch (e) {
+        print('Error parsing response: $e');
+        return ReturnResult(
+          state: false,
+          message: 'Invalid response from server',
+        );
+      }
+      
+      if (profilePictureUrl == null) {
+        return ReturnResult(
+          state: false,
+          message: 'No profile picture URL returned',
+        );
+      }
+
+      return ReturnResult(
+        state: true,
+        message: 'Profile picture uploaded successfully',
+        data: profilePictureUrl,
+      );
+    } catch (e) {
+      print('Upload error: $e');
+      String errorMessage;
+      if (e.toString().contains('timeout')) {
+        errorMessage = 'Request timeout. Please check your connection and try again.';
+      } else if (e.toString().contains('SocketException') || e.toString().contains('Failed host lookup')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.';
+      } else if (e.toString().contains('FormatException') || e.toString().contains('unexpected character')) {
+        errorMessage = 'Server returned invalid response. Please try again.';
+      } else {
+        errorMessage = 'Failed to upload profile picture: ${e.toString()}';
+      }
+      return ReturnResult(
+        state: false,
+        message: errorMessage,
+      );
     }
   }
 }

@@ -25,6 +25,8 @@ class _DoctorViewDoctorProfileScreenState
   List<Speciality> _dbSpecialities = [];
   bool _loadingSpecialities = true;
   String? _specialityError;
+  bool _imageError = false;
+  String? _lastProfilePictureUrl;
 
   @override
   void initState() {
@@ -190,10 +192,45 @@ class _DoctorViewDoctorProfileScreenState
                   }
 
                   // Display profile picture if available
-                  if (doctor.profilePicture != null && doctor.profilePicture!.isNotEmpty) {
+                  final profilePictureUrl = doctor.profilePicture;
+                  
+                  // Reset error state if profile picture URL changes
+                  if (_lastProfilePictureUrl != profilePictureUrl) {
+                    _imageError = false;
+                    _lastProfilePictureUrl = profilePictureUrl;
+                  }
+                  
+                  if (profilePictureUrl != null && 
+                      profilePictureUrl.isNotEmpty &&
+                      profilePictureUrl.trim().isNotEmpty &&
+                      !_imageError) {
+                    try {
+                      profilePic = CircleAvatar(
+                        radius: 50,
+                        backgroundColor: greyColor.withOpacity(0.3),
+                        backgroundImage: NetworkImage(profilePictureUrl),
+                        onBackgroundImageError: (exception, stackTrace) {
+                          // If image fails to load, use default icon
+                          if (mounted && _lastProfilePictureUrl == profilePictureUrl) {
+                            setState(() {
+                              _imageError = true;
+                            });
+                          }
+                        },
+                      );
+                    } catch (e) {
+                      // If there's an error creating the NetworkImage, use default
+                      profilePic = CircleAvatar(
+                        radius: 50,
+                        backgroundColor: greyColor.withOpacity(0.3),
+                        child: const Icon(Icons.person, size: 50, color: whiteColor),
+                      );
+                    }
+                  } else {
                     profilePic = CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(doctor.profilePicture!),
+                      backgroundColor: greyColor.withOpacity(0.3),
+                      child: const Icon(Icons.person, size: 50, color: whiteColor),
                     );
                   }
                 }

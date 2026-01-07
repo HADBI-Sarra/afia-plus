@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
 
 class ApiClient {
   // For real phone on same network, use your computer's IP address
@@ -75,6 +77,48 @@ class ApiClient {
             throw Exception('Request timeout');
           },
         );
+  }
+
+  static Future<http.Response> postMultipart(
+    String endpoint,
+    String filePath, {
+    String? token,
+    String fieldName = 'file',
+  }) async {
+    print('API POST MULTIPART: $baseUrl$endpoint');
+    final file = File(filePath);
+    if (!await file.exists()) {
+      throw Exception('File does not exist: $filePath');
+    }
+
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl$endpoint'),
+    );
+
+    // Add authorization header if token is provided
+    if (token != null) {
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    // Add file
+    final fileName = path.basename(filePath);
+    final fileStream = http.ByteStream(file.openRead());
+    final fileLength = await file.length();
+    final multipartFile = http.MultipartFile(
+      fieldName,
+      fileStream,
+      fileLength,
+      filename: fileName,
+    );
+    request.files.add(multipartFile);
+
+    final streamedResponse = await request.send().timeout(timeout, onTimeout: () {
+      print('API timeout on POST MULTIPART: $endpoint');
+      throw Exception('Request timeout');
+    });
+
+    return await http.Response.fromStream(streamedResponse);
   }
 
   static Map<String, String> _headers(String? token) {

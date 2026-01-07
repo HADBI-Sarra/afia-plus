@@ -7,6 +7,7 @@ import '../../../../logic/cubits/signup/signup_cubit.dart';
 import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../homescreen/patient_home_screen.dart';
+import '../profile_picture.dart';
 
 class PatientPersonalDataScreen extends StatefulWidget {
   const PatientPersonalDataScreen({super.key});
@@ -86,11 +87,10 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
           final authCubit = context.read<AuthCubit>();
           await authCubit.checkLoginStatus();
 
-          // Navigate to the home screen after AuthCubit is updated
-          Navigator.pushAndRemoveUntil(
+          // Navigate to profile picture screen instead of directly to home
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
-            (route) => false,
+            MaterialPageRoute(builder: (_) => const ProfilePictureScreen()),
           );
         }
       },

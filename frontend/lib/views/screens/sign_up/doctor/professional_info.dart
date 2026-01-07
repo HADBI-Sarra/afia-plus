@@ -13,6 +13,7 @@ import '../../../../logic/cubits/signup/signup_cubit.dart';
 import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../homescreen/doctor_home_screen.dart';
+import '../profile_picture.dart';
 
 class ProfessionalInfoScreen extends StatefulWidget {
   const ProfessionalInfoScreen({super.key});
@@ -188,10 +189,10 @@ class _ProfessionalInfoScreenState extends State<ProfessionalInfoScreen> {
           final authCubit = context.read<AuthCubit>();
           await authCubit.checkLoginStatus();
 
-          Navigator.pushAndRemoveUntil(
+          // Navigate to profile picture screen instead of directly to home
+          Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
-            (route) => false,
+            MaterialPageRoute(builder: (_) => const ProfilePictureScreen()),
           );
         }
       },

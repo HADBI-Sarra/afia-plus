@@ -54,7 +54,11 @@ Future<void> initMyApp() async {
   // Dependency Injection
   final sl = GetIt.instance;
 
-  sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
+  // Initialize TokenProvider and load persisted token
+  final tokenProvider = TokenProvider();
+  await tokenProvider.initialize();
+  sl.registerLazySingleton<TokenProvider>(() => tokenProvider);
+  
   sl.registerLazySingleton<UserRepository>(() => SupabaseUserRepository());
   sl.registerLazySingleton<PatientRepository>(
     () => SupabasePatientRepository(),
