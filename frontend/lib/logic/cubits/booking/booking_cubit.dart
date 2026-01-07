@@ -23,6 +23,7 @@ class BookingCubit extends Cubit<BookingState> {
   }) async {
     emit(BookingInProgress());
     try {
+      print('🔹 BookingCubit: Starting booking process...');
       final newConsultation = Consultation(
         patientId: patientId,
         doctorId: doctorId,
@@ -34,12 +35,17 @@ class BookingCubit extends Cubit<BookingState> {
         prescription: '',
       );
 
-      await _consultations.createConsultation(newConsultation);
+      final consultationId = await _consultations.createConsultation(
+        newConsultation,
+      );
+      print('🔹 BookingCubit: Consultation created with ID: $consultationId');
 
       // mark availability as booked - done automatically by backend
       // availability status is updated when consultation is created
-      emit(BookingSuccess('Appointment booked'));
+      emit(BookingSuccess('Appointment booked successfully!'));
+      print('🔹 BookingCubit: Success emitted');
     } catch (e) {
+      print('🔹 BookingCubit: Error - $e');
       emit(BookingFailure('Failed to book appointment: $e'));
     }
   }

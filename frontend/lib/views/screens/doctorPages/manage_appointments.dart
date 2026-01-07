@@ -252,7 +252,8 @@ class _SchedulePageView extends StatelessWidget {
                   );
               final phoneNumber = consultation.patientPhoneNumber;
               final isPending = consultation.consultation.status == 'pending';
-              final isAccepted = consultation.consultation.status == 'scheduled';
+              final isAccepted =
+                  consultation.consultation.status == 'scheduled';
 
               if (isAccepted && phoneNumber != null && phoneNumber.isNotEmpty) {
                 return ElevatedButton(
@@ -450,96 +451,132 @@ class _SchedulePageView extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           // Check database for existing prescription PDF
-          consultation.consultation.prescription == null ||
-                  consultation.consultation.prescription!.isEmpty
-              ? ElevatedButton.icon(
-                  onPressed: () async {
-                    if (consultation.consultation.consultationId == null)
-                      return;
+          BlocBuilder<DoctorAppointmentsCubit, DoctorAppointmentsState>(
+            builder: (context, state) {
+              final isUploading =
+                  consultation.consultation.consultationId != null &&
+                  state.processingConsultationIds.contains(
+                    consultation.consultation.consultationId,
+                  );
 
-                    // Pick PDF file
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                          type: FileType.custom,
-                          allowedExtensions: ['pdf'],
-                        );
+              return consultation.consultation.prescription == null ||
+                      consultation.consultation.prescription!.isEmpty
+                  ? ElevatedButton.icon(
+                      onPressed: isUploading
+                          ? null
+                          : () async {
+                              if (consultation.consultation.consultationId ==
+                                  null)
+                                return;
 
-                    if (result != null && result.files.single.path != null) {
-                      final file = File(result.files.single.path!);
+                              // Pick PDF file
+                              FilePickerResult? result = await FilePicker
+                                  .platform
+                                  .pickFiles(
+                                    type: FileType.custom,
+                                    allowedExtensions: ['pdf'],
+                                  );
 
-                      // Upload PDF (path will be stored in prescription field)
-                      if (context.mounted) {
-                        context
-                            .read<DoctorAppointmentsCubit>()
-                            .uploadPrescriptionPDF(
-                              consultation.consultation.consultationId!,
-                              file,
-                              '', // Empty string as we're storing path, not text
-                            );
-                      }
+                              if (result != null &&
+                                  result.files.single.path != null) {
+                                final file = File(result.files.single.path!);
 
-                      // Show success message
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(context)!.pdfUploadedSuccess,
+                                // Upload PDF (path will be stored in prescription field)
+                                if (context.mounted) {
+                                  context
+                                      .read<DoctorAppointmentsCubit>()
+                                      .uploadPrescriptionPDF(
+                                        consultation
+                                            .consultation
+                                            .consultationId!,
+                                        file,
+                                        '', // Empty string as we're storing path, not text
+                                      );
+                                }
+
+                                // Show success message
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.pdfUploadedSuccess,
+                                      ),
+                                      backgroundColor: darkGreenColor,
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                      icon: isUploading
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  whiteColor,
+                                ),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.upload_file,
+                              size: 18,
+                              color: whiteColor,
                             ),
-                            backgroundColor: darkGreenColor,
-                            duration: const Duration(seconds: 2),
+                      label: Text(
+                        isUploading
+                            ? 'Uploading...'
+                            : AppLocalizations.of(context)!.uploadPdf,
+                        style: const TextStyle(fontSize: 12, color: whiteColor),
+                      ),
+                      style: greenButtonStyle.copyWith(
+                        backgroundColor: WidgetStateProperty.all(
+                          blueGreenColor,
+                        ),
+                        minimumSize: WidgetStateProperty.all(
+                          const Size(100, 36),
+                        ),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        );
-                      }
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.upload_file,
-                    size: 18,
-                    color: whiteColor,
-                  ),
-                  label: Text(
-                    AppLocalizations.of(context)!.uploadPdf,
-                    style: const TextStyle(fontSize: 12, color: whiteColor),
-                  ),
-                  style: greenButtonStyle.copyWith(
-                    backgroundColor: WidgetStateProperty.all(blueGreenColor),
-                    minimumSize: WidgetStateProperty.all(const Size(100, 36)),
-                    shape: WidgetStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  ),
-                )
-              : Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: darkGreenColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.check_circle,
-                        size: 16,
-                        color: darkGreenColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppLocalizations.of(context)!.pdfUploaded,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: darkGreenColor,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: darkGreenColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: darkGreenColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppLocalizations.of(context)!.pdfUploaded,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: darkGreenColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+            },
+          ),
         ],
       ),
     );

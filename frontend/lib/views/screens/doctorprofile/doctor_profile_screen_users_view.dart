@@ -346,6 +346,61 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               );
                               return;
                             }
+
+                            // Check if selected date is in the past
+                            final today = DateTime.now();
+                            final todayOnly = DateTime(
+                              today.year,
+                              today.month,
+                              today.day,
+                            );
+                            final selectedDateOnly = DateTime(
+                              selectedBookDay!.year,
+                              selectedBookDay!.month,
+                              selectedBookDay!.day,
+                            );
+
+                            if (selectedDateOnly.isBefore(todayOnly)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'You cannot book appointments for past dates. Please select a current or future date.',
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                              return;
+                            }
+
+                            // Check if selected time is in the past (for today)
+                            if (selectedDateOnly.isAtSameMomentAs(todayOnly)) {
+                              final currentTime = TimeOfDay.now();
+                              final currentMinutes =
+                                  currentTime.hour * 60 + currentTime.minute;
+
+                              // Parse selected time (e.g., "18:00")
+                              final timeParts = selectedBookTime!.split(':');
+                              if (timeParts.length == 2) {
+                                final hour = int.tryParse(timeParts[0]) ?? 0;
+                                final minute = int.tryParse(timeParts[1]) ?? 0;
+                                final selectedMinutes = hour * 60 + minute;
+
+                                if (selectedMinutes <= currentMinutes) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'You cannot book appointments for past times. Please select a future time slot.',
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                  return;
+                                }
+                              }
+                            }
+
                             // Find availabilityId for selected date/time:
                             final availCubit = context
                                 .read<AvailabilityCubit>();
@@ -391,7 +446,8 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                               return;
                             }
                             // Book
-                            context.read<BookingCubit>().book(
+                            final bookingCubit = context.read<BookingCubit>();
+                            bookingCubit.book(
                               patientId: patientId,
                               doctorId: doctor!.userId!,
                               availabilityId: availabilityId,
@@ -400,6 +456,21 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   .split('T')[0],
                               startTime: selectedBookTime!,
                             );
+
+                            // Refresh patient home after booking
+                            Future.delayed(const Duration(milliseconds: 500), () {
+                              if (context.mounted) {
+                                final authState = context
+                                    .read<AuthCubit>()
+                                    .state;
+                                if (authState is AuthenticatedPatient) {
+                                  // Trigger reload of patient appointments if available
+                                  print(
+                                    '🔄 Booking complete, data should refresh automatically',
+                                  );
+                                }
+                              }
+                            });
                           },
                           child: bookingState is BookingInProgress
                               ? const CircularProgressIndicator(

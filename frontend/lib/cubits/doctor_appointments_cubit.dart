@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/pdf_service.dart';
+import 'package:afia_plus_app/utils/logger.dart';
 import 'dart:io';
 
 class DoctorAppointmentsState {
@@ -149,7 +150,7 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
 
   Future<void> rejectAppointment(int consultationId, int doctorId) async {
     try {
-      print('🔄 Rejecting appointment $consultationId...');
+      AppLogger.log('🔄 Rejecting appointment $consultationId...');
       emit(
         state.copyWith(
           processingConsultationIds: {
@@ -160,7 +161,7 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
       );
 
       await _repository.updateConsultationStatus(consultationId, 'cancelled');
-      print('✅ Status updated in database');
+      AppLogger.success('✅ Status updated in database');
 
       // Reload appointments to reflect the change
       final upcoming = await _repository.getUpcomingDoctorConsultations(
@@ -168,7 +169,7 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
       );
       final past = await _repository.getPastDoctorConsultations(doctorId);
 
-      print(
+      AppLogger.log(
         '📋 Reloaded: ${upcoming.length} upcoming, ${past.length} past appointments',
       );
 
@@ -182,10 +183,10 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
           error: null,
         ),
       );
-      print('✅ State updated successfully');
+      AppLogger.success('✅ State updated successfully');
     } catch (e, stackTrace) {
-      print('❌ Error rejecting appointment: $e');
-      print('Stack trace: $stackTrace');
+      AppLogger.error('❌ Error rejecting appointment: $e');
+      AppLogger.error('Stack trace: $stackTrace');
       final newProcessingSet = Set<int>.from(state.processingConsultationIds)
         ..remove(consultationId);
       emit(
@@ -204,7 +205,10 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
     String prescriptionText,
   ) async {
     try {
-      emit(state.copyWith(isLoading: true, error: null));
+      // Add consultation to processing set to show loading state
+      final newProcessingSet = Set<int>.from(state.processingConsultationIds)
+        ..add(consultationId);
+      emit(state.copyWith(processingConsultationIds: newProcessingSet));
 
       // Save PDF to app's documents directory and get the stored path
       final storedPath = await PDFService.saveUploadedPDF(
@@ -227,10 +231,23 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
 
       await loadAppointments(doctorId);
 
-      emit(state.copyWith(isLoading: false));
-    } catch (e) {
+      // Remove from processing set after successful upload
+      final updatedProcessingSet = Set<int>.from(
+        state.processingConsultationIds,
+      )..remove(consultationId);
       emit(
         state.copyWith(
+          processingConsultationIds: updatedProcessingSet,
+          isLoading: false,
+        ),
+      );
+    } catch (e) {
+      // Remove from processing set on error
+      final errorProcessingSet = Set<int>.from(state.processingConsultationIds)
+        ..remove(consultationId);
+      emit(
+        state.copyWith(
+          processingConsultationIds: errorProcessingSet,
           isLoading: false,
           error: 'Failed to upload PDF: ${e.toString()}',
         ),

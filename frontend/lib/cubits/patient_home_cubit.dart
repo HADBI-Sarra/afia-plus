@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
+import 'package:afia_plus_app/utils/logger.dart';
 
 class PatientHomeState {
   final List<ConsultationWithDetails> upcomingConsultations;
@@ -104,6 +105,7 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
 
   Future<void> deleteAppointment(int consultationId, int patientId) async {
     try {
+      AppLogger.log('🗑️ Cancelling appointment $consultationId...');
       // Add to deleting set
       emit(
         state.copyWith(
@@ -114,14 +116,25 @@ class PatientHomeCubit extends Cubit<PatientHomeState> {
         ),
       );
 
+      // First, update status to 'cancelled' so the appointment can be deleted
+      AppLogger.log('  Step 1: Updating status to cancelled');
+      await _repository.updateConsultationStatus(consultationId, 'cancelled');
+
+      // Then delete the consultation
+      AppLogger.log('  Step 2: Deleting consultation');
       await _repository.deleteConsultation(consultationId);
+
+      // Reload upcoming consultations
+      AppLogger.log('  Step 3: Reloading consultations');
       await loadUpcomingConsultations(patientId);
 
       // Remove from deleting set
       final newDeletingSet = Set<int>.from(state.deletingConsultationIds)
         ..remove(consultationId);
       emit(state.copyWith(deletingConsultationIds: newDeletingSet));
+      AppLogger.success('✅ Appointment cancelled and deleted successfully');
     } catch (e) {
+      AppLogger.error('❌ Error deleting appointment: $e');
       // Remove from deleting set on error
       final newDeletingSet = Set<int>.from(state.deletingConsultationIds)
         ..remove(consultationId);

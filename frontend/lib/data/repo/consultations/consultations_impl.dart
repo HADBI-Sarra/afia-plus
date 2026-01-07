@@ -19,7 +19,8 @@ class ConsultationsImpl implements ConsultationsRepository {
     try {
       final response = await ApiClient.get('/consultations/patient/$patientId');
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get patient consultations: $e');
@@ -36,7 +37,8 @@ class ConsultationsImpl implements ConsultationsRepository {
         '/consultations/patient/$patientId/confirmed',
       );
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get confirmed consultations: $e');
@@ -53,7 +55,8 @@ class ConsultationsImpl implements ConsultationsRepository {
         '/consultations/patient/$patientId/pending',
       );
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get pending consultations: $e');
@@ -68,7 +71,8 @@ class ConsultationsImpl implements ConsultationsRepository {
     try {
       final response = await ApiClient.get('/consultations/doctor/$doctorId');
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get doctor consultations: $e');
@@ -81,13 +85,29 @@ class ConsultationsImpl implements ConsultationsRepository {
     int doctorId,
   ) async {
     try {
+      print('📋 Fetching upcoming consultations for doctor $doctorId');
       final response = await ApiClient.get(
         '/consultations/doctor/$doctorId/upcoming',
       );
+      print('✅ Response status: ${response.statusCode}');
+      print('✅ Response body: ${response.body}');
+
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+
+      if (data == null) {
+        print('⚠️  Data is null, returning empty list');
+        return [];
+      }
+
+      if (data is! List) {
+        print('❌ Data is not a list: ${data.runtimeType}');
+        return [];
+      }
+
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
+      print('❌ Error getting upcoming consultations: $e');
       throw Exception('Failed to get upcoming consultations: $e');
     }
   }
@@ -102,7 +122,8 @@ class ConsultationsImpl implements ConsultationsRepository {
         '/consultations/doctor/$doctorId/past',
       );
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get past consultations: $e');
@@ -119,7 +140,8 @@ class ConsultationsImpl implements ConsultationsRepository {
         '/consultations/patient/$patientId/prescriptions',
       );
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-      final data = jsonData['data'] as List;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
       return data.map((item) => _mapToConsultationWithDetails(item)).toList();
     } catch (e) {
       throw Exception('Failed to get prescriptions: $e');
@@ -131,6 +153,13 @@ class ConsultationsImpl implements ConsultationsRepository {
   @override
   Future<int> createConsultation(Consultation consultation) async {
     try {
+      print('📅 Booking consultation:');
+      print('  Patient ID: ${consultation.patientId}');
+      print('  Doctor ID: ${consultation.doctorId}');
+      print('  Availability ID: ${consultation.availabilityId}');
+      print('  Date: ${consultation.consultationDate}');
+      print('  Time: ${consultation.startTime}');
+
       final response = await ApiClient.post('/consultations/book', {
         'patientId': consultation.patientId,
         'doctorId': consultation.doctorId,
@@ -139,11 +168,23 @@ class ConsultationsImpl implements ConsultationsRepository {
         'startTime': consultation.startTime,
       });
 
+      print('✅ Response status: ${response.statusCode}');
+      print('✅ Response body: ${response.body}');
+
       // Return the created consultation ID
       final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final message = jsonData['message'] ?? 'Unknown error';
+        throw Exception('Booking failed: $message');
+      }
+
       final createdConsultation = jsonData['data'] as Map<String, dynamic>;
-      return createdConsultation['consultation_id'] as int;
+      final consultationId = createdConsultation['consultation_id'] as int;
+      print('✅ Created consultation ID: $consultationId');
+      return consultationId;
     } catch (e) {
+      print('❌ Booking error: $e');
       throw Exception('Failed to book consultation: $e');
     }
   }

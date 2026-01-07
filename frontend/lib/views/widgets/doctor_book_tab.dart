@@ -31,7 +31,9 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
   void initState() {
     super.initState();
     // Load availability for this doctor
-    context.read<AvailabilityCubit>().loadAvailabilityForDoctor(widget.doctorId);
+    context.read<AvailabilityCubit>().loadAvailabilityForDoctor(
+      widget.doctorId,
+    );
   }
 
   @override
@@ -46,10 +48,39 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
           return const Text("No availability");
         }
 
-        final availability = state.availability;
+        // Get current date without time
+        final today = DateTime.now();
+        final todayOnly = DateTime(today.year, today.month, today.day);
+
+        // Filter out past dates - only show today and future dates
+        final availability = state.availability.where((avail) {
+          final availDate = DateTime(
+            avail.date.year,
+            avail.date.month,
+            avail.date.day,
+          );
+          return !availDate.isBefore(todayOnly);
+        }).toList();
+
         final availableDates = availability.map((e) => e.date).toList();
 
-        // If no selected day yet, pick first available day
+        // Show message if no future dates available
+        if (availableDates.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text(
+                "No upcoming availability. This doctor has no available time slots for booking.",
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: greyColor),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+
+        // If no selected day yet, pick first available day (from future dates only)
         if (selectedDay == null && availableDates.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             setState(() {
@@ -60,14 +91,44 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
 
         final timesForSelected = selectedDay != null
             ? (() {
-                final selectedDate = DateTime(selectedDay!.year, selectedDay!.month, selectedDay!.day);
+                final selectedDate = DateTime(
+                  selectedDay!.year,
+                  selectedDay!.month,
+                  selectedDay!.day,
+                );
                 final matching = availability.firstWhere(
                   (e) {
-                    final availableDate = DateTime(e.date.year, e.date.month, e.date.day);
+                    final availableDate = DateTime(
+                      e.date.year,
+                      e.date.month,
+                      e.date.day,
+                    );
                     return selectedDate.isAtSameMomentAs(availableDate);
                   },
-                  orElse: () => AvailabilityModel(date: DateTime.now(), times: []),
+                  orElse: () =>
+                      AvailabilityModel(date: DateTime.now(), times: []),
                 );
+
+                // If selected day is today, filter out past time slots
+                final isToday = selectedDate.isAtSameMomentAs(todayOnly);
+                if (isToday) {
+                  final currentTime = TimeOfDay.now();
+                  final currentMinutes =
+                      currentTime.hour * 60 + currentTime.minute;
+
+                  return matching.times.where((timeString) {
+                    // Parse time string (e.g., "18:00")
+                    final parts = timeString.split(':');
+                    if (parts.length != 2) return true;
+                    final hour = int.tryParse(parts[0]) ?? 0;
+                    final minute = int.tryParse(parts[1]) ?? 0;
+                    final slotMinutes = hour * 60 + minute;
+
+                    // Only show slots that are in the future
+                    return slotMinutes > currentMinutes;
+                  }).toList();
+                }
+
                 return matching.times;
               })()
             : [];
@@ -76,22 +137,27 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// PRICE
-            Text("Price",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontSize: 18)),
+            Text(
+              "Price",
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontSize: 18),
+            ),
             const SizedBox(height: 8),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("1 hour consultation",
-                    style: Theme.of(context).textTheme.bodyMedium),
-                Text("1000 DZD",
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        )),
+                Text(
+                  "1 hour consultation",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                Text(
+                  "1000 DZD",
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                ),
               ],
             ),
 
@@ -120,11 +186,12 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
             Divider(color: greyColor),
 
             /// TIME SELECTION
-            Text("Select time",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontSize: 18)),
+            Text(
+              "Select time",
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontSize: 18),
+            ),
             const SizedBox(height: 10),
 
             if (timesForSelected.isEmpty)

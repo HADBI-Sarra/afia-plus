@@ -6,7 +6,7 @@ import 'package:path/path.dart' as path;
 class ApiClient {
   // For real phone on same network, use your computer's IP address
   static const String baseUrl =
-      'http://192.168.100.7:3000'; // Your PC IP address
+      'http://192.168.101.239:3000'; // Your PC IP address
   // static const String baseUrl = 'http://10.0.2.2:3000'; // Android emulator
   // static const String baseUrl = 'http://localhost:3000'; // Web
   static const Duration timeout = Duration(seconds: 30);
@@ -113,10 +113,13 @@ class ApiClient {
     );
     request.files.add(multipartFile);
 
-    final streamedResponse = await request.send().timeout(timeout, onTimeout: () {
-      print('API timeout on POST MULTIPART: $endpoint');
-      throw Exception('Request timeout');
-    });
+    final streamedResponse = await request.send().timeout(
+      timeout,
+      onTimeout: () {
+        print('API timeout on POST MULTIPART: $endpoint');
+        throw Exception('Request timeout');
+      },
+    );
 
     return await http.Response.fromStream(streamedResponse);
   }
