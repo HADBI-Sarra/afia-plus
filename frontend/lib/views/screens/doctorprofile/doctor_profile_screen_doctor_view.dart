@@ -9,6 +9,8 @@ import 'package:afia_plus_app/views/widgets/footer_doctor.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../../../logic/cubits/signup/signup_cubit.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class DoctorViewDoctorProfileScreen extends StatefulWidget {
   static const routename = "/doctorViewDoctorProfile";
@@ -53,7 +55,7 @@ class _DoctorViewDoctorProfileScreenState
       if (mounted) {
         setState(() {
           _loadingSpecialities = false;
-          _specialityError = 'Failed to load specialities';
+          _specialityError = 'failedToLoadSpecialities';
         });
       }
     }
@@ -292,7 +294,7 @@ class _DoctorViewDoctorProfileScreenState
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         child: Text(
-                          _specialityError!,
+                          getLocalizedError(_specialityError, context) ?? '',
                           style: const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),

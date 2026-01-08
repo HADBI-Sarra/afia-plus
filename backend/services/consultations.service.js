@@ -378,6 +378,25 @@ export class ConsultationsService {
 
         logger.info('  ✅ Availability slot marked as booked');
         logger.info('  ✅ Booking complete!');
+
+        // Send notification to doctor about new booking
+        try {
+            const { NotificationService } = await import('./notification.service.js');
+            await NotificationService.notifyDoctorOnBooking(consultation);
+            logger.info('  📨 Notification sent to doctor');
+        } catch (notificationError) {
+            // Don't fail the booking if notification fails
+            logger.warn('  ⚠️ Failed to send notification to doctor:', notificationError.message);
+        }
+
+        // Schedule reminder for the consultation
+        try {
+            const { ReminderService } = await import('./reminder.service.js');
+            await ReminderService.scheduleReminderForConsultation(consultation);
+        } catch (reminderError) {
+            logger.warn('  ⚠️ Failed to schedule reminder:', reminderError.message);
+        }
+
         return consultation;
     }
 
@@ -424,9 +443,8 @@ export class ConsultationsService {
         }
 
         // If scheduling from pending, update status
-        if (status === 'scheduled' && consultation.status === 'pending') {
-            // Doctor accepted the consultation
-        }
+        const wasPending = consultation.status === 'pending';
+        const isScheduled = status === 'scheduled';
 
         const { data, error } = await supabaseAdmin
             .from('consultations')
@@ -436,6 +454,27 @@ export class ConsultationsService {
             .single();
 
         if (error) throw new Error(`Failed to update consultation status: ${error.message}`);
+
+        // Send notification to patient when doctor accepts consultation
+        if (wasPending && isScheduled) {
+            try {
+                const { NotificationService } = await import('./notification.service.js');
+                await NotificationService.notifyPatientOnAcceptance(data);
+                logger.info(`📨 Notification sent to patient for consultation ${consultationId}`);
+            } catch (notificationError) {
+                // Don't fail the status update if notification fails
+                logger.warn('⚠️ Failed to send notification to patient:', notificationError.message);
+            }
+
+            // Ensure reminder is scheduled for the accepted consultation
+            try {
+                const { ReminderService } = await import('./reminder.service.js');
+                await ReminderService.scheduleReminderForConsultation(data);
+            } catch (reminderError) {
+                logger.warn('⚠️ Failed to schedule reminder:', reminderError.message);
+            }
+        }
+
         return data;
     }
 

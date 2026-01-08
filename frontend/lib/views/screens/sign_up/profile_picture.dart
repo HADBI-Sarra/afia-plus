@@ -10,6 +10,7 @@ import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../homescreen/doctor_home_screen.dart';
 import '../homescreen/patient_home_screen.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class ProfilePictureScreen extends StatefulWidget {
   const ProfilePictureScreen({super.key});
@@ -58,17 +59,20 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'More options',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  AppLocalizations.of(context)!.moreOptions,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: darkGreenColor),
-                title: const Text('Upload from Gallery'),
+                title: Text(AppLocalizations.of(context)!.uploadFromGallery),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () async {
                   Navigator.pop(context);
@@ -77,7 +81,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: darkGreenColor),
-                title: const Text('Take photo'),
+                title: Text(AppLocalizations.of(context)!.takePhoto),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () async {
                   Navigator.pop(context);
@@ -86,7 +90,10 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.cancel, color: redColor),
-                title: const Text('Cancel', style: TextStyle(color: redColor)),
+                title: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(color: redColor),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -114,7 +121,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking image: $e'),
+            content: Text(AppLocalizations.of(context)!.errorPickingImage(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -167,7 +174,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error uploading profile picture: $e'),
+              content: Text(AppLocalizations.of(context)!.errorUploadingProfilePicture(e.toString())),
               backgroundColor: Colors.orange,
               duration: const Duration(seconds: 3),
             ),
@@ -254,7 +261,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                 TextButton(
                   onPressed: _skipProfilePicture,
                   child: Text(
-                    'Skip',
+                    AppLocalizations.of(context)!.skip,
                     style: TextStyle(
                       color: greyColor,
                       fontSize: 16,
@@ -275,15 +282,15 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                       children: [
                         // Title
                         Text(
-                          'Profile picture',
+                          AppLocalizations.of(context)!.profilePicture,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(height: 10),
                         // Subtitle - changes based on role
                         Text(
                           isPatient
-                              ? 'Help people recognize you with a professional headshot.'
-                              : 'Help patients recognize you with a professional headshot.',
+                              ? AppLocalizations.of(context)!.helpPeopleRecognizeYou
+                              : AppLocalizations.of(context)!.helpPatientsRecognizeYou,
                         ),
                       ],
                     ),
@@ -327,10 +334,8 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                             onPressed: _isUploading ? null : _completeSignup,
                             style: greenButtonStyle,
                             child: _isUploading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : Text('Continue', style: whiteButtonText),
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : Text(AppLocalizations.of(context)!.continueButton, style: whiteButtonText),
                           ),
                           const SizedBox(height: 12),
                           TextButton(
@@ -340,7 +345,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                               });
                             },
                             child: Text(
-                              'Change photo',
+                              AppLocalizations.of(context)!.changePhoto,
                               style: TextStyle(
                                 color: darkGreenColor,
                                 fontSize: 16,
@@ -352,10 +357,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                           ElevatedButton(
                             onPressed: _showImageSourceModal,
                             style: greenButtonStyle,
-                            child: Text(
-                              'Add a profile picture',
-                              style: whiteButtonText,
-                            ),
+                            child: Text(AppLocalizations.of(context)!.addAProfilePicture, style: whiteButtonText),
                           ),
                       ],
                     ),

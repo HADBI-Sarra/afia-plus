@@ -7,6 +7,7 @@ import patientRoutes from '../routes/patients.routes.js';
 import doctorRoutes from '../routes/doctors.routes.js';
 import doctorAvailabilityRoutes from '../routes/doctor_availability.routes.js';
 import consultationsRoutes from '../routes/consultations.routes.js';
+import deviceTokenRoutes from '../routes/deviceToken.routes.js';
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use('/patients', patientRoutes);
 app.use('/doctors', doctorRoutes);
 app.use('/availability', doctorAvailabilityRoutes);
 app.use('/consultations', consultationsRoutes);
+app.use('/device-tokens', deviceTokenRoutes);
 
 export default app;
