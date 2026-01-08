@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get_it/get_it.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../models/user.dart';
 import '../../models/result.dart';
@@ -27,6 +29,47 @@ class SupabaseAuthRepository implements AuthRepository {
       return Doctor.fromMap(userWithPassword);
     } else {
       return User.fromMap(userWithPassword);
+    }
+  }
+
+  /// Send FCM device token to backend after login/signup
+  /// This is called automatically after successful authentication
+  Future<void> _sendFCMTokenToBackend(int userId) async {
+    try {
+      // Get FCM token
+      final token = await FirebaseMessaging.instance.getToken();
+      
+      if (token == null || token.isEmpty) {
+        print('⚠️ No FCM token available to send');
+        return;
+      }
+
+      // Determine device type
+      String deviceType = 'android';
+      if (Platform.isIOS) {
+        deviceType = 'ios';
+      } else if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        deviceType = 'web';
+      }
+
+      // Send token to backend
+      final response = await ApiClient.post(
+        '/device-tokens',
+        {
+          'userId': userId,
+          'token': token,
+          'deviceType': deviceType,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ FCM token sent to backend successfully');
+      } else {
+        print('⚠️ Failed to send FCM token: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      // Don't throw - token sending failure shouldn't block login/signup
+      print('⚠️ Error sending FCM token to backend: $e');
     }
   }
 
@@ -91,6 +134,11 @@ class SupabaseAuthRepository implements AuthRepository {
           } else if (user is Doctor) {
             print('Parsed as Doctor, specialityId: ${user.specialityId}');
           }
+          // Send FCM token to backend after successful login
+          if (user.userId != null) {
+            _sendFCMTokenToBackend(user.userId!);
+          }
+          
           return ReturnResult(
             state: true,
             message: 'Login successful',
@@ -128,10 +176,17 @@ class SupabaseAuthRepository implements AuthRepository {
         );
       }
       
+      final user = _parseUserFromMap(meUserMap, password);
+      
+      // Send FCM token to backend after successful login
+      if (user.userId != null) {
+        _sendFCMTokenToBackend(user.userId!);
+      }
+      
       return ReturnResult(
         state: true,
         message: 'Login successful',
-        data: _parseUserFromMap(meUserMap, password),
+        data: user,
       );
     } catch (e) {
       // Provide user-friendly error messages
@@ -238,7 +293,8 @@ class SupabaseAuthRepository implements AuthRepository {
         try {
           final loginResult = await login(user.email!, password);
           if (loginResult.state && loginResult.data != null) {
-            // Token is now stored from login, return the user from login
+            // Token is now stored from login, and FCM token is sent in login method
+            // Return the user from login
             return ReturnResult(
               state: true,
               message: 'Signup successful',
@@ -260,10 +316,17 @@ class SupabaseAuthRepository implements AuthRepository {
         userMap = data as Map<String, dynamic>;
       }
 
+      final createdUser = _parseUserFromMap(userMap, password);
+      
+      // Send FCM token to backend after successful signup
+      if (createdUser.userId != null) {
+        _sendFCMTokenToBackend(createdUser.userId!);
+      }
+
       return ReturnResult(
         state: true,
         message: 'Signup successful',
-        data: _parseUserFromMap(userMap, password),
+        data: createdUser,
       );
     } catch (e) {
       // Provide user-friendly error messages
