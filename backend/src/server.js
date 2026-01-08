@@ -14,10 +14,45 @@ console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
 import('./app.js').then(module => {
   const app = module.default;
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, '0.0.0.0', () => {
+
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📍 Listening on all interfaces (0.0.0.0:${PORT})`);
+
+    // Start background job scheduler
+    console.log('🔧 Loading job scheduler...');
+    import('../jobs/scheduler.js').then(({ scheduler }) => {
+      console.log('✅ Scheduler module loaded');
+      scheduler.startAll();
+    }).catch(err => {
+      console.error('❌ Failed to start job scheduler:', err);
+      console.error('Error details:', err.stack);
+    });
   });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('⚠️ SIGTERM received, shutting down gracefully...');
+    import('../jobs/scheduler.js').then(({ scheduler }) => {
+      scheduler.stopAll();
+    });
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  });
+
+  process.on('SIGINT', () => {
+    console.log('\n⚠️ SIGINT received, shutting down gracefully...');
+    import('../jobs/scheduler.js').then(({ scheduler }) => {
+      scheduler.stopAll();
+    });
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  });
+
 }).catch(err => {
   console.error('Failed to start server:', err);
   process.exit(1);
