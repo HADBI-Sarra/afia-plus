@@ -21,6 +21,7 @@ import 'package:afia_plus_app/views/screens/userprofile/user_profile_user_view.d
 import 'package:afia_plus_app/views/screens/doctorprofile/doctor_profile_screen_doctor_view.dart';
 import 'package:afia_plus_app/views/screens/search/search.dart';
 import 'package:afia_plus_app/data/repo/doctor_availability/doctor_availability_impl.dart';
+import 'package:afia_plus_app/data/repo/doctor_availability/doctor_availability_abstract.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/data/repo/users/db_user_repository.dart';
@@ -59,11 +60,16 @@ Future<void> initMyApp() async {
   sl.registerLazySingleton<TokenProvider>(() => tokenProvider);
   
   sl.registerLazySingleton<UserRepository>(() => SupabaseUserRepository());
-  sl.registerLazySingleton<PatientRepository>(() => SupabasePatientRepository());
+  sl.registerLazySingleton<PatientRepository>(
+    () => SupabasePatientRepository(),
+  );
   sl.registerLazySingleton<DoctorRepository>(() => SupabaseDoctorRepository());
   sl.registerLazySingleton<AuthRepository>(() => SupabaseAuthRepository());
   sl.registerLazySingleton<SpecialityRepository>(
     () => DBSpecialityRepository(),
+  );
+  sl.registerLazySingleton<DoctorAvailabilityRepository>(
+    () => DoctorAvailabilityImpl(),
   );
   sl.registerLazySingleton<ConsultationsRepository>(() => ConsultationsImpl());
 
@@ -85,6 +91,8 @@ class MainApp extends StatelessWidget {
     final authRepo = GetIt.instance<AuthRepository>();
     final patientRepo = GetIt.instance<PatientRepository>();
     final doctorRepo = GetIt.instance<DoctorRepository>();
+    final consultationsRepo = GetIt.instance<ConsultationsRepository>();
+    final availabilityRepo = GetIt.instance<DoctorAvailabilityRepository>();
 
     return MultiBlocProvider(
       providers: [
@@ -99,13 +107,12 @@ class MainApp extends StatelessWidget {
         BlocProvider(create: (_) => DoctorsCubit()),
         BlocProvider(create: (_) => SignupCubit(authRepository: authRepo)),
         BlocProvider<AvailabilityCubit>(
-          create: (_) => AvailabilityCubit(repo: DoctorAvailabilityImpl()),
+          create: (_) => AvailabilityCubit(repo: availabilityRepo),
         ),
 
         BlocProvider<BookingCubit>(
           create: (_) => BookingCubit(
-            consultations: ConsultationsImpl(),
-            availability: DoctorAvailabilityImpl(),
+            consultations: consultationsRepo as ConsultationsImpl,
           ),
         ),
       ],

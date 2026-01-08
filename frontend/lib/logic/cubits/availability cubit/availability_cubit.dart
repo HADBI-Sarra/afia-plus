@@ -16,7 +16,8 @@ class AvailabilityModel {
 
   /// Convert list of DoctorAvailabilityModel to grouped AvailabilityModel
   static List<AvailabilityModel> fromDoctorAvailability(
-      List<DoctorAvailabilityModel> slots) {
+    List<DoctorAvailabilityModel> slots,
+  ) {
     final Map<String, List<String>> grouped = {};
 
     for (var slot in slots) {
@@ -27,34 +28,45 @@ class AvailabilityModel {
     }
 
     return grouped.entries
-        .map((e) => AvailabilityModel(
-            date: DateTime.parse(e.key), times: e.value))
+        .map(
+          (e) => AvailabilityModel(date: DateTime.parse(e.key), times: e.value),
+        )
         .toList();
   }
 }
 
 class AvailabilityCubit extends Cubit<AvailabilityState> {
-  final DoctorAvailabilityRepo _repo;
+  final DoctorAvailabilityRepository _repo;
 
-  AvailabilityCubit({DoctorAvailabilityRepo? repo})
-      : _repo = repo ?? DoctorAvailabilityImpl(),
-        super(AvailabilityInitial());
+  AvailabilityCubit({DoctorAvailabilityRepository? repo})
+    : _repo = repo ?? DoctorAvailabilityImpl(),
+      super(AvailabilityInitial());
 
   /// Load all availability rows for a given doctorId
   Future<void> loadAvailabilityForDoctor(int doctorId) async {
     try {
       emit(AvailabilityLoading());
 
-      // Fetch raw rows from repo (List<Map<String, dynamic>>)
-      final rawRows = await _repo.getAvailabilityByDoctor(doctorId);
+      // Fetch availability from new API-based repo
+      final availabilityList = await _repo.getDoctorAvailability(doctorId);
 
-      // Convert raw maps to DoctorAvailabilityModel instances
-      final doctorAvailabilityList = rawRows
-          .map((map) => DoctorAvailabilityModel.fromMap(map))
+      // Convert DoctorAvailability to DoctorAvailabilityModel for grouping
+      final doctorAvailabilityList = availabilityList
+          .map(
+            (slot) => DoctorAvailabilityModel(
+              availabilityId: slot.availabilityId,
+              doctorId: slot.doctorId,
+              availableDate: slot.availableDate,
+              startTime: slot.startTime,
+              status: slot.status,
+            ),
+          )
           .toList();
 
       // Transform into grouped list for UI
-      final grouped = AvailabilityModel.fromDoctorAvailability(doctorAvailabilityList);
+      final grouped = AvailabilityModel.fromDoctorAvailability(
+        doctorAvailabilityList,
+      );
 
       // Emit grouped list
       emit(AvailabilityLoaded(grouped, doctorAvailabilityList));
@@ -66,8 +78,11 @@ class AvailabilityCubit extends Cubit<AvailabilityState> {
   /// Add a new availability (doctor side)
   Future<void> addAvailability(Map<String, dynamic> data) async {
     try {
-      await _repo.addAvailability(data);
       final doctorId = data['doctor_id'] as int;
+      final date = data['available_date'] as String;
+      final time = data['start_time'] as String;
+
+      await _repo.createAvailabilitySlot(doctorId, date, time);
       await loadAvailabilityForDoctor(doctorId);
     } catch (e) {
       emit(AvailabilityError('Failed to add availability: $e'));
@@ -76,9 +91,12 @@ class AvailabilityCubit extends Cubit<AvailabilityState> {
 
   /// Update slot status (used when booking to mark booked)
   Future<void> updateSlotStatus(
-      int availabilityId, String status, int doctorId) async {
+    int availabilityId,
+    String status,
+    int doctorId,
+  ) async {
     try {
-      await _repo.updateAvailability(availabilityId, {'status': status});
+      await _repo.updateAvailabilityStatus(availabilityId, status);
       await loadAvailabilityForDoctor(doctorId);
     } catch (e) {
       emit(AvailabilityError('Failed to update slot: $e'));
@@ -86,17 +104,14 @@ class AvailabilityCubit extends Cubit<AvailabilityState> {
   }
 
   Future<void> addMultipleAvailabilities({
-    required int doctorId, required String date, required List<String> times,
+    required int doctorId,
+    required String date,
+    required List<String> times,
   }) async {
     try {
-      for (final t in times) {
-        await _repo.addAvailability({
-          'doctor_id': doctorId,
-          'available_date': date,
-          'start_time': t,
-          'status': 'free',
-        });
-      }
+      final slots = times.map((t) => {'date': date, 'startTime': t}).toList();
+
+      await _repo.bulkCreateSlots(doctorId, slots);
       await loadAvailabilityForDoctor(doctorId);
     } catch (e) {
       emit(AvailabilityError('Failed to add times: $e'));
@@ -105,16 +120,29 @@ class AvailabilityCubit extends Cubit<AvailabilityState> {
 
   Future<void> deleteAvailabilityById(int availabilityId, int doctorId) async {
     try {
-      await _repo.deleteAvailability(availabilityId);
+      await _repo.deleteAvailabilitySlot(availabilityId);
       await loadAvailabilityForDoctor(doctorId);
     } catch (e) {
       emit(AvailabilityError('Failed to delete slot: $e'));
     }
   }
 
-  Future<List<DoctorAvailabilityModel>> getAvailableSlotsForDate(int doctorId, String date) async {
-    final rawRows = await _repo.getAvailabilityByDoctor(doctorId);
-    final all = rawRows.map((m) => DoctorAvailabilityModel.fromMap(m)).toList();
-    return all.where((a) => a.availableDate == date).toList();
+  Future<List<DoctorAvailabilityModel>> getAvailableSlotsForDate(
+    int doctorId,
+    String date,
+  ) async {
+    final availabilityList = await _repo.getDoctorAvailability(doctorId);
+    return availabilityList
+        .where((slot) => slot.availableDate == date)
+        .map(
+          (slot) => DoctorAvailabilityModel(
+            availabilityId: slot.availabilityId,
+            doctorId: slot.doctorId,
+            availableDate: slot.availableDate,
+            startTime: slot.startTime,
+            status: slot.status,
+          ),
+        )
+        .toList();
   }
 }

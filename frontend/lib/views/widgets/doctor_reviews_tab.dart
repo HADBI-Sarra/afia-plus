@@ -28,7 +28,7 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
   Future<void> _loadReviews() async {
     final cubit = context.read<DoctorsCubit>();
     final result = await cubit.getReviewsByDoctorId(widget.doctor.userId ?? 0);
-    
+
     if (mounted) {
       setState(() {
         if (result.state && result.data != null) {
@@ -38,16 +38,6 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
         }
         loading = false;
       });
-    }
-  }
-
-  String _formatDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) return '';
-    try {
-      final date = DateTime.parse(dateString);
-      return DateFormat('MMM d, yyyy').format(date);
-    } catch (e) {
-      return dateString;
     }
   }
 
@@ -61,7 +51,9 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
       return Center(
         child: Text(
           error!,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: greyColor),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: greyColor),
         ),
       );
     }
@@ -75,7 +67,9 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
           children: [
             Text(
               "${reviews.length} ${reviews.length == 1 ? 'review' : 'reviews'}",
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             Row(
               children: [
@@ -84,7 +78,9 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
                 Text(
                   "Leave a review",
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: darkGreenColor, fontWeight: FontWeight.bold),
+                    color: darkGreenColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -99,23 +95,27 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
               padding: const EdgeInsets.all(20.0),
               child: Text(
                 "No reviews yet. Be the first to review!",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: greyColor),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: greyColor),
                 textAlign: TextAlign.center,
               ),
             ),
           )
         else
-          ...reviews.map((review) => Column(
-                children: [
-                  ReviewItem(review: review),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Divider(color: lightGreyColor, thickness: 1),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-              )),
+          ...reviews.map(
+            (review) => Column(
+              children: [
+                ReviewItem(review: review),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Divider(color: lightGreyColor, thickness: 1),
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -144,7 +144,10 @@ class ReviewItem extends StatelessWidget {
         Container(
           width: 50,
           height: 50,
-          decoration: BoxDecoration(color: greyColor.withOpacity(0.3), shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: greyColor.withOpacity(0.3),
+            shape: BoxShape.circle,
+          ),
           child: Icon(Icons.person, color: greyColor, size: 28),
         ),
         const SizedBox(width: 12),
@@ -161,12 +164,15 @@ class ReviewItem extends StatelessWidget {
                     children: [
                       Text(
                         review.patientName ?? "Anonymous",
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         _formatDate(review.createdAt),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: greyColor),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: greyColor),
                       ),
                     ],
                   ),
@@ -175,7 +181,9 @@ class ReviewItem extends StatelessWidget {
                       5,
                       (index) => Icon(
                         Icons.star,
-                        color: index < review.rating ? darkGreenColor : greyColor.withOpacity(0.3),
+                        color: index < review.rating
+                            ? darkGreenColor
+                            : greyColor.withOpacity(0.3),
                         size: 16,
                       ),
                     ),
@@ -186,7 +194,9 @@ class ReviewItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   review.comment!,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: blackColor),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: blackColor),
                 ),
               ],
             ],

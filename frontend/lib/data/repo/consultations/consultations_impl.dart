@@ -1,276 +1,331 @@
-import 'package:afia_plus_app/data/db_helper.dart';
+import 'dart:convert';
+
+import 'package:afia_plus_app/data/api/api_client.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_abstract.dart';
 import 'package:afia_plus_app/models/consultation.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 
+/**
+ * Consultations Implementation
+ * Communicates with backend Supabase through Node.js API
+ * Handles booking logic, status transitions, and transaction management
+ */
 class ConsultationsImpl implements ConsultationsRepository {
+  /// Get all consultations for a patient
   @override
-  Future<List<ConsultationWithDetails>> getPatientConsultations(int patientId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      WHERE c.patient_id = ?
-      ORDER BY c.consultation_date DESC, c.start_time DESC
-    ''', [patientId]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getPatientConsultations(
+    int patientId,
+  ) async {
+    try {
+      final response = await ApiClient.get('/consultations/patient/$patientId');
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get patient consultations: $e');
+    }
   }
 
+  /// Get confirmed consultations for a patient (scheduled or completed)
   @override
-  Future<List<ConsultationWithDetails>> getDoctorConsultations(int doctorId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty,
-        u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname,
-        u2.phone_number as patient_phone_number
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      LEFT JOIN patients p ON c.patient_id = p.patient_id
-      LEFT JOIN users u2 ON p.patient_id = u2.user_id
-      WHERE c.doctor_id = ?
-      ORDER BY c.consultation_date DESC, c.start_time DESC
-    ''', [doctorId]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getConfirmedPatientConsultations(
+    int patientId,
+  ) async {
+    try {
+      final response = await ApiClient.get(
+        '/consultations/patient/$patientId/confirmed',
+      );
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get confirmed consultations: $e');
+    }
   }
 
+  /// Get not confirmed (pending) consultations for a patient
   @override
-  Future<List<ConsultationWithDetails>> getConfirmedPatientConsultations(int patientId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      WHERE c.patient_id = ? AND c.status IN ('scheduled', 'completed')
-      ORDER BY c.consultation_date DESC, c.start_time DESC
-    ''', [patientId]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getNotConfirmedPatientConsultations(
+    int patientId,
+  ) async {
+    try {
+      final response = await ApiClient.get(
+        '/consultations/patient/$patientId/pending',
+      );
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get pending consultations: $e');
+    }
   }
 
+  /// Get all consultations for a doctor
   @override
-  Future<List<ConsultationWithDetails>> getNotConfirmedPatientConsultations(int patientId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      WHERE c.patient_id = ? AND c.status = 'pending'
-      ORDER BY c.consultation_date DESC, c.start_time DESC
-    ''', [patientId]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getDoctorConsultations(
+    int doctorId,
+  ) async {
+    try {
+      final response = await ApiClient.get('/consultations/doctor/$doctorId');
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get doctor consultations: $e');
+    }
   }
 
+  /// Get upcoming consultations for a doctor
   @override
-  Future<List<ConsultationWithDetails>> getUpcomingDoctorConsultations(int doctorId) async {
-    final db = await DBHelper.getDatabase();
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty,
-        u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname,
-        u2.phone_number as patient_phone_number
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      LEFT JOIN patients p ON c.patient_id = p.patient_id
-      LEFT JOIN users u2 ON p.patient_id = u2.user_id
-      WHERE c.doctor_id = ? AND c.status IN ('pending', 'scheduled') AND c.consultation_date >= ?
-      ORDER BY c.consultation_date ASC, c.start_time ASC
-    ''', [doctorId, today]);
+  Future<List<ConsultationWithDetails>> getUpcomingDoctorConsultations(
+    int doctorId,
+  ) async {
+    try {
+      print('📋 Fetching upcoming consultations for doctor $doctorId');
+      final response = await ApiClient.get(
+        '/consultations/doctor/$doctorId/upcoming',
+      );
+      print('✅ Response status: ${response.statusCode}');
+      print('✅ Response body: ${response.body}');
 
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+
+      if (data == null) {
+        print('⚠️  Data is null, returning empty list');
+        return [];
+      }
+
+      if (data is! List) {
+        print('❌ Data is not a list: ${data.runtimeType}');
+        return [];
+      }
+
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      print('❌ Error getting upcoming consultations: $e');
+      throw Exception('Failed to get upcoming consultations: $e');
+    }
   }
 
+  /// Get past consultations for a doctor
   @override
-  Future<List<ConsultationWithDetails>> getPastDoctorConsultations(int doctorId) async {
-    final db = await DBHelper.getDatabase();
-    final today = DateTime.now().toIso8601String().split('T')[0];
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty,
-        u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname,
-        u2.phone_number as patient_phone_number
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      LEFT JOIN patients p ON c.patient_id = p.patient_id
-      LEFT JOIN users u2 ON p.patient_id = u2.user_id
-      WHERE c.doctor_id = ? AND c.status = 'completed' AND c.consultation_date < ?
-      ORDER BY c.consultation_date DESC, c.start_time DESC
-    ''', [doctorId, today]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getPastDoctorConsultations(
+    int doctorId,
+  ) async {
+    try {
+      final response = await ApiClient.get(
+        '/consultations/doctor/$doctorId/past',
+      );
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get past consultations: $e');
+    }
   }
 
+  /// Get patient prescriptions
   @override
-  Future<List<ConsultationWithDetails>> getPatientPrescriptions(int patientId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      WHERE c.patient_id = ? AND c.prescription IS NOT NULL AND c.prescription != ''
-      ORDER BY c.consultation_date DESC
-    ''', [patientId]);
-
-    return maps.map((map) => _mapToConsultationWithDetails(map)).toList();
+  Future<List<ConsultationWithDetails>> getPatientPrescriptions(
+    int patientId,
+  ) async {
+    try {
+      final response = await ApiClient.get(
+        '/consultations/patient/$patientId/prescriptions',
+      );
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'];
+      if (data == null || data is! List) return [];
+      return data.map((item) => _mapToConsultationWithDetails(item)).toList();
+    } catch (e) {
+      throw Exception('Failed to get prescriptions: $e');
+    }
   }
 
+  /// Create a new consultation (book a consultation)
+  /// This prevents double-booking through backend logic
   @override
   Future<int> createConsultation(Consultation consultation) async {
-    final db = await DBHelper.getDatabase();
-    final map = consultation.toMap();
-    map.remove('consultation_id'); // Remove ID for insertion
-    
-    return await db.insert('consultations', map);
-  }
+    try {
+      print('📅 Booking consultation:');
+      print('  Patient ID: ${consultation.patientId}');
+      print('  Doctor ID: ${consultation.doctorId}');
+      print('  Availability ID: ${consultation.availabilityId}');
+      print('  Date: ${consultation.consultationDate}');
+      print('  Time: ${consultation.startTime}');
 
-  @override
-  Future<void> updateConsultationStatus(int consultationId, String status) async {
-    final db = await DBHelper.getDatabase();
-    final result = await db.update(
-      'consultations',
-      {'status': status},
-      where: 'consultation_id = ?',
-      whereArgs: [consultationId],
-    );
-    
-    if (result == 0) {
-      throw Exception('No consultation found with ID: $consultationId');
+      final response = await ApiClient.post('/consultations/book', {
+        'patientId': consultation.patientId,
+        'doctorId': consultation.doctorId,
+        'availabilityId': consultation.availabilityId,
+        'consultationDate': consultation.consultationDate,
+        'startTime': consultation.startTime,
+      });
+
+      print('✅ Response status: ${response.statusCode}');
+      print('✅ Response body: ${response.body}');
+
+      // Return the created consultation ID
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final message = jsonData['message'] ?? 'Unknown error';
+        throw Exception('Booking failed: $message');
+      }
+
+      final createdConsultation = jsonData['data'] as Map<String, dynamic>;
+      final consultationId = createdConsultation['consultation_id'] as int;
+      print('✅ Created consultation ID: $consultationId');
+      return consultationId;
+    } catch (e) {
+      print('❌ Booking error: $e');
+      throw Exception('Failed to book consultation: $e');
     }
-    
-    print('✅ Updated consultation $consultationId status to: $status (rows affected: $result)');
   }
 
+  /// Update consultation status
   @override
-  Future<void> updateConsultationPrescription(int consultationId, String prescription) async {
-    final db = await DBHelper.getDatabase();
-    await db.update(
-      'consultations',
-      {'prescription': prescription},
-      where: 'consultation_id = ?',
-      whereArgs: [consultationId],
-    );
+  Future<void> updateConsultationStatus(
+    int consultationId,
+    String status,
+  ) async {
+    try {
+      await ApiClient.put('/consultations/$consultationId/status', {
+        'status': status,
+      });
+    } catch (e) {
+      throw Exception('Failed to update consultation status: $e');
+    }
   }
 
+  /// Update consultation prescription
+  @override
+  Future<void> updateConsultationPrescription(
+    int consultationId,
+    String prescription,
+  ) async {
+    try {
+      await ApiClient.post('/consultations/$consultationId/prescription', {
+        'prescription': prescription,
+      });
+    } catch (e) {
+      throw Exception('Failed to update prescription: $e');
+    }
+  }
+
+  /// Delete a consultation (only for pending/cancelled)
   @override
   Future<void> deleteConsultation(int consultationId) async {
-    final db = await DBHelper.getDatabase();
-    await db.delete(
-      'consultations',
-      where: 'consultation_id = ?',
-      whereArgs: [consultationId],
-    );
+    try {
+      await ApiClient.delete('/consultations/$consultationId');
+    } catch (e) {
+      throw Exception('Failed to delete consultation: $e');
+    }
   }
 
+  /// Get consultation by ID
   @override
-  Future<ConsultationWithDetails?> getConsultationById(int consultationId) async {
-    final db = await DBHelper.getDatabase();
-    
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
-      SELECT 
-        c.*,
-        u1.firstname as doctor_firstname,
-        u1.lastname as doctor_lastname,
-        u1.profile_picture as doctor_image_path,
-        u1.phone_number as doctor_phone_number,
-        s.speciality_name as doctor_specialty,
-        u2.firstname as patient_firstname,
-        u2.lastname as patient_lastname,
-        u2.phone_number as patient_phone_number
-      FROM consultations c
-      LEFT JOIN doctors d ON c.doctor_id = d.doctor_id
-      LEFT JOIN users u1 ON d.doctor_id = u1.user_id
-      LEFT JOIN specialities s ON d.speciality_id = s.speciality_id
-      LEFT JOIN patients p ON c.patient_id = p.patient_id
-      LEFT JOIN users u2 ON p.patient_id = u2.user_id
-      WHERE c.consultation_id = ?
-    ''', [consultationId]);
-
-    if (maps.isEmpty) return null;
-    return _mapToConsultationWithDetails(maps.first);
+  Future<ConsultationWithDetails?> getConsultationById(
+    int consultationId,
+  ) async {
+    try {
+      final response = await ApiClient.get('/consultations/$consultationId');
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = jsonData['data'] as Map<String, dynamic>;
+      return _mapToConsultationWithDetails(data);
+    } catch (e) {
+      // Return null if consultation not found
+      if (e.toString().contains('404')) {
+        return null;
+      }
+      throw Exception('Failed to get consultation: $e');
+    }
   }
 
-  ConsultationWithDetails _mapToConsultationWithDetails(Map<String, dynamic> map) {
-    final consultation = Consultation.fromMap(map);
-    
+  /// Map API response to ConsultationWithDetails model
+  ConsultationWithDetails _mapToConsultationWithDetails(
+    Map<String, dynamic> data,
+  ) {
+    // Extract consultation data
+    final consultation = Consultation(
+      consultationId: data['consultation_id'] as int?,
+      patientId: data['patient_id'] as int,
+      doctorId: data['doctor_id'] as int,
+      availabilityId: data['availability_id'] as int?,
+      consultationDate: data['consultation_date'] as String,
+      startTime: data['start_time'] as String,
+      status: data['status'] as String? ?? 'pending',
+      prescription: data['prescription'] as String?,
+    );
+
+    // Extract doctor details (from nested object or flat structure)
+    String? doctorFirstName;
+    String? doctorLastName;
+    String? doctorSpecialty;
+    String? doctorImagePath;
+    String? doctorPhoneNumber;
+
+    if (data['doctor'] is Map) {
+      final doctorData = data['doctor'] as Map<String, dynamic>;
+      final userData = doctorData['user'] as Map<String, dynamic>?;
+      final specialityData = doctorData['speciality'] as Map<String, dynamic>?;
+
+      if (userData != null) {
+        doctorFirstName = userData['firstname'] as String?;
+        doctorLastName = userData['lastname'] as String?;
+        doctorImagePath = userData['profile_picture'] as String?;
+        doctorPhoneNumber = userData['phone_number'] as String?;
+      }
+
+      if (specialityData != null) {
+        doctorSpecialty = specialityData['speciality_name'] as String?;
+      }
+    } else {
+      // Fallback for flat structure
+      doctorFirstName = data['doctor_firstname'] as String?;
+      doctorLastName = data['doctor_lastname'] as String?;
+      doctorSpecialty = data['doctor_specialty'] as String?;
+      doctorImagePath = data['doctor_image_path'] as String?;
+      doctorPhoneNumber = data['doctor_phone_number'] as String?;
+    }
+
+    // Extract patient details
+    String? patientFirstName;
+    String? patientLastName;
+    String? patientPhoneNumber;
+
+    if (data['patient'] is Map) {
+      final patientData = data['patient'] as Map<String, dynamic>;
+      final userData = patientData['user'] as Map<String, dynamic>?;
+
+      if (userData != null) {
+        patientFirstName = userData['firstname'] as String?;
+        patientLastName = userData['lastname'] as String?;
+        patientPhoneNumber = userData['phone_number'] as String?;
+      }
+    } else {
+      // Fallback for flat structure
+      patientFirstName = data['patient_firstname'] as String?;
+      patientLastName = data['patient_lastname'] as String?;
+      patientPhoneNumber = data['patient_phone_number'] as String?;
+    }
+
     return ConsultationWithDetails(
       consultation: consultation,
-      doctorFirstName: map['doctor_firstname'] as String?,
-      doctorLastName: map['doctor_lastname'] as String?,
-      doctorSpecialty: map['doctor_specialty'] as String?,
-      patientFirstName: map['patient_firstname'] as String?,
-      patientLastName: map['patient_lastname'] as String?,
-      doctorImagePath: map['doctor_image_path'] as String?,
-      doctorPhoneNumber: map['doctor_phone_number'] as String?,
-      patientPhoneNumber: map['patient_phone_number'] as String?,
+      doctorFirstName: doctorFirstName,
+      doctorLastName: doctorLastName,
+      doctorSpecialty: doctorSpecialty,
+      patientFirstName: patientFirstName,
+      patientLastName: patientLastName,
+      doctorImagePath: doctorImagePath,
+      doctorPhoneNumber: doctorPhoneNumber,
+      patientPhoneNumber: patientPhoneNumber,
     );
   }
 }
-

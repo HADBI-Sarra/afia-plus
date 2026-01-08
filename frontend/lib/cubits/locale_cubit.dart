@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:afia_plus_app/utils/logger.dart';
 
 class LocaleCubit extends Cubit<Locale> {
   LocaleCubit() : super(const Locale('en')) {
@@ -17,7 +18,7 @@ class LocaleCubit extends Cubit<Locale> {
         emit(Locale(savedLocaleCode));
       }
     } catch (e) {
-      print('Error loading saved locale: $e');
+      AppLogger.error('Error loading saved locale: $e');
       // Keep default English locale
     }
   }
@@ -27,9 +28,9 @@ class LocaleCubit extends Cubit<Locale> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_localeKey, newLocale.languageCode);
       emit(newLocale);
-      print('✅ Locale changed to: ${newLocale.languageCode}');
+      AppLogger.success('✅ Locale changed to: ${newLocale.languageCode}');
     } catch (e) {
-      print('Error saving locale: $e');
+      AppLogger.error('Error saving locale: $e');
     }
   }
 

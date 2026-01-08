@@ -5,7 +5,7 @@ import {
   login,
   me,
   logout,
-  uploadProfilePicture
+  uploadProfilePicture,
 } from '../controllers/auth.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
@@ -21,23 +21,23 @@ const upload = multer({
     // Log the file info for debugging
     console.log('File upload - mimetype:', file.mimetype);
     console.log('File upload - originalname:', file.originalname);
-    
+
     // Accept only image files - check both mimetype and file extension
     const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
     const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-    
+
     // Get file extension
     const fileExtension = file.originalname.toLowerCase().substring(file.originalname.lastIndexOf('.'));
     const hasValidExtension = validExtensions.includes(fileExtension);
-    
+
     // Check mimetype - be lenient with application/octet-stream if extension is valid
     const mimetype = file.mimetype ? file.mimetype.toLowerCase() : '';
-    const isGenericMimeType = mimetype === 'application/octet-stream' || 
-                             mimetype === 'application/x-unknown-content-type' ||
-                             mimetype === '';
-    const hasValidMimeType = mimetype.startsWith('image/') || 
-                            validMimeTypes.includes(mimetype);
-    
+    const isGenericMimeType = mimetype === 'application/octet-stream' ||
+      mimetype === 'application/x-unknown-content-type' ||
+      mimetype === '';
+    const hasValidMimeType = mimetype.startsWith('image/') ||
+      validMimeTypes.includes(mimetype);
+
     // Accept if: valid mimetype OR (generic mimetype with valid extension)
     if (hasValidMimeType || (isGenericMimeType && hasValidExtension) || hasValidExtension) {
       console.log('File accepted - mimetype:', file.mimetype, 'extension:', fileExtension);

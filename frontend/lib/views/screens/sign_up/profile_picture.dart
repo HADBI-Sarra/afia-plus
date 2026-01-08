@@ -135,23 +135,23 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
 
   Future<void> _completeSignup() async {
     if (_isUploading) return; // Prevent multiple clicks
-    
+
     final cubit = context.read<SignupCubit>();
     final state = cubit.state;
-    
+
     // Upload profile picture if one was selected
     if (_selectedImage != null) {
       setState(() {
         _isUploading = true;
       });
-      
+
       try {
         // Use the actual file path from the selected image
         final imagePath = _selectedImage!.path;
         print('Uploading profile picture from path: $imagePath');
-        
+
         final result = await cubit.uploadProfilePicture(imagePath);
-        
+
         // Check if upload was successful
         if (result.state && result.data != null) {
           print('Profile picture uploaded successfully: ${result.data}');
@@ -188,7 +188,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
         }
       }
     }
-    
+
     // Navigate to home screen
     if (state.isPatient) {
       Navigator.pushAndRemoveUntil(
@@ -212,8 +212,8 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     final isPatient = state.isPatient;
 
     return BlocListener<SignupCubit, SignupState>(
-      listenWhen: (prev, curr) => 
-          prev.currentStep != curr.currentStep || 
+      listenWhen: (prev, curr) =>
+          prev.currentStep != curr.currentStep ||
           (prev.message != curr.message && curr.message.isNotEmpty),
       listener: (context, state) {
         // Handle navigation back if step changes
@@ -224,7 +224,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
           if (Navigator.canPop(context)) Navigator.pop(context);
           if (Navigator.canPop(context)) Navigator.pop(context);
         }
-        
+
         // Suppress success messages - don't show snackbars for success
         // Success messages are handled silently (no snackbars)
         // Error messages are handled in _completeSignup method
@@ -371,4 +371,3 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     );
   }
 }
-

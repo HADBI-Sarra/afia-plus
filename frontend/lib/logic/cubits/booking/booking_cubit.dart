@@ -2,19 +2,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:afia_plus_app/data/repo/consultations/consultations_impl.dart';
-import 'package:afia_plus_app/data/repo/doctor_availability/doctor_availability_impl.dart';
 import 'package:afia_plus_app/models/consultation.dart';
 
 part 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
   final ConsultationsImpl _consultations;
-  final DoctorAvailabilityImpl _availability;
 
-  BookingCubit({ConsultationsImpl? consultations, DoctorAvailabilityImpl? availability})
-      : _consultations = consultations ?? ConsultationsImpl(),
-        _availability = availability ?? DoctorAvailabilityImpl(),
-        super(BookingInitial());
+  BookingCubit({ConsultationsImpl? consultations})
+    : _consultations = consultations ?? ConsultationsImpl(),
+      super(BookingInitial());
 
   /// book slot: create consultation and mark availability as booked
   Future<void> book({
@@ -26,6 +23,7 @@ class BookingCubit extends Cubit<BookingState> {
   }) async {
     emit(BookingInProgress());
     try {
+      print('🔹 BookingCubit: Starting booking process...');
       final newConsultation = Consultation(
         patientId: patientId,
         doctorId: doctorId,
@@ -37,13 +35,17 @@ class BookingCubit extends Cubit<BookingState> {
         prescription: '',
       );
 
-      await _consultations.createConsultation(newConsultation);
+      final consultationId = await _consultations.createConsultation(
+        newConsultation,
+      );
+      print('🔹 BookingCubit: Consultation created with ID: $consultationId');
 
-      // mark availability as booked
-      await _availability.updateAvailability(availabilityId, {'status': 'booked'});
-
-      emit(BookingSuccess('Appointment booked'));
+      // mark availability as booked - done automatically by backend
+      // availability status is updated when consultation is created
+      emit(BookingSuccess('Appointment booked successfully!'));
+      print('🔹 BookingCubit: Success emitted');
     } catch (e) {
+      print('🔹 BookingCubit: Error - $e');
       emit(BookingFailure('Failed to book appointment: $e'));
     }
   }
