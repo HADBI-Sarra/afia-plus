@@ -14,11 +14,7 @@ console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
 import('./app.js').then(async module => {
   const app = module.default;
   const PORT = process.env.PORT || 3000;
-<<<<<<< HEAD
 
-  const server = app.listen(PORT, '0.0.0.0', () => {
-=======
-  
   // Start reminder service for consultation reminders
   try {
     const { ReminderService } = await import('../services/reminder.service.js');
@@ -28,8 +24,7 @@ import('./app.js').then(async module => {
     // Don't exit - server can still run without reminders
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
->>>>>>> 5bc71feafbccfed1156a5f84851d9f6710a688f2
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📍 Listening on all interfaces (0.0.0.0:${PORT})`);
 
