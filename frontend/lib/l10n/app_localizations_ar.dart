@@ -623,6 +623,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get popularSpecializations => 'التخصصات الشائعة';
 
   @override
+  String get allSpecialities => 'جميع التخصصات';
+
+  @override
   String get popularDoctors => 'الأطباء الشائعون';
 
   @override

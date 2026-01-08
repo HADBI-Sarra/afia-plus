@@ -758,6 +758,8 @@
   "@popularSpecializations": {
     "description": "Title for popular specializations section"
   },
+  "allSpecialities": "All specialities",
+  "@allSpecialities": { "description": "Header for list of all specialities overlay" },
   "popularDoctors": "Popular doctors",
   "@popularDoctors": {
     "description": "Title for popular doctors section"

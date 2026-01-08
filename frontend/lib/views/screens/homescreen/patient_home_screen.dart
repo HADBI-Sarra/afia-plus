@@ -621,9 +621,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                           });
                         },
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'All specialities',
+                          AppLocalizations.of(context)!.allSpecialities,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: blackColor,

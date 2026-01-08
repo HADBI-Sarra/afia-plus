@@ -632,6 +632,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get popularSpecializations => 'Popular specializations';
 
   @override
+  String get allSpecialities => 'All specialities';
+
+  @override
   String get popularDoctors => 'Popular doctors';
 
   @override

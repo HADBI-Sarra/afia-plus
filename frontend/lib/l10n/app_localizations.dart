@@ -1252,6 +1252,12 @@ abstract class AppLocalizations {
   /// **'Popular specializations'**
   String get popularSpecializations;
 
+  /// Header for list of all specialities overlay
+  ///
+  /// In en, this message translates to:
+  /// **'All specialities'**
+  String get allSpecialities;
+
   /// Title for popular doctors section
   ///
   /// In en, this message translates to:
