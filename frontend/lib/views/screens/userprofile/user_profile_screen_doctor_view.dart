@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class DoctorViewUserProfileScreen extends StatefulWidget {
   static const routename = "/doctorViewUserProfile";
@@ -24,9 +25,9 @@ class _DoctorViewUserProfileScreenState
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
-          title: const Text(
-            "Patient Profile",
-            style: TextStyle(
+          title: Text(
+            AppLocalizations.of(context)!.patientProfile,
+            style: const TextStyle(
               color: blackColor,
               fontWeight: FontWeight.w700,
               fontSize: 20,
@@ -90,22 +91,22 @@ class _DoctorViewUserProfileScreenState
                       children: [
                         _buildInfoRow(
                           icon: Icons.email_outlined,
-                          title: "Email",
+                          title: AppLocalizations.of(context)!.email,
                           value: "besmala@gmail.com",
                         ),
                         _buildInfoRow(
                           icon: Icons.phone_outlined,
-                          title: "Phone",
+                          title: AppLocalizations.of(context)!.phone,
                           value: "+213 123 456 789",
                         ),
                         _buildInfoRow(
                           icon: Icons.location_on_outlined,
-                          title: "Address",
+                          title: AppLocalizations.of(context)!.address,
                           value: "Jijel, Algeria",
                         ),
                         _buildInfoRow(
                           icon: Icons.health_and_safety_outlined,
-                          title: "Health Info",
+                          title: AppLocalizations.of(context)!.healthInfo,
                           value: "Blood Type: O+ | Allergies: None | Chronic Conditions: None",
                         ),
                         const SizedBox(height: 20),
@@ -127,7 +128,7 @@ class _DoctorViewUserProfileScreenState
                     ),
                     onPressed: () {},
                     child: Text(
-                      "Send Message",
+                      AppLocalizations.of(context)!.sendMessage,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: whiteColor, fontWeight: FontWeight.bold),
                     ),

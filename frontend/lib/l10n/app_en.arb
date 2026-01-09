@@ -306,6 +306,10 @@
   "@arabic": {
     "description": "Arabic language label"
   },
+  "french": "French",
+  "@french": {
+    "description": "French language label"
+  },
   "whatsappError": "Could not open WhatsApp. Please make sure WhatsApp is installed.",
   "@whatsappError": {
     "description": "Error message when WhatsApp cannot be opened"
@@ -321,6 +325,234 @@
         "type": "String"
       }
     }
+  },
+  "doctorProfile": "Doctor Profile",
+  "@doctorProfile": {
+    "description": "Title for doctor profile screen"
+  },
+  "book": "Book",
+  "@book": {
+    "description": "Book tab label"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About tab label"
+  },
+  "reviews": "Reviews",
+  "@reviews": {
+    "description": "Reviews tab label"
+  },
+  "bookAppointment": "Book appointment",
+  "@bookAppointment": {
+    "description": "Book appointment button text"
+  },
+  "doctorNotFound": "Doctor not found",
+  "@doctorNotFound": {
+    "description": "Error message when doctor is not found"
+  },
+  "bookingSuccessMessage": "Booking was successful and must be confirmed by the doctor.",
+  "@bookingSuccessMessage": {
+    "description": "Success message after booking appointment"
+  },
+  "pleaseSelectTime": "Please select a time for your consultation.",
+  "@pleaseSelectTime": {
+    "description": "Message when time is not selected for booking"
+  },
+  "cannotBookPastDate": "You cannot book appointments for past dates. Please select a current or future date.",
+  "@cannotBookPastDate": {
+    "description": "Error message when trying to book past date"
+  },
+  "cannotBookPastTime": "You cannot book appointments for past times. Please select a future time slot.",
+  "@cannotBookPastTime": {
+    "description": "Error message when trying to book past time"
+  },
+  "noAvailableSlot": "No available slot found for the selected date/time.",
+  "@noAvailableSlot": {
+    "description": "Error message when no slot is available"
+  },
+  "mustBeLoggedInAsPatient": "You must be logged in as a patient.",
+  "@mustBeLoggedInAsPatient": {
+    "description": "Error message when user is not logged in as patient"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile screen title"
+  },
+  "bookedAppointments": "Booked appointments",
+  "@bookedAppointments": {
+    "description": "Booked appointments menu item"
+  },
+  "myPatients": "My patients",
+  "@myPatients": {
+    "description": "My patients menu item"
+  },
+  "availability": "Availability",
+  "@availability": {
+    "description": "Availability menu item"
+  },
+  "notificationSettings": "Notification settings",
+  "@notificationSettings": {
+    "description": "Notification settings menu item"
+  },
+  "policies": "Policies",
+  "@policies": {
+    "description": "Policies menu item"
+  },
+  "changeEmail": "Change email",
+  "@changeEmail": {
+    "description": "Change email menu item"
+  },
+  "securitySettings": "Security settings",
+  "@securitySettings": {
+    "description": "Security settings menu item"
+  },
+  "aboutMe": "About me",
+  "@aboutMe": {
+    "description": "About me menu item"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout menu item and button"
+  },
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "@logoutConfirmation": {
+    "description": "Logout confirmation dialog message"
+  },
+  "specialtyNotSet": "Specialty not set",
+  "@specialtyNotSet": {
+    "description": "Message when specialty is not set"
+  },
+  "loadingSpecialty": "Loading specialty...",
+  "@loadingSpecialty": {
+    "description": "Loading message for specialty"
+  },
+  "favoriteDoctors": "Favorite doctors",
+  "@favoriteDoctors": {
+    "description": "Favorite doctors menu item"
+  },
+  "dobNotSet": "DOB not set",
+  "@dobNotSet": {
+    "description": "Message when date of birth is not set"
+  },
+  "patientProfile": "Patient Profile",
+  "@patientProfile": {
+    "description": "Title for patient profile screen from doctor view"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Address label"
+  },
+  "healthInfo": "Health Info",
+  "@healthInfo": {
+    "description": "Health info label"
+  },
+  "sendMessage": "Send Message",
+  "@sendMessage": {
+    "description": "Send message button text"
+  },
+  "generalInformation": "General Information",
+  "@generalInformation": {
+    "description": "General information section title"
+  },
+  "currentWorkingPlace": "Current Working Place",
+  "@currentWorkingPlace": {
+    "description": "Current working place section title"
+  },
+  "education": "Education",
+  "@education": {
+    "description": "Education section title"
+  },
+  "certification": "Certification",
+  "@certification": {
+    "description": "Certification section title"
+  },
+  "training": "Training",
+  "@training": {
+    "description": "Training section title"
+  },
+  "licensure": "Licensure",
+  "@licensure": {
+    "description": "Licensure section title"
+  },
+  "experience": "Experience",
+  "@experience": {
+    "description": "Experience section title"
+  },
+  "notSpecified": "Not specified",
+  "@notSpecified": {
+    "description": "Default text when information is not specified"
+  },
+  "licenseNumber": "License number:",
+  "@licenseNumber": {
+    "description": "License number label"
+  },
+  "over": "Over",
+  "@over": {
+    "description": "Prefix for years of experience"
+  },
+  "year": "year",
+  "@year": {
+    "description": "Singular year"
+  },
+  "years": "years",
+  "@years": {
+    "description": "Plural years"
+  },
+  "ofExperience": "of experience",
+  "@ofExperience": {
+    "description": "Suffix for years of experience"
+  },
+  "specializingIn": "specializing in",
+  "@specializingIn": {
+    "description": "Prefix for areas of expertise"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Price label"
+  },
+  "oneHourConsultation": "1 hour consultation",
+  "@oneHourConsultation": {
+    "description": "One hour consultation label"
+  },
+  "selectTime": "Select time",
+  "@selectTime": {
+    "description": "Select time label"
+  },
+  "noAvailableTimesForDay": "No available times for this day",
+  "@noAvailableTimesForDay": {
+    "description": "Message when no times available for selected day"
+  },
+  "noUpcomingAvailability": "No upcoming availability. This doctor has no available time slots for booking.",
+  "@noUpcomingAvailability": {
+    "description": "Message when doctor has no upcoming availability"
+  },
+  "noAvailability": "No availability",
+  "@noAvailability": {
+    "description": "Message when availability cannot be loaded"
+  },
+  "review": "review",
+  "@review": {
+    "description": "Singular review"
+  },
+  "reviewsPlural": "reviews",
+  "@reviewsPlural": {
+    "description": "Plural reviews"
+  },
+  "leaveReview": "Leave a review",
+  "@leaveReview": {
+    "description": "Leave a review button text"
+  },
+  "noReviewsYet": "No reviews yet. Be the first to review!",
+  "@noReviewsYet": {
+    "description": "Message when there are no reviews"
+  },
+  "anonymous": "Anonymous",
+  "@anonymous": {
+    "description": "Default name when patient name is not available"
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/data/models/doctor.dart';
 import 'package:afia_plus_app/data/models/speciality.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class DoctorAboutTab extends StatelessWidget {
   final Doctor doctor;
@@ -9,7 +10,8 @@ class DoctorAboutTab extends StatelessWidget {
 
   const DoctorAboutTab({Key? key, required this.doctor, this.speciality}) : super(key: key);
 
-  String _formatEducation() {
+  String _formatEducation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final parts = <String>[];
     if (doctor.degree != null && doctor.degree!.isNotEmpty) {
       parts.add(doctor.degree!);
@@ -17,10 +19,11 @@ class DoctorAboutTab extends StatelessWidget {
     if (doctor.university != null && doctor.university!.isNotEmpty) {
       parts.add(doctor.university!);
     }
-    return parts.isEmpty ? "Not specified" : parts.join(", ");
+    return parts.isEmpty ? l10n.notSpecified : parts.join(", ");
   }
 
-  String _formatCertification() {
+  String _formatCertification(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final parts = <String>[];
     if (doctor.certification != null && doctor.certification!.isNotEmpty) {
       parts.add(doctor.certification!);
@@ -28,40 +31,44 @@ class DoctorAboutTab extends StatelessWidget {
     if (doctor.institution != null && doctor.institution!.isNotEmpty) {
       parts.add(doctor.institution!);
     }
-    return parts.isEmpty ? "Not specified" : parts.join(", ");
+    return parts.isEmpty ? l10n.notSpecified : parts.join(", ");
   }
 
-  String _formatLicensure() {
+  String _formatLicensure(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final parts = <String>[];
     if (doctor.licenseDescription != null && doctor.licenseDescription!.isNotEmpty) {
       parts.add(doctor.licenseDescription!);
     }
     if (doctor.licenseNumber != null && doctor.licenseNumber!.isNotEmpty) {
-      parts.add("License number: ${doctor.licenseNumber!}");
+      parts.add("${l10n.licenseNumber} ${doctor.licenseNumber!}");
     }
-    return parts.isEmpty ? "Not specified" : parts.join(". ");
+    return parts.isEmpty ? l10n.notSpecified : parts.join(". ");
   }
 
-  String _formatExperience() {
+  String _formatExperience(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final parts = <String>[];
     if (doctor.yearsExperience != null) {
-      parts.add("Over ${doctor.yearsExperience} year${doctor.yearsExperience == 1 ? '' : 's'} of experience");
+      final yearText = doctor.yearsExperience == 1 ? l10n.year : l10n.years;
+      parts.add("${l10n.over} ${doctor.yearsExperience} $yearText ${l10n.ofExperience}");
     }
     if (doctor.areasOfExpertise != null && doctor.areasOfExpertise!.isNotEmpty) {
-      parts.add("specializing in ${doctor.areasOfExpertise!}");
+      parts.add("${l10n.specializingIn} ${doctor.areasOfExpertise!}");
     }
-    return parts.isEmpty ? "Not specified" : parts.join(", ");
+    return parts.isEmpty ? l10n.notSpecified : parts.join(", ");
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final items = <Widget>[];
 
     // General Information (required)
     if (doctor.bio != null && doctor.bio!.isNotEmpty) {
       items.add(AboutItem(
         icon: Icons.info,
-        title: "General Information",
+        title: l10n.generalInformation,
         description: doctor.bio!,
       ));
     }
@@ -70,7 +77,7 @@ class DoctorAboutTab extends StatelessWidget {
     if (doctor.locationOfWork != null && doctor.locationOfWork!.isNotEmpty) {
       items.add(AboutItem(
         icon: Icons.location_on,
-        title: "Current Working Place",
+        title: l10n.currentWorkingPlace,
         description: doctor.locationOfWork!,
       ));
     }
@@ -78,22 +85,22 @@ class DoctorAboutTab extends StatelessWidget {
     // Education (required fields)
     items.add(AboutItem(
       icon: Icons.school,
-      title: "Education",
-      description: _formatEducation(),
+      title: l10n.education,
+      description: _formatEducation(context),
     ));
 
     // Certification (optional)
     items.add(AboutItem(
       icon: Icons.card_membership,
-      title: "Certification",
-      description: _formatCertification(),
+      title: l10n.certification,
+      description: _formatCertification(context),
     ));
 
     // Training (optional)
     if (doctor.residency != null && doctor.residency!.isNotEmpty) {
       items.add(AboutItem(
         icon: Icons.medical_services,
-        title: "Training",
+        title: l10n.training,
         description: doctor.residency!,
       ));
     }
@@ -101,15 +108,15 @@ class DoctorAboutTab extends StatelessWidget {
     // Licensure (license number is required, but description is optional)
     items.add(AboutItem(
       icon: Icons.verified,
-      title: "Licensure",
-      description: _formatLicensure(),
+      title: l10n.licensure,
+      description: _formatLicensure(context),
     ));
 
     // Experience (required fields)
     items.add(AboutItem(
       icon: Icons.history,
-      title: "Experience",
-      description: _formatExperience(),
+      title: l10n.experience,
+      description: _formatExperience(context),
     ));
 
     return ListView(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/logic/cubits/availability cubit/availability_cubit.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 import 'calendar.dart';
 
 class DoctorBookTab extends StatefulWidget {
@@ -45,7 +46,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
         }
 
         if (state is! AvailabilityLoaded) {
-          return const Text("No availability");
+          return Text(AppLocalizations.of(context)!.noAvailability);
         }
 
         // Get current date without time
@@ -70,7 +71,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                "No upcoming availability. This doctor has no available time slots for booking.",
+                AppLocalizations.of(context)!.noUpcomingAvailability,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: greyColor),
@@ -152,12 +153,13 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
               })()
             : [];
 
+        final l10n = AppLocalizations.of(context)!;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// PRICE
             Text(
-              "Price",
+              l10n.price,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontSize: 18),
@@ -168,7 +170,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "1 hour consultation",
+                  l10n.oneHourConsultation,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Text(
@@ -206,7 +208,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
 
             /// TIME SELECTION
             Text(
-              "Select time",
+              l10n.selectTime,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontSize: 18),
@@ -214,7 +216,7 @@ class _DoctorBookTabState extends State<DoctorBookTab> {
             const SizedBox(height: 10),
 
             if (timesForSelected.isEmpty)
-              const Text("No available times for this day"),
+              Text(l10n.noAvailableTimesForDay),
 
             Wrap(
               spacing: 10,
