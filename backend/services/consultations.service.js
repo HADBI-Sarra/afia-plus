@@ -122,6 +122,7 @@ export class ConsultationsService {
           user:users!patients_patient_id_fkey(
             firstname,
             lastname,
+            profile_picture,
             phone_number
           )
         ),
@@ -153,6 +154,7 @@ export class ConsultationsService {
           user:users!patients_patient_id_fkey(
             firstname,
             lastname,
+            profile_picture,
             phone_number
           )
         ),
@@ -188,6 +190,7 @@ export class ConsultationsService {
           user:users!patients_patient_id_fkey(
             firstname,
             lastname,
+            profile_picture,
             phone_number
           )
         ),
