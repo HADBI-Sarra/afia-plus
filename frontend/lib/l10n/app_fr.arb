@@ -131,6 +131,14 @@
   "reviewsPlural": "avis",
   "leaveReview": "Laisser un avis",
   "noReviewsYet": "Aucun avis pour le moment. Soyez le premier à donner votre avis !",
-  "anonymous": "Anonyme"
+  "anonymous": "Anonyme",
+  "selectAvailableHours": "Sélectionner les heures disponibles",
+  "addTimes": "Ajouter des heures",
+  "deleteSlot": "Supprimer le créneau?",
+  "deleteSlotMessage": "Êtes-vous sûr de vouloir supprimer ce créneau horaire?",
+  "availableSlotsFor": "Créneaux disponibles pour {date}",
+  "noTimesForDay": "Aucun horaire pour ce jour. Ajoutez-en avec + .",
+  "cannotSetPastAvailability": "Vous ne pouvez pas définir une disponibilité dans le passé.",
+  "selectFutureDateAvailability": "Sélectionnez aujourd'hui ou une date future pour ajouter une disponibilité."
 }
 

@@ -903,6 +903,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Anonymous'**
   String get anonymous;
+
+  /// Title for selecting available hours
+  ///
+  /// In en, this message translates to:
+  /// **'Select available hours'**
+  String get selectAvailableHours;
+
+  /// Button text to add time slots
+  ///
+  /// In en, this message translates to:
+  /// **'Add times'**
+  String get addTimes;
+
+  /// Confirmation dialog title for deleting time slot
+  ///
+  /// In en, this message translates to:
+  /// **'Delete slot?'**
+  String get deleteSlot;
+
+  /// Confirmation message for deleting time slot
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this time slot?'**
+  String get deleteSlotMessage;
+
+  /// Title showing available slots for a specific date
+  ///
+  /// In en, this message translates to:
+  /// **'Available slots for {date}'**
+  String availableSlotsFor(String date);
+
+  /// Message when no time slots exist for selected day
+  ///
+  /// In en, this message translates to:
+  /// **'No times for this day. Add some with + .'**
+  String get noTimesForDay;
+
+  /// Error message when trying to set availability in the past
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot set availability in the past.'**
+  String get cannotSetPastAvailability;
+
+  /// Message to select a future date for availability
+  ///
+  /// In en, this message translates to:
+  /// **'Select today or a future date to add availability.'**
+  String get selectFutureDateAvailability;
 }
 
 class _AppLocalizationsDelegate

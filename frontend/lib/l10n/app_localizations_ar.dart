@@ -424,4 +424,32 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get anonymous => 'مجهول';
+
+  @override
+  String get selectAvailableHours => 'اختر الساعات المتاحة';
+
+  @override
+  String get addTimes => 'إضافة أوقات';
+
+  @override
+  String get deleteSlot => 'حذف الفترة؟';
+
+  @override
+  String get deleteSlotMessage => 'هل أنت متأكد من حذف هذه الفترة الزمنية؟';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'الفترات المتاحة لـ $date';
+  }
+
+  @override
+  String get noTimesForDay =>
+      'لا توجد أوقات لهذا اليوم. أضف بعضها باستخدام + .';
+
+  @override
+  String get cannotSetPastAvailability => 'لا يمكنك تحديد التوفر في الماضي.';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'اختر اليوم أو تاريخًا مستقبليًا لإضافة التوفر.';
 }

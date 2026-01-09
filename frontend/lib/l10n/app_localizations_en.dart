@@ -428,4 +428,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get anonymous => 'Anonymous';
+
+  @override
+  String get selectAvailableHours => 'Select available hours';
+
+  @override
+  String get addTimes => 'Add times';
+
+  @override
+  String get deleteSlot => 'Delete slot?';
+
+  @override
+  String get deleteSlotMessage =>
+      'Are you sure you want to delete this time slot?';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'Available slots for $date';
+  }
+
+  @override
+  String get noTimesForDay => 'No times for this day. Add some with + .';
+
+  @override
+  String get cannotSetPastAvailability =>
+      'You cannot set availability in the past.';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'Select today or a future date to add availability.';
 }

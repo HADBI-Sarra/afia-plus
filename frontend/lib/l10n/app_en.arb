@@ -553,6 +553,43 @@
   "anonymous": "Anonymous",
   "@anonymous": {
     "description": "Default name when patient name is not available"
+  },
+  "selectAvailableHours": "Select available hours",
+  "@selectAvailableHours": {
+    "description": "Title for selecting available hours"
+  },
+  "addTimes": "Add times",
+  "@addTimes": {
+    "description": "Button text to add time slots"
+  },
+  "deleteSlot": "Delete slot?",
+  "@deleteSlot": {
+    "description": "Confirmation dialog title for deleting time slot"
+  },
+  "deleteSlotMessage": "Are you sure you want to delete this time slot?",
+  "@deleteSlotMessage": {
+    "description": "Confirmation message for deleting time slot"
+  },
+  "availableSlotsFor": "Available slots for {date}",
+  "@availableSlotsFor": {
+    "description": "Title showing available slots for a specific date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noTimesForDay": "No times for this day. Add some with + .",
+  "@noTimesForDay": {
+    "description": "Message when no time slots exist for selected day"
+  },
+  "cannotSetPastAvailability": "You cannot set availability in the past.",
+  "@cannotSetPastAvailability": {
+    "description": "Error message when trying to set availability in the past"
+  },
+  "selectFutureDateAvailability": "Select today or a future date to add availability.",
+  "@selectFutureDateAvailability": {
+    "description": "Message to select a future date for availability"
   }
 }
 

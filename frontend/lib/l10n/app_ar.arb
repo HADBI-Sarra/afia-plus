@@ -133,6 +133,14 @@
   "reviewsPlural": "تقييمات",
   "leaveReview": "اترك تقييماً",
   "noReviewsYet": "لا توجد تقييمات بعد. كن أول من يقيم!",
-  "anonymous": "مجهول"
+  "anonymous": "مجهول",
+  "selectAvailableHours": "اختر الساعات المتاحة",
+  "addTimes": "إضافة أوقات",
+  "deleteSlot": "حذف الفترة؟",
+  "deleteSlotMessage": "هل أنت متأكد من حذف هذه الفترة الزمنية؟",
+  "availableSlotsFor": "الفترات المتاحة لـ {date}",
+  "noTimesForDay": "لا توجد أوقات لهذا اليوم. أضف بعضها باستخدام + .",
+  "cannotSetPastAvailability": "لا يمكنك تحديد التوفر في الماضي.",
+  "selectFutureDateAvailability": "اختر اليوم أو تاريخًا مستقبليًا لإضافة التوفر."
 }
 

@@ -434,4 +434,33 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get anonymous => 'Anonyme';
+
+  @override
+  String get selectAvailableHours => 'Sélectionner les heures disponibles';
+
+  @override
+  String get addTimes => 'Ajouter des heures';
+
+  @override
+  String get deleteSlot => 'Supprimer le créneau?';
+
+  @override
+  String get deleteSlotMessage =>
+      'Êtes-vous sûr de vouloir supprimer ce créneau horaire?';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'Créneaux disponibles pour $date';
+  }
+
+  @override
+  String get noTimesForDay => 'Aucun horaire pour ce jour. Ajoutez-en avec + .';
+
+  @override
+  String get cannotSetPastAvailability =>
+      'Vous ne pouvez pas définir une disponibilité dans le passé.';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'Sélectionnez aujourd\'hui ou une date future pour ajouter une disponibilité.';
 }
