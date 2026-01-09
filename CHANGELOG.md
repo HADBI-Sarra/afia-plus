@@ -28,6 +28,10 @@ All notable changes to this project will be documented in this file.
 - **Database Repair Script**: Created `fix_doctor_user_link.js` to repair doctor-user relationships
   - Automatically links doctors with NULL user_id to their corresponding user accounts
 
+- **Cron Background Job**: Added automated consultation completion job
+  - Scheduler runs every hour to auto-complete consultations past their end time
+  - Implemented in `backend/jobs/autoCompleteConsultations.js` and `backend/jobs/scheduler.js`
+
 ## [2026-01-09]
 
 ### Testing Summary
