@@ -252,6 +252,11 @@ class ConsultationsImpl implements ConsultationsRepository {
   ConsultationWithDetails _mapToConsultationWithDetails(
     Map<String, dynamic> data,
   ) {
+    // DEBUG: Print the entire data structure
+    print('🔍 CONSULTATION DATA: ${data.toString()}');
+    print('🔍 Doctor field type: ${data['doctor']?.runtimeType}');
+    print('🔍 Doctor field value: ${data['doctor']}');
+
     // Extract consultation data
     final consultation = Consultation(
       consultationId: data['consultation_id'] as int?,
@@ -271,20 +276,47 @@ class ConsultationsImpl implements ConsultationsRepository {
     String? doctorImagePath;
     String? doctorPhoneNumber;
 
-    if (data['doctor'] is Map) {
-      final doctorData = data['doctor'] as Map<String, dynamic>;
-      final userData = doctorData['user'] as Map<String, dynamic>?;
-      final specialityData = doctorData['speciality'] as Map<String, dynamic>?;
+    // Supabase returns nested relations as arrays, even for single items
+    if (data['doctor'] != null) {
+      Map<String, dynamic>? doctorData;
 
-      if (userData != null) {
-        doctorFirstName = userData['firstname'] as String?;
-        doctorLastName = userData['lastname'] as String?;
-        doctorImagePath = userData['profile_picture'] as String?;
-        doctorPhoneNumber = userData['phone_number'] as String?;
+      // Handle both array and object responses
+      if (data['doctor'] is List && (data['doctor'] as List).isNotEmpty) {
+        doctorData = (data['doctor'] as List).first as Map<String, dynamic>;
+      } else if (data['doctor'] is Map) {
+        doctorData = data['doctor'] as Map<String, dynamic>;
       }
 
-      if (specialityData != null) {
-        doctorSpecialty = specialityData['speciality_name'] as String?;
+      if (doctorData != null) {
+        // Extract user data (also might be array)
+        Map<String, dynamic>? userData;
+        if (doctorData['user'] is List &&
+            (doctorData['user'] as List).isNotEmpty) {
+          userData = (doctorData['user'] as List).first as Map<String, dynamic>;
+        } else if (doctorData['user'] is Map) {
+          userData = doctorData['user'] as Map<String, dynamic>;
+        }
+
+        if (userData != null) {
+          doctorFirstName = userData['firstname'] as String?;
+          doctorLastName = userData['lastname'] as String?;
+          doctorImagePath = userData['profile_picture'] as String?;
+          doctorPhoneNumber = userData['phone_number'] as String?;
+        }
+
+        // Extract speciality data (also might be array)
+        Map<String, dynamic>? specialityData;
+        if (doctorData['speciality'] is List &&
+            (doctorData['speciality'] as List).isNotEmpty) {
+          specialityData =
+              (doctorData['speciality'] as List).first as Map<String, dynamic>;
+        } else if (doctorData['speciality'] is Map) {
+          specialityData = doctorData['speciality'] as Map<String, dynamic>;
+        }
+
+        if (specialityData != null) {
+          doctorSpecialty = specialityData['speciality_name'] as String?;
+        }
       }
     } else {
       // Fallback for flat structure
@@ -300,14 +332,33 @@ class ConsultationsImpl implements ConsultationsRepository {
     String? patientLastName;
     String? patientPhoneNumber;
 
-    if (data['patient'] is Map) {
-      final patientData = data['patient'] as Map<String, dynamic>;
-      final userData = patientData['user'] as Map<String, dynamic>?;
+    // Supabase returns nested relations as arrays, even for single items
+    if (data['patient'] != null) {
+      Map<String, dynamic>? patientData;
 
-      if (userData != null) {
-        patientFirstName = userData['firstname'] as String?;
-        patientLastName = userData['lastname'] as String?;
-        patientPhoneNumber = userData['phone_number'] as String?;
+      // Handle both array and object responses
+      if (data['patient'] is List && (data['patient'] as List).isNotEmpty) {
+        patientData = (data['patient'] as List).first as Map<String, dynamic>;
+      } else if (data['patient'] is Map) {
+        patientData = data['patient'] as Map<String, dynamic>;
+      }
+
+      if (patientData != null) {
+        // Extract user data (also might be array)
+        Map<String, dynamic>? userData;
+        if (patientData['user'] is List &&
+            (patientData['user'] as List).isNotEmpty) {
+          userData =
+              (patientData['user'] as List).first as Map<String, dynamic>;
+        } else if (patientData['user'] is Map) {
+          userData = patientData['user'] as Map<String, dynamic>;
+        }
+
+        if (userData != null) {
+          patientFirstName = userData['firstname'] as String?;
+          patientLastName = userData['lastname'] as String?;
+          patientPhoneNumber = userData['phone_number'] as String?;
+        }
       }
     } else {
       // Fallback for flat structure
