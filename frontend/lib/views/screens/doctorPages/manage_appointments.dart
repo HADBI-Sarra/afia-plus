@@ -10,6 +10,7 @@ import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
+import 'package:afia_plus_app/views/widgets/profile_image_widget.dart';
 
 class SchedulePage extends StatelessWidget {
   const SchedulePage({super.key});
@@ -211,10 +212,10 @@ class _SchedulePageView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            backgroundColor: darkGreenColor,
+          NetworkProfileAvatar(
+            imageUrl: consultation.patientImagePath,
+            isDoctor: false,
             radius: 24,
-            child: Icon(Icons.person, color: whiteColor),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -418,10 +419,10 @@ class _SchedulePageView extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            backgroundColor: blueGreenColor,
+          NetworkProfileAvatar(
+            imageUrl: consultation.patientImagePath,
+            isDoctor: false,
             radius: 24,
-            child: Icon(Icons.person, color: whiteColor),
           ),
           const SizedBox(width: 12),
           Expanded(

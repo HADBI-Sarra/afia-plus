@@ -331,6 +331,7 @@ class ConsultationsImpl implements ConsultationsRepository {
     String? patientFirstName;
     String? patientLastName;
     String? patientPhoneNumber;
+    String? patientImagePath;
 
     // Supabase returns nested relations as arrays, even for single items
     if (data['patient'] != null) {
@@ -358,6 +359,7 @@ class ConsultationsImpl implements ConsultationsRepository {
           patientFirstName = userData['firstname'] as String?;
           patientLastName = userData['lastname'] as String?;
           patientPhoneNumber = userData['phone_number'] as String?;
+          patientImagePath = userData['profile_picture'] as String?;
         }
       }
     } else {
@@ -365,6 +367,7 @@ class ConsultationsImpl implements ConsultationsRepository {
       patientFirstName = data['patient_firstname'] as String?;
       patientLastName = data['patient_lastname'] as String?;
       patientPhoneNumber = data['patient_phone_number'] as String?;
+      patientImagePath = data['patient_image_path'] as String?;
     }
 
     return ConsultationWithDetails(
@@ -375,6 +378,7 @@ class ConsultationsImpl implements ConsultationsRepository {
       patientFirstName: patientFirstName,
       patientLastName: patientLastName,
       doctorImagePath: doctorImagePath,
+      patientImagePath: patientImagePath,
       doctorPhoneNumber: doctorPhoneNumber,
       patientPhoneNumber: patientPhoneNumber,
     );

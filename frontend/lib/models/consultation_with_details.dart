@@ -9,6 +9,7 @@ class ConsultationWithDetails {
   final String? patientFirstName;
   final String? patientLastName;
   final String? doctorImagePath;
+  final String? patientImagePath;
   final String? doctorPhoneNumber;
   final String? patientPhoneNumber;
 
@@ -20,6 +21,7 @@ class ConsultationWithDetails {
     this.patientFirstName,
     this.patientLastName,
     this.doctorImagePath,
+    this.patientImagePath,
     this.doctorPhoneNumber,
     this.patientPhoneNumber,
   });
@@ -45,12 +47,22 @@ class ConsultationWithDetails {
       if (dateParts.length == 3) {
         final month = int.parse(dateParts[1]);
         final day = int.parse(dateParts[2]);
-        
+
         final monthNames = [
-          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
         ];
-        
+
         return '$day ${monthNames[month - 1]}, ${consultation.startTime}';
       }
     } catch (e) {
@@ -59,4 +71,3 @@ class ConsultationWithDetails {
     return '${consultation.consultationDate}, ${consultation.startTime}';
   }
 }
-

@@ -8,6 +8,7 @@ import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/views/widgets/language_switcher.dart';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
+import 'package:afia_plus_app/views/widgets/profile_image_widget.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
@@ -17,15 +18,9 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget sectionTitle(BuildContext context, String title) {
     return Row(
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text(title, style: Theme.of(context).textTheme.titleMedium),
         const Spacer(),
-        Text(
-          'See all',
-          style: greenLink,
-        ),
+        Text('See all', style: greenLink),
       ],
     );
   }
@@ -39,6 +34,7 @@ class DoctorHomeScreen extends StatelessWidget {
       time: consultation.consultation.startTime,
       date: consultation.consultation.consultationDate,
       phoneNumber: consultation.patientPhoneNumber,
+      imageUrl: consultation.patientImagePath,
       context: context,
     );
   }
@@ -48,6 +44,7 @@ class DoctorHomeScreen extends StatelessWidget {
     required String time,
     required String date,
     String? phoneNumber,
+    String? imageUrl,
     required BuildContext context,
   }) {
     return Container(
@@ -67,11 +64,7 @@ class DoctorHomeScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            backgroundColor: darkGreenColor,
-            radius: 24,
-            child: Icon(Icons.person, color: whiteColor),
-          ),
+          NetworkProfileAvatar(imageUrl: imageUrl, isDoctor: false, radius: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -104,12 +97,15 @@ class DoctorHomeScreen extends StatelessWidget {
               if (phoneNumber != null && phoneNumber.isNotEmpty) {
                 final success = await WhatsAppService.openWhatsApp(
                   phoneNumber: phoneNumber,
-                  message: 'Hello, I would like to discuss our appointment on $date at $time.',
+                  message:
+                      'Hello, I would like to discuss our appointment on $date at $time.',
                 );
                 if (!success && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Could not open WhatsApp. Please make sure WhatsApp is installed.'),
+                      content: Text(
+                        'Could not open WhatsApp. Please make sure WhatsApp is installed.',
+                      ),
                       backgroundColor: Colors.red,
                       duration: Duration(seconds: 2),
                     ),
@@ -154,6 +150,7 @@ class DoctorHomeScreen extends StatelessWidget {
       time: consultation.consultation.startTime,
       date: consultation.consultation.consultationDate,
       consultationId: consultation.consultation.consultationId,
+      imageUrl: consultation.patientImagePath,
       context: context,
       doctorId: doctorId,
     );
@@ -164,6 +161,7 @@ class DoctorHomeScreen extends StatelessWidget {
     required String time,
     required String date,
     required int? consultationId,
+    String? imageUrl,
     required BuildContext context,
     required int doctorId,
   }) {
@@ -184,11 +182,7 @@ class DoctorHomeScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const CircleAvatar(
-            backgroundColor: darkGreenColor,
-            radius: 24,
-            child: Icon(Icons.person, color: whiteColor),
-          ),
+          NetworkProfileAvatar(imageUrl: imageUrl, isDoctor: false, radius: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -218,25 +212,28 @@ class DoctorHomeScreen extends StatelessWidget {
           const SizedBox(width: 8),
           BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
             builder: (context, state) {
-              final isProcessing = consultationId != null &&
+              final isProcessing =
+                  consultationId != null &&
                   state.processingConsultationIds.contains(consultationId);
-              
+
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: isProcessing ? null : () {
-                      if (consultationId != null) {
-                        _showAcceptConfirmationDialog(
-                          context: context,
-                          consultationId: consultationId,
-                          patientName: name,
-                          date: date,
-                          time: time,
-                          doctorId: doctorId,
-                        );
-                      }
-                    },
+                    onPressed: isProcessing
+                        ? null
+                        : () {
+                            if (consultationId != null) {
+                              _showAcceptConfirmationDialog(
+                                context: context,
+                                consultationId: consultationId,
+                                patientName: name,
+                                date: date,
+                                time: time,
+                                doctorId: doctorId,
+                              );
+                            }
+                          },
                     icon: const Icon(
                       Icons.check_circle_outline,
                       size: 18,
@@ -248,7 +245,9 @@ class DoctorHomeScreen extends StatelessWidget {
                             height: 12,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                whiteColor,
+                              ),
                             ),
                           )
                         : const Text(
@@ -266,18 +265,20 @@ class DoctorHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   OutlinedButton.icon(
-                    onPressed: isProcessing ? null : () {
-                      if (consultationId != null) {
-                        _showRejectConfirmationDialog(
-                          context: context,
-                          consultationId: consultationId,
-                          patientName: name,
-                          date: date,
-                          time: time,
-                          doctorId: doctorId,
-                        );
-                      }
-                    },
+                    onPressed: isProcessing
+                        ? null
+                        : () {
+                            if (consultationId != null) {
+                              _showRejectConfirmationDialog(
+                                context: context,
+                                consultationId: consultationId,
+                                patientName: name,
+                                date: date,
+                                time: time,
+                                doctorId: doctorId,
+                              );
+                            }
+                          },
                     icon: const Icon(
                       Icons.delete_outline,
                       size: 18,
@@ -289,12 +290,17 @@ class DoctorHomeScreen extends StatelessWidget {
                             height: 12,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(darkGreenColor),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                darkGreenColor,
+                              ),
                             ),
                           )
                         : const Text(
                             'Reject',
-                            style: TextStyle(color: darkGreenColor, fontSize: 12),
+                            style: TextStyle(
+                              color: darkGreenColor,
+                              fontSize: 12,
+                            ),
                           ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
@@ -348,11 +354,17 @@ class DoctorHomeScreen extends StatelessWidget {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, authState) {
         if (authState is AuthLoading) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
         if (authState is! AuthenticatedDoctor) {
           return const Scaffold(
-            body: Center(child: Text('Please log in as a doctor to view your home screen.')),
+            body: Center(
+              child: Text(
+                'Please log in as a doctor to view your home screen.',
+              ),
+            ),
           );
         }
 
@@ -361,7 +373,8 @@ class DoctorHomeScreen extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(
-          create: (context) => DoctorHomeCubit()..loadConsultations(doctorId),
+              create: (context) =>
+                  DoctorHomeCubit()..loadConsultations(doctorId),
             ),
           ],
           child: Container(
@@ -373,160 +386,194 @@ class DoctorHomeScreen extends StatelessWidget {
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
                 leading: const Icon(Icons.arrow_back_ios_new, color: greyColor),
-                actions: const [
-                  LanguageSwitcher(),
-                  SizedBox(width: 8),
-                ],
+                actions: const [LanguageSwitcher(), SizedBox(width: 8)],
               ),
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return SingleChildScrollView(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                        Text(
-                          'Hello Dr. ${authState.doctor.lastname}!',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Quick overview',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 20),
-                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                                          builder: (context, state) {
-                                            if (state.isLoading) {
-                                              return Column(
-                                                children: [
-                                                  specialityLink(context, 'Today', 'Loading...'),
-                        const SizedBox(height: 10),
-                                                  specialityLink(context, 'Pending Requests', 'Loading...'),
-                        const SizedBox(height: 10),
-                                                  specialityLink(context, 'Total patients', 'Loading...'),
-                                                ],
-                                              );
-                                            }
-                            
-                                            return Column(
-                                              children: [
-                                                specialityLink(context, 'Today', '${state.todayConsultations} appointments'),
-                                                const SizedBox(height: 10),
-                                                specialityLink(context, 'Pending Requests', '${state.pendingConsultationsCount} request${state.pendingConsultationsCount != 1 ? 's' : ''}'),
-                                                const SizedBox(height: 10),
-                                                specialityLink(context, 'Total patients', '${state.totalPatients} patients'),
-                                              ],
-                                            );
-                                          },
+                              Text(
+                                'Hello Dr. ${authState.doctor.lastname}!',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Quick overview',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 20),
+                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                                builder: (context, state) {
+                                  if (state.isLoading) {
+                                    return Column(
+                                      children: [
+                                        specialityLink(
+                                          context,
+                                          'Today',
+                                          'Loading...',
                                         ),
-                        const SizedBox(height: 20),
-                        sectionTitle(context, 'Coming consultations'),
-                        const SizedBox(height: 20),
-                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                          builder: (context, state) {
-                            if (state.isLoading) {
-                              return const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(20.0),
-                                  child: CircularProgressIndicator(),
-                                ),
-                              );
-                            }
-
-                            if (state.error != null) {
-                              return Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Text(
-                                  'Error loading consultations',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              );
-                            }
-
-                            if (state.comingConsultations.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'No upcoming consultations',
-                                  style: TextStyle(color: greyColor),
-                                ),
-                              );
-                            }
-
-                            // Display coming consultations from database
-                            return Column(
-                              children: state.comingConsultations
-                                  .map((consultation) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 12.0),
-                                        child: _buildConsultationCardFromData(
-                                          consultation: consultation,
-                                          context: context,
+                                        const SizedBox(height: 10),
+                                        specialityLink(
+                                          context,
+                                          'Pending Requests',
+                                          'Loading...',
                                         ),
-                                      ))
-                                  .toList(),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        sectionTitle(context, 'Pending consultations'),
-                        const SizedBox(height: 20),
-                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                          builder: (context, state) {
-                            if (state.pendingConsultations.isEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.all(20.0),
-                                child: Text(
-                                  'No pending consultations',
-                                  style: TextStyle(color: greyColor),
-                                ),
-                              );
-                            }
-
-                            return Column(
-                              children: state.pendingConsultations
-                                  .map((consultation) => Padding(
-                                        padding: const EdgeInsets.only(bottom: 12.0),
-                                        child: _buildAppointmentCardFromData(
-                                          consultation: consultation,
-                                          context: context,
-                                            doctorId: doctorId,
+                                        const SizedBox(height: 10),
+                                        specialityLink(
+                                          context,
+                                          'Total patients',
+                                          'Loading...',
                                         ),
-                                      ))
-                                  .toList(),
-                            );
-                          },
+                                      ],
+                                    );
+                                  }
+
+                                  return Column(
+                                    children: [
+                                      specialityLink(
+                                        context,
+                                        'Today',
+                                        '${state.todayConsultations} appointments',
+                                      ),
+                                      const SizedBox(height: 10),
+                                      specialityLink(
+                                        context,
+                                        'Pending Requests',
+                                        '${state.pendingConsultationsCount} request${state.pendingConsultationsCount != 1 ? 's' : ''}',
+                                      ),
+                                      const SizedBox(height: 10),
+                                      specialityLink(
+                                        context,
+                                        'Total patients',
+                                        '${state.totalPatients} patients',
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              sectionTitle(context, 'Coming consultations'),
+                              const SizedBox(height: 20),
+                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                                builder: (context, state) {
+                                  if (state.isLoading) {
+                                    return const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20.0),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    );
+                                  }
+
+                                  if (state.error != null) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                        'Error loading consultations',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    );
+                                  }
+
+                                  if (state.comingConsultations.isEmpty) {
+                                    return const Padding(
+                                      padding: EdgeInsets.all(20.0),
+                                      child: Text(
+                                        'No upcoming consultations',
+                                        style: TextStyle(color: greyColor),
+                                      ),
+                                    );
+                                  }
+
+                                  // Display coming consultations from database
+                                  return Column(
+                                    children: state.comingConsultations
+                                        .map(
+                                          (consultation) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12.0,
+                                            ),
+                                            child:
+                                                _buildConsultationCardFromData(
+                                                  consultation: consultation,
+                                                  context: context,
+                                                ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              sectionTitle(context, 'Pending consultations'),
+                              const SizedBox(height: 20),
+                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                                builder: (context, state) {
+                                  if (state.pendingConsultations.isEmpty) {
+                                    return const Padding(
+                                      padding: EdgeInsets.all(20.0),
+                                      child: Text(
+                                        'No pending consultations',
+                                        style: TextStyle(color: greyColor),
+                                      ),
+                                    );
+                                  }
+
+                                  return Column(
+                                    children: state.pendingConsultations
+                                        .map(
+                                          (consultation) => Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 12.0,
+                                            ),
+                                            child:
+                                                _buildAppointmentCardFromData(
+                                                  consultation: consultation,
+                                                  context: context,
+                                                  doctorId: doctorId,
+                                                ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Services',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 20),
+                              seviceLink(context, 'Appointments'),
+                              const SizedBox(height: 10),
+                              seviceLink(context, 'Availability'),
+                              const SizedBox(height: 10),
+                              seviceLink(context, 'FAQ'),
+                              const SizedBox(height: 20),
+                              DoctorFooter(currentIndex: 0),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          'Services',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 20),
-                        seviceLink(context, 'Appointments'),
-                        const SizedBox(height: 10),
-                        seviceLink(context, 'Availability'),
-                        const SizedBox(height: 10),
-                        seviceLink(context, 'FAQ'),
-                        const SizedBox(height: 20),
-                        DoctorFooter(currentIndex: 0),
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  });
-}
+  }
 
   void _showAcceptConfirmationDialog({
     required BuildContext context,
@@ -594,7 +641,11 @@ class DoctorHomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.person, size: 18, color: darkGreenColor),
+                        const Icon(
+                          Icons.person,
+                          size: 18,
+                          color: darkGreenColor,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -611,7 +662,11 @@ class DoctorHomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 18,
+                          color: darkGreenColor,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           '$date at $time',
@@ -643,9 +698,9 @@ class DoctorHomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 context.read<DoctorHomeCubit>().acceptConsultation(
-                      consultationId,
-                      doctorId,
-                    );
+                  consultationId,
+                  doctorId,
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Appointment accepted successfully'),
@@ -659,7 +714,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 'Accept',
@@ -742,7 +800,11 @@ class DoctorHomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.person, size: 18, color: darkGreenColor),
+                        const Icon(
+                          Icons.person,
+                          size: 18,
+                          color: darkGreenColor,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -759,7 +821,11 @@ class DoctorHomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 18,
+                          color: darkGreenColor,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           '$date at $time',
@@ -803,9 +869,9 @@ class DoctorHomeScreen extends StatelessWidget {
                   print('🔴 UI: Rejecting consultation ID: $consultationId');
                   try {
                     await context.read<DoctorHomeCubit>().rejectConsultation(
-                          consultationId,
-                          doctorId,
-                        );
+                      consultationId,
+                      doctorId,
+                    );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -820,7 +886,9 @@ class DoctorHomeScreen extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Error rejecting appointment: ${e.toString()}'),
+                          content: Text(
+                            'Error rejecting appointment: ${e.toString()}',
+                          ),
                           backgroundColor: Colors.red,
                           duration: const Duration(seconds: 3),
                         ),
@@ -834,7 +902,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
               child: const Text(
                 'Reject',
