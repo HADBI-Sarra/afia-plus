@@ -559,6 +559,7 @@ export async function signup(req, res) {
 
     const { error: doctorError } = await supabaseAdmin.from('doctors').insert({
       doctor_id: user.user_id,
+      user_id: user.user_id, // Foreign key to users table - CRITICAL for joins
       speciality_id: speciality_id || null,
       bio: bio?.trim() || null,
       location_of_work: location_of_work?.trim() || null,
