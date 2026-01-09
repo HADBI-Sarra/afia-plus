@@ -6,6 +6,7 @@ import 'package:afia_plus_app/views/themes/style_simple/styles.dart';
 import 'package:afia_plus_app/views/widgets/footer_user.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../../../logic/cubits/signup/signup_cubit.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class UserProfileScreen extends StatefulWidget {
   static const routename = "/UserViewUserProfile";
@@ -21,21 +22,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   // Show logout confirmation dialog
   void _showLogoutConfirmationDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text(
-            "Logout",
-            style: TextStyle(
+          title: Text(
+            l10n.logout,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: darkGreenColor,
             ),
           ),
-          content: const Text(
-            "Are you sure you want to logout?",
-            style: TextStyle(
+          content: Text(
+            l10n.logoutConfirmation,
+            style: const TextStyle(
               fontSize: 16,
               color: blackColor,
             ),
@@ -48,9 +50,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close dialog
               },
-              child: const Text(
-                "Cancel",
-                style: TextStyle(
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(
                   fontSize: 16,
                   color: darkGreenColor,
                 ),
@@ -67,9 +69,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                "Logout",
-                style: TextStyle(
+              child: Text(
+                l10n.logout,
+                style: const TextStyle(
                   fontSize: 16,
                   color: whiteColor,
                 ),
@@ -93,7 +95,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           elevation: 0,
           centerTitle: false,
           title: Text(
-            "Profile",
+            AppLocalizations.of(context)!.profile,
             style: Theme.of(context)
                 .textTheme
                 .titleLarge
@@ -124,11 +126,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 );
 
                 if (authState is AuthenticatedPatient) {
+                  final l10n = AppLocalizations.of(context)!;
                   final patient = authState.patient;
                   fullName = "${patient.firstname} ${patient.lastname}";
                   subtitle = patient.dateOfBirth.isNotEmpty
                       ? patient.dateOfBirth
-                      : "DOB not set";
+                      : l10n.dobNotSet;
 
                   // Display profile picture if available
                   final profilePictureUrl = patient.profilePicture;
@@ -225,14 +228,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     Expanded(
                       child: ListView(
                         children: [
-                          _buildMenuItem(icon: Icons.favorite_outline, title: "Favorite doctors"),
-                          _buildMenuItem(icon: Icons.calendar_today_outlined, title: "Booked appointments"),
-                          _buildMenuItem(icon: Icons.notifications_outlined, title: "Notification settings"),
-                          _buildMenuItem(icon: Icons.policy_outlined, title: "Policies"),
-                          _buildMenuItem(icon: Icons.email_outlined, title: "Change email"),
-                          _buildMenuItem(icon: Icons.security_outlined, title: "Security settings"),
-                          _buildMenuItem(icon: Icons.badge_outlined, title: "About me"),
-                          _buildMenuItem(icon: Icons.logout_outlined, title: "Logout", showTrailing: false),
+                          _buildMenuItem(icon: Icons.favorite_outline, title: AppLocalizations.of(context)!.favoriteDoctors),
+                          _buildMenuItem(icon: Icons.calendar_today_outlined, title: AppLocalizations.of(context)!.bookedAppointments),
+                          _buildMenuItem(icon: Icons.notifications_outlined, title: AppLocalizations.of(context)!.notificationSettings),
+                          _buildMenuItem(icon: Icons.policy_outlined, title: AppLocalizations.of(context)!.policies),
+                          _buildMenuItem(icon: Icons.email_outlined, title: AppLocalizations.of(context)!.changeEmail),
+                          _buildMenuItem(icon: Icons.security_outlined, title: AppLocalizations.of(context)!.securitySettings),
+                          _buildMenuItem(icon: Icons.badge_outlined, title: AppLocalizations.of(context)!.aboutMe),
+                          _buildMenuItem(icon: Icons.logout_outlined, title: AppLocalizations.of(context)!.logout, showTrailing: false),
                           const SizedBox(height: 20),
                           const UserFooter(currentIndex: 3),
                           const SizedBox(height: 10),
@@ -273,7 +276,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   )
                 : null,
             onTap: () {
-              if (title == "Logout") {
+              final l10n = AppLocalizations.of(context)!;
+              if (title == l10n.logout) {
                 _showLogoutConfirmationDialog(context);
               } else {
                 // Other menu actions

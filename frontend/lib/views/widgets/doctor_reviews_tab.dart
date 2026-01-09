@@ -4,6 +4,7 @@ import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
 import 'package:afia_plus_app/data/models/doctor.dart';
 import 'package:afia_plus_app/data/models/review.dart';
 import 'package:afia_plus_app/logic/cubits/doctors/doctors_cubit.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class DoctorReviewsTab extends StatefulWidget {
@@ -58,6 +59,7 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
       );
     }
 
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,7 +68,7 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "${reviews.length} ${reviews.length == 1 ? 'review' : 'reviews'}",
+              "${reviews.length} ${reviews.length == 1 ? l10n.review : l10n.reviewsPlural}",
               style: Theme.of(
                 context,
               ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -76,7 +78,7 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
                 Icon(Icons.comment, color: darkGreenColor),
                 const SizedBox(width: 5),
                 Text(
-                  "Leave a review",
+                  l10n.leaveReview,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: darkGreenColor,
                     fontWeight: FontWeight.bold,
@@ -94,7 +96,7 @@ class _DoctorReviewsTabState extends State<DoctorReviewsTab> {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Text(
-                "No reviews yet. Be the first to review!",
+                l10n.noReviewsYet,
                 style: Theme.of(
                   context,
                 ).textTheme.bodyMedium?.copyWith(color: greyColor),
@@ -138,6 +140,7 @@ class ReviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -163,7 +166,7 @@ class ReviewItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        review.patientName ?? "Anonymous",
+                        review.patientName ?? l10n.anonymous,
                         style: Theme.of(context).textTheme.labelMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),

@@ -14,6 +14,7 @@ import 'package:afia_plus_app/logic/cubits/availability cubit/availability_cubit
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/logic/cubits/booking/booking_cubit.dart';
 import 'package:afia_plus_app/views/screens/homescreen/patient_home_screen.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 // inside class DoctorProfileScreen:
 class DoctorProfileScreen extends StatefulWidget {
@@ -65,11 +66,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (loading)
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     if (error != null) return Scaffold(body: Center(child: Text(error!)));
     if (doctor == null)
-      return Scaffold(body: Center(child: Text("Doctor not found")));
+      return Scaffold(body: Center(child: Text(l10n.doctorNotFound)));
 
     return BlocProvider<BookingCubit>(
       create: (_) => BookingCubit(),
@@ -82,9 +84,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              "Doctor Profile",
-              style: TextStyle(
+            title: Text(
+              l10n.doctorProfile,
+              style: const TextStyle(
                 color: blackColor,
                 fontWeight: FontWeight.w700,
                 fontSize: 20,
@@ -121,7 +123,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              speciality?.name ?? "Speciality",
+                              speciality?.name ?? l10n.specialist,
                               style: Theme.of(context).textTheme.labelMedium
                                   ?.copyWith(color: greyColor),
                             ),
@@ -211,7 +213,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           child: Column(
                             children: [
                               Text(
-                                "Book",
+                                l10n.book,
                                 style: Theme.of(context).textTheme.labelMedium
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -236,7 +238,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           onTap: () => setState(() => selectedTab = 1),
                           child: Center(
                             child: Text(
-                              "About",
+                              l10n.about,
                               style: Theme.of(context).textTheme.labelMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -253,7 +255,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                           onTap: () => setState(() => selectedTab = 2),
                           child: Center(
                             child: Text(
-                              "Reviews",
+                              l10n.reviews,
                               style: Theme.of(context).textTheme.labelMedium
                                   ?.copyWith(
                                     fontWeight: FontWeight.bold,
@@ -304,7 +306,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Booking was successful and must be confirmed by the doctor.',
+                              l10n.bookingSuccessMessage,
                             ),
                             backgroundColor: darkGreenColor,
                           ),
@@ -338,9 +340,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             if (selectedBookDay == null ||
                                 selectedBookTime == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'Please select a time for your consultation.',
+                                    l10n.pleaseSelectTime,
                                   ),
                                 ),
                               );
@@ -362,12 +364,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                             if (selectedDateOnly.isBefore(todayOnly)) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'You cannot book appointments for past dates. Please select a current or future date.',
+                                    l10n.cannotBookPastDate,
                                   ),
                                   backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 3),
+                                  duration: const Duration(seconds: 3),
                                 ),
                               );
                               return;
@@ -388,12 +390,12 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
 
                                 if (selectedMinutes <= currentMinutes) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text(
-                                        'You cannot book appointments for past times. Please select a future time slot.',
+                                        l10n.cannotBookPastTime,
                                       ),
                                       backgroundColor: Colors.red,
-                                      duration: Duration(seconds: 3),
+                                      duration: const Duration(seconds: 3),
                                     ),
                                   );
                                   return;
@@ -421,9 +423,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             }
                             if (availabilityId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'No available slot found for the selected date/time.',
+                                    l10n.noAvailableSlot,
                                   ),
                                 ),
                               );
@@ -437,9 +439,9 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                             }
                             if (patientId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
+                                SnackBar(
                                   content: Text(
-                                    'You must be logged in as a patient.',
+                                    l10n.mustBeLoggedInAsPatient,
                                   ),
                                 ),
                               );
@@ -477,7 +479,7 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
                                   color: whiteColor,
                                 )
                               : Text(
-                                  "Book appointment",
+                                  l10n.bookAppointment,
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(
                                         color: whiteColor,

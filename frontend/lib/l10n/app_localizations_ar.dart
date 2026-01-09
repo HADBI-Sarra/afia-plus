@@ -236,10 +236,189 @@ class AppLocalizationsAr extends AppLocalizations {
   String get arabic => 'العربية';
 
   @override
+  String get french => 'الفرنسية';
+
+  @override
   String get whatsappError => 'تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.';
 
   @override
   String whatsappMessageDoctor(String doctorName, String date) {
     return 'مرحباً د. $doctorName، لدي سؤال حول موعدي في $date.';
   }
+
+  @override
+  String get doctorProfile => 'ملف الطبيب';
+
+  @override
+  String get book => 'حجز';
+
+  @override
+  String get about => 'حول';
+
+  @override
+  String get reviews => 'التقييمات';
+
+  @override
+  String get bookAppointment => 'حجز موعد';
+
+  @override
+  String get doctorNotFound => 'الطبيب غير موجود';
+
+  @override
+  String get bookingSuccessMessage =>
+      'تم الحجز بنجاح ويجب تأكيده من قبل الطبيب.';
+
+  @override
+  String get pleaseSelectTime => 'يرجى اختيار وقت لاستشارتك.';
+
+  @override
+  String get cannotBookPastDate =>
+      'لا يمكنك حجز مواعيد للتواريخ السابقة. يرجى اختيار تاريخ حالي أو مستقبلي.';
+
+  @override
+  String get cannotBookPastTime =>
+      'لا يمكنك حجز مواعيد للأوقات السابقة. يرجى اختيار وقت مستقبلي.';
+
+  @override
+  String get noAvailableSlot =>
+      'لم يتم العثور على موعد متاح للتاريخ/الوقت المحدد.';
+
+  @override
+  String get mustBeLoggedInAsPatient => 'يجب أن تكون مسجلاً كـ مريض.';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get bookedAppointments => 'المواعيد المحجوزة';
+
+  @override
+  String get myPatients => 'مرضاي';
+
+  @override
+  String get availability => 'التوفر';
+
+  @override
+  String get notificationSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get policies => 'السياسات';
+
+  @override
+  String get changeEmail => 'تغيير البريد الإلكتروني';
+
+  @override
+  String get securitySettings => 'إعدادات الأمان';
+
+  @override
+  String get aboutMe => 'نبذة عني';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get logoutConfirmation => 'هل أنت متأكد من أنك تريد تسجيل الخروج؟';
+
+  @override
+  String get specialtyNotSet => 'التخصص غير محدد';
+
+  @override
+  String get loadingSpecialty => 'جاري تحميل التخصص...';
+
+  @override
+  String get favoriteDoctors => 'الأطباء المفضلون';
+
+  @override
+  String get dobNotSet => 'تاريخ الميلاد غير محدد';
+
+  @override
+  String get patientProfile => 'ملف المريض';
+
+  @override
+  String get phone => 'الهاتف';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get healthInfo => 'المعلومات الصحية';
+
+  @override
+  String get sendMessage => 'إرسال رسالة';
+
+  @override
+  String get generalInformation => 'المعلومات العامة';
+
+  @override
+  String get currentWorkingPlace => 'مكان العمل الحالي';
+
+  @override
+  String get education => 'التعليم';
+
+  @override
+  String get certification => 'الشهادات';
+
+  @override
+  String get training => 'التدريب';
+
+  @override
+  String get licensure => 'الترخيص';
+
+  @override
+  String get experience => 'الخبرة';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get licenseNumber => 'رقم الترخيص:';
+
+  @override
+  String get over => 'أكثر من';
+
+  @override
+  String get year => 'سنة';
+
+  @override
+  String get years => 'سنوات';
+
+  @override
+  String get ofExperience => 'من الخبرة';
+
+  @override
+  String get specializingIn => 'متخصص في';
+
+  @override
+  String get price => 'السعر';
+
+  @override
+  String get oneHourConsultation => 'استشارة لمدة ساعة واحدة';
+
+  @override
+  String get selectTime => 'اختر الوقت';
+
+  @override
+  String get noAvailableTimesForDay => 'لا توجد أوقات متاحة لهذا اليوم';
+
+  @override
+  String get noUpcomingAvailability =>
+      'لا يوجد توفر قادم. هذا الطبيب ليس لديه أوقات متاحة للحجز.';
+
+  @override
+  String get noAvailability => 'لا يوجد توفر';
+
+  @override
+  String get review => 'تقييم';
+
+  @override
+  String get reviewsPlural => 'تقييمات';
+
+  @override
+  String get leaveReview => 'اترك تقييماً';
+
+  @override
+  String get noReviewsYet => 'لا توجد تقييمات بعد. كن أول من يقيم!';
+
+  @override
+  String get anonymous => 'مجهول';
 }
