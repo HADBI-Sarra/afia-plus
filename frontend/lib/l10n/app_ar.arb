@@ -36,6 +36,7 @@
   "pdfUploadedSuccess": "تم رفع ملف الوصفة بنجاح",
   "pdfUploadFailed": "فشل رفع الملف: {error}",
   "pdfOpenFailed": "فشل فتح الملف: {error}",
+  "downloadingPdf": "جاري تحميل الوصفة...",
   "whatsappNotInstalled": "تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.",
   "phoneNumberNotAvailable": "رقم الهاتف غير متاح",
   "doctorPhoneNumberNotAvailable": "رقم هاتف الطبيب غير متاح",

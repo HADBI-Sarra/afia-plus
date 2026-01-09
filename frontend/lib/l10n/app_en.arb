@@ -154,6 +154,10 @@
       }
     }
   },
+  "downloadingPdf": "Downloading prescription...",
+  "@downloadingPdf": {
+    "description": "Message shown while downloading PDF from cloud"
+  },
   "whatsappNotInstalled": "Could not open WhatsApp. Please make sure WhatsApp is installed.",
   "@whatsappNotInstalled": {
     "description": "Error message when WhatsApp is not installed"

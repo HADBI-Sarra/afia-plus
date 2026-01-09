@@ -123,6 +123,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get downloadingPdf => 'جاري تحميل الوصفة...';
+
+  @override
   String get whatsappNotInstalled =>
       'تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.';
 

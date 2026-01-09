@@ -15,6 +15,7 @@ import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/views/widgets/language_switcher.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/views/widgets/profile_image_widget.dart';
 
 class PatientHomeScreen extends StatefulWidget {
   const PatientHomeScreen({super.key});
@@ -53,7 +54,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       }
       // Call backend API to get top 4 specialities
       final response = await ApiClient.get('/doctors/specialities');
-      
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         final List<Map<String, dynamic>> specialities = data
@@ -66,7 +67,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         });
 
         // Load all specialities for "See all" functionality
-        final allResponse = await ApiClient.get('/doctors/specialities?all=true');
+        final allResponse = await ApiClient.get(
+          '/doctors/specialities?all=true',
+        );
         if (allResponse.statusCode == 200) {
           final List<dynamic> allData = jsonDecode(allResponse.body);
           final List<Map<String, dynamic>> allSpecialitiesList = allData
@@ -79,7 +82,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           });
         }
       } else {
-        print('Error loading specialities: ${response.statusCode} - ${response.body}');
+        print(
+          'Error loading specialities: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
       print('Error loading specialities: $e');
@@ -114,8 +119,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         });
       }
       // Call backend API to get doctors by speciality
-      final response = await ApiClient.get('/doctors/by-speciality?speciality_id=$specialityId');
-      
+      final response = await ApiClient.get(
+        '/doctors/by-speciality?speciality_id=$specialityId',
+      );
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         final List<Map<String, dynamic>> doctors = data
@@ -185,7 +192,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   Widget specialityButtonFromMap(Map<String, dynamic> speciality) {
     final String name = speciality['speciality_name'] ?? '';
     final int doctorCount = (speciality['doctor_count'] as num?)?.toInt() ?? 0;
-    final int specialityId = (speciality['speciality_id'] as num?)?.toInt() ?? 0;
+    final int specialityId =
+        (speciality['speciality_id'] as num?)?.toInt() ?? 0;
     return specialityButton(name, doctorCount, specialityId: specialityId);
   }
 
@@ -234,12 +242,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     required ConsultationWithDetails consultation,
     required int patientId,
   }) {
-    // Default image path - you can enhance this with actual doctor image from DB
-    String imagePath = 'assets/images/doctorBrahimi.png';
-    if (consultation.doctorImagePath != null) {
-      imagePath = consultation.doctorImagePath!;
-    }
-
     return _buildDoctorCard(
       context: context,
       consultation: consultation,
@@ -248,7 +250,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           consultation.doctorSpecialty ??
           AppLocalizations.of(context)!.specialist,
       date: consultation.formattedDate,
-      imagePath: imagePath,
+      imageUrl: consultation.doctorImagePath,
       phoneNumber: consultation.doctorPhoneNumber,
       patientId: patientId,
     );
@@ -260,7 +262,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     required String name,
     required String specialty,
     required String date,
-    required String imagePath,
+    required String? imageUrl,
     String? phoneNumber,
     required int patientId,
   }) {
@@ -285,7 +287,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(radius: 24, backgroundImage: AssetImage(imagePath)),
+              NetworkProfileAvatar(
+                imageUrl: imageUrl,
+                isDoctor: true,
+                radius: 24,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

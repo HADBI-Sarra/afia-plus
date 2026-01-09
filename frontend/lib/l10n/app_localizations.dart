@@ -316,6 +316,12 @@ abstract class AppLocalizations {
   /// **'Failed to open PDF: {error}'**
   String pdfOpenFailed(String error);
 
+  /// Message shown while downloading PDF from cloud
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading prescription...'**
+  String get downloadingPdf;
+
   /// Error message when WhatsApp is not installed
   ///
   /// In en, this message translates to:

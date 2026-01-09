@@ -8,6 +8,7 @@ import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/views/widgets/profile_image_widget.dart';
 
 class UpcomingAppointmentsPage extends StatelessWidget {
   const UpcomingAppointmentsPage({super.key});
@@ -24,14 +25,17 @@ class UpcomingAppointmentsPage extends StatelessWidget {
 
         if (authState is! AuthenticatedPatient) {
           return const Scaffold(
-            body: Center(child: Text('Please log in as a patient to view appointments.')),
+            body: Center(
+              child: Text('Please log in as a patient to view appointments.'),
+            ),
           );
         }
 
         final patientId = authState.patient.userId!;
 
         return BlocProvider(
-          create: (context) => UserAppointmentsCubit()..loadAppointments(patientId),
+          create: (context) =>
+              UserAppointmentsCubit()..loadAppointments(patientId),
           child: _UpcomingAppointmentsPageView(patientId: patientId),
         );
       },
@@ -68,7 +72,9 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          context.read<UserAppointmentsCubit>().refreshAppointments(patientId);
+                          context
+                              .read<UserAppointmentsCubit>()
+                              .refreshAppointments(patientId);
                         },
                         child: Text(AppLocalizations.of(context)!.retry),
                       ),
@@ -113,8 +119,12 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                     Expanded(
                       child: RefreshIndicator(
                         onRefresh: () async {
-                          context.read<UserAppointmentsCubit>().refreshAppointments(patientId);
-                          await Future.delayed(const Duration(milliseconds: 500));
+                          context
+                              .read<UserAppointmentsCubit>()
+                              .refreshAppointments(patientId);
+                          await Future.delayed(
+                            const Duration(milliseconds: 500),
+                          );
                         },
                         color: darkGreenColor,
                         child: ListView(
@@ -122,9 +132,13 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                             // Confirmed Appointments Section
                             if (state.confirmedAppointments.isNotEmpty) ...[
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
                                 child: Text(
-                                  AppLocalizations.of(context)!.confirmedAppointments,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.confirmedAppointments,
                                   style: const TextStyle(
                                     color: blackColor,
                                     fontWeight: FontWeight.w600,
@@ -144,9 +158,13 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                             // Not Confirmed Appointments Section
                             if (state.notConfirmedAppointments.isNotEmpty) ...[
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
                                 child: Text(
-                                  AppLocalizations.of(context)!.notConfirmedAppointments,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.notConfirmedAppointments,
                                   style: const TextStyle(
                                     color: blackColor,
                                     fontWeight: FontWeight.w600,
@@ -168,7 +186,9 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                                 padding: const EdgeInsets.all(40.0),
                                 child: Center(
                                   child: Text(
-                                    AppLocalizations.of(context)!.noAppointmentsFound,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.noAppointmentsFound,
                                     style: const TextStyle(
                                       color: greyColor,
                                       fontSize: 16,
@@ -195,11 +215,6 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
     required ConsultationWithDetails consultation,
     required BuildContext context,
   }) {
-    // Default image path - you can enhance this with actual doctor image from DB
-    String imagePath = 'assets/images/doctorBrahimi.png';
-    if (consultation.doctorImagePath != null) {
-      imagePath = consultation.doctorImagePath!;
-    }
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(12),
@@ -221,9 +236,10 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
+              NetworkProfileAvatar(
+                imageUrl: consultation.doctorImagePath,
+                isDoctor: true,
                 radius: 24,
-                backgroundImage: AssetImage(imagePath),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -241,7 +257,8 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      consultation.doctorSpecialty ?? AppLocalizations.of(context)!.specialist,
+                      consultation.doctorSpecialty ??
+                          AppLocalizations.of(context)!.specialist,
                       style: const TextStyle(color: greyColor, fontSize: 13),
                     ),
                   ],
@@ -310,15 +327,18 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                   if (phoneNumber != null && phoneNumber.isNotEmpty) {
                     final success = await WhatsAppService.openWhatsApp(
                       phoneNumber: phoneNumber,
-                      message: AppLocalizations.of(context)!.whatsappMessageDoctor(
-                        consultation.doctorFullName,
-                        consultation.formattedDate,
-                      ),
+                      message: AppLocalizations.of(context)!
+                          .whatsappMessageDoctor(
+                            consultation.doctorFullName,
+                            consultation.formattedDate,
+                          ),
                     );
                     if (!success && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.whatsappError),
+                          content: Text(
+                            AppLocalizations.of(context)!.whatsappError,
+                          ),
                           backgroundColor: Colors.red,
                           duration: const Duration(seconds: 2),
                         ),
@@ -328,7 +348,11 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)!.doctorPhoneNumberNotAvailable),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.doctorPhoneNumberNotAvailable,
+                          ),
                           backgroundColor: Colors.orange,
                           duration: const Duration(seconds: 2),
                         ),
@@ -514,7 +538,9 @@ class _UpcomingAppointmentsPageView extends StatelessWidget {
                   // Show success message
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)!.appointmentCancelled),
+                      content: Text(
+                        AppLocalizations.of(context)!.appointmentCancelled,
+                      ),
                       backgroundColor: darkGreenColor,
                       duration: const Duration(seconds: 2),
                     ),

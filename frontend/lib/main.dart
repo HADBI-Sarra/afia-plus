@@ -40,6 +40,7 @@ import 'package:afia_plus_app/data/repo/specialities/db_speciality_repository.da
 import 'package:afia_plus_app/data/repo/specialities/speciality_repository.dart';
 import 'package:afia_plus_app/data/repo/auth/token_provider.dart';
 import 'package:afia_plus_app/data/db_helper.dart';
+import 'package:afia_plus_app/config/supabase_config.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -47,6 +48,9 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> initMyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Supabase
+  await SupabaseConfig.initialize();
 
   // Initialize DB
   final db = await DBHelper.getDatabase();
@@ -58,7 +62,7 @@ Future<void> initMyApp() async {
   final tokenProvider = TokenProvider();
   await tokenProvider.initialize();
   sl.registerLazySingleton<TokenProvider>(() => tokenProvider);
-  
+
   sl.registerLazySingleton<UserRepository>(() => SupabaseUserRepository());
   sl.registerLazySingleton<PatientRepository>(
     () => SupabasePatientRepository(),

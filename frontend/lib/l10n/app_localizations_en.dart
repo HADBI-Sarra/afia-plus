@@ -124,6 +124,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get downloadingPdf => 'Downloading prescription...';
+
+  @override
   String get whatsappNotInstalled =>
       'Could not open WhatsApp. Please make sure WhatsApp is installed.';
 

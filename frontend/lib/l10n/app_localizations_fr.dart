@@ -124,6 +124,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get downloadingPdf => 'Téléchargement de l\'ordonnance...';
+
+  @override
   String get whatsappNotInstalled =>
       'Impossible d\'ouvrir WhatsApp. Veuillez vous assurer que WhatsApp est installé.';
 

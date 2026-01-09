@@ -210,16 +210,16 @@ class DoctorAppointmentsCubit extends Cubit<DoctorAppointmentsState> {
         ..add(consultationId);
       emit(state.copyWith(processingConsultationIds: newProcessingSet));
 
-      // Save PDF to app's documents directory and get the stored path
-      final storedPath = await PDFService.saveUploadedPDF(
+      // Upload PDF to Supabase Storage and get public URL
+      final publicUrl = await PDFService.uploadToSupabase(
         pdfFile,
         consultationId,
       );
 
-      // Store PDF path in database (prescription field now stores the path)
+      // Store public URL in database (prescription field now stores the URL)
       await _repository.updateConsultationPrescription(
         consultationId,
-        storedPath,
+        publicUrl,
       );
 
       // Reload appointments to reflect the update

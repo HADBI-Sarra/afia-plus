@@ -23,7 +23,7 @@ function validatePassword(password) {
   const hasNumber = /[0-9]/.test(trimmedPassword);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(trimmedPassword);
   const isLongEnough = trimmedPassword.length >= 8;
-  
+
   if (!isLongEnough || !hasLowercase || !hasUppercase || !hasNumber || !hasSpecialChar) {
     return 'Weak password';
   }
@@ -81,10 +81,10 @@ function validateDob(dob) {
   if (!dob || dob.trim() === '') {
     return 'Date of birth cannot be empty';
   }
-  
+
   try {
     let year, month, day;
-    
+
     if (dob.includes('/')) {
       // Handle DD/MM/YYYY format (explicitly parse as day/month/year)
       const parts = dob.split('/');
@@ -95,17 +95,17 @@ function validateDob(dob) {
       day = parseInt(parts[0], 10);
       month = parseInt(parts[1], 10);
       year = parseInt(parts[2], 10);
-      
+
       // Validate the components are valid numbers
       if (isNaN(day) || isNaN(month) || isNaN(year)) {
         return 'Invalid date format';
       }
-      
+
       // Validate ranges and date validity
       if (!isValidDate(year, month, day)) {
         return 'Invalid date format';
       }
-      
+
       // Additional year range validation
       if (year < 1900 || year > new Date().getFullYear()) {
         return 'Invalid date format';
@@ -119,34 +119,34 @@ function validateDob(dob) {
       year = parseInt(parts[0], 10);
       month = parseInt(parts[1], 10);
       day = parseInt(parts[2], 10);
-      
+
       if (isNaN(year) || isNaN(month) || isNaN(day)) {
         return 'Invalid date format';
       }
-      
+
       if (!isValidDate(year, month, day)) {
         return 'Invalid date format';
       }
-      
+
       if (year < 1900 || year > new Date().getFullYear()) {
         return 'Invalid date format';
       }
     } else {
       return 'Invalid date format';
     }
-    
+
     // Calculate age accurately
     const today = new Date();
     const birthDate = new Date(year, month - 1, day);
     let age = today.getFullYear() - year;
     const monthDiff = today.getMonth() - (month - 1);
     const dayDiff = today.getDate() - day;
-    
+
     // Adjust age if birthday hasn't occurred this year yet
     if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
       age--;
     }
-    
+
     if (age < 16) {
       return 'You must be at least 16 years old';
     }
@@ -160,10 +160,10 @@ function convertDobToISO(dob) {
   if (!dob || dob.trim() === '') {
     return null;
   }
-  
+
   try {
     let day, month, year;
-    
+
     if (dob.includes('/')) {
       // Handle DD/MM/YYYY format (explicitly parse as day/month/year)
       const parts = dob.split('/');
@@ -174,22 +174,22 @@ function convertDobToISO(dob) {
       day = parseInt(parts[0], 10);
       month = parseInt(parts[1], 10);
       year = parseInt(parts[2], 10);
-      
+
       // Validate the components are valid numbers
       if (isNaN(day) || isNaN(month) || isNaN(year)) {
         return null;
       }
-      
+
       // Validate date validity (including checking days per month)
       if (!isValidDate(year, month, day)) {
         return null;
       }
-      
+
       // Additional year range validation
       if (year < 1900 || year > new Date().getFullYear()) {
         return null;
       }
-      
+
       // Convert directly to YYYY-MM-DD format without Date object manipulation
       // This prevents any timezone or date interpretation issues
       const isoYear = String(year).padStart(4, '0');
@@ -203,21 +203,21 @@ function convertDobToISO(dob) {
         year = parseInt(parts[0], 10);
         month = parseInt(parts[1], 10);
         day = parseInt(parts[2], 10);
-        
+
         // Validate components
         if (isNaN(year) || isNaN(month) || isNaN(day)) {
           return null;
         }
-        
+
         // Validate date validity
         if (!isValidDate(year, month, day)) {
           return null;
         }
-        
+
         if (year < 1900 || year > new Date().getFullYear()) {
           return null;
         }
-        
+
         // Return as-is if already in YYYY-MM-DD format
         return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       }
@@ -372,10 +372,10 @@ export async function signup(req, res) {
 
   // Validate role - must be 'patient' or 'doctor'
   const userRole = role?.toLowerCase().trim();
-  
+
   if (!userRole || (userRole !== 'patient' && userRole !== 'doctor')) {
-    return res.status(400).json({ 
-      message: 'Invalid role. Must be "patient" or "doctor"' 
+    return res.status(400).json({
+      message: 'Invalid role. Must be "patient" or "doctor"'
     });
   }
 
@@ -392,8 +392,8 @@ export async function signup(req, res) {
 
   // Explicit validation: date_of_birth should NOT be present for doctors
   if (userRole === 'doctor' && date_of_birth) {
-    return res.status(400).json({ 
-      message: 'Date of birth should not be provided for doctor signup' 
+    return res.status(400).json({
+      message: 'Date of birth should not be provided for doctor signup'
     });
   }
 
@@ -478,27 +478,27 @@ export async function signup(req, res) {
       await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
       return res.status(400).json({ message: 'Date of birth is required for patients' });
     }
-    
+
     // Convert date to ISO format (YYYY-MM-DD) for Supabase
     console.log(`[SIGNUP] Original date_of_birth received: "${date_of_birth}"`);
     console.log(`[SIGNUP] Date type: ${typeof date_of_birth}`);
-    
+
     // Debug: Parse the date manually to verify
     if (date_of_birth.includes('/')) {
       const parts = date_of_birth.split('/');
       console.log(`[SIGNUP] Parsed parts: [0]=${parts[0]} (day), [1]=${parts[1]} (month), [2]=${parts[2]} (year)`);
     }
-    
+
     const isoDateOfBirth = convertDobToISO(date_of_birth);
     console.log(`[SIGNUP] Converted ISO date: "${isoDateOfBirth}"`);
-    
+
     if (!isoDateOfBirth) {
       // Clean up user and auth user if date conversion fails
       await supabaseAdmin.from('users').delete().eq('user_id', user.user_id);
       await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
       return res.status(400).json({ message: 'Invalid date format' });
     }
-    
+
     // Verify the ISO date format is correct
     const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!isoDateRegex.test(isoDateOfBirth)) {
@@ -507,10 +507,10 @@ export async function signup(req, res) {
       await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
       return res.status(400).json({ message: 'Invalid date format' });
     }
-    
+
     console.log(`[SIGNUP] Inserting patient with date_of_birth: "${isoDateOfBirth}"`);
     console.log(`[SIGNUP] Date type: ${typeof isoDateOfBirth}`);
-    
+
     // Ensure we're sending a proper date string to Supabase
     // Supabase expects a date string in YYYY-MM-DD format
     const { error: patientError } = await supabaseAdmin.from('patients').insert({
@@ -525,15 +525,15 @@ export async function signup(req, res) {
       console.error(`[SIGNUP] Error details:`, JSON.stringify(patientError, null, 2));
       console.error(`[SIGNUP] Original date input: ${date_of_birth}`);
       console.error(`[SIGNUP] Converted ISO date: ${isoDateOfBirth}`);
-      
+
       // Clean up user and auth user if patient creation fails
       await supabaseAdmin.from('users').delete().eq('user_id', user.user_id);
       await supabaseAdmin.auth.admin.deleteUser(authUser.user.id);
-      
+
       // Provide more specific error message for date-related errors
       if (patientError.message && patientError.message.toLowerCase().includes('out of range')) {
-        return res.status(400).json({ 
-          message: `Date out of range: The date "${date_of_birth}" (converted to ${isoDateOfBirth}) is invalid. Please check the date format and ensure it's a valid date.` 
+        return res.status(400).json({
+          message: `Date out of range: The date "${date_of_birth}" (converted to ${isoDateOfBirth}) is invalid. Please check the date format and ensure it's a valid date.`
         });
       }
       return res.status(400).json({ message: patientError.message });
@@ -764,7 +764,7 @@ export async function login(req, res) {
   console.log(`[LOGIN] Final response userData keys:`, Object.keys(userData));
   console.log(`[LOGIN] Final response userData.date_of_birth:`, userData.date_of_birth);
   console.log(`[LOGIN] Final response userData.speciality_id:`, userData.speciality_id);
-  
+
   res.json({
     access_token: data.session.access_token,
     refresh_token: data.session.refresh_token,
@@ -845,7 +845,7 @@ export async function me(req, res) {
   console.log(`[ME] Final response userData keys:`, Object.keys(userData));
   console.log(`[ME] Final response userData.date_of_birth:`, userData.date_of_birth);
   console.log(`[ME] Final response userData.speciality_id:`, userData.speciality_id);
-  
+
   res.json(userData);
 }
 
@@ -857,7 +857,7 @@ export async function uploadProfilePicture(req, res) {
   try {
     console.log('Upload profile picture - req.file:', req.file ? 'exists' : 'missing');
     console.log('Upload profile picture - req.user:', req.user ? 'exists' : 'missing');
-    
+
     if (!req.file) {
       console.error('No file in request');
       return res.status(400).json({ message: 'No file uploaded' });
@@ -885,7 +885,7 @@ export async function uploadProfilePicture(req, res) {
     // Generate unique filename
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
     const fileName = `${user.user_id}_${Date.now()}.${fileExtension}`;
-    const filePath = `profile-pictures/${fileName}`;
+    const filePath = `profile-pictures/${fileName}`; // Folder inside profile-pictures bucket
 
     // Convert buffer to base64 or use buffer directly
     const fileBuffer = req.file.buffer;
@@ -913,8 +913,8 @@ export async function uploadProfilePicture(req, res) {
 
     if (uploadError) {
       console.error('Upload error:', uploadError);
-      return res.status(500).json({ 
-        message: 'Failed to upload profile picture: ' + uploadError.message 
+      return res.status(500).json({
+        message: 'Failed to upload profile picture: ' + uploadError.message
       });
     }
 
@@ -937,9 +937,9 @@ export async function uploadProfilePicture(req, res) {
       await supabaseAdmin.storage
         .from('profile-pictures')
         .remove([filePath]);
-      
-      return res.status(500).json({ 
-        message: 'Failed to update user profile: ' + updateError.message 
+
+      return res.status(500).json({
+        message: 'Failed to update user profile: ' + updateError.message
       });
     }
 
@@ -951,7 +951,7 @@ export async function uploadProfilePicture(req, res) {
     console.error('Upload profile picture error:', error);
     // Ensure we always return JSON
     if (!res.headersSent) {
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Internal server error: ' + (error.message || 'Unknown error')
       });
     }

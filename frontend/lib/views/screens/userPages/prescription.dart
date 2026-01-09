@@ -105,11 +105,19 @@ class _PrescriptionPageView extends StatelessWidget {
                 }
 
                 try {
+                  // Check if it's a Supabase URL (cloud storage)
+                  if (PDFService.isSupabaseUrl(prescriptionPath)) {
+                    await _openSupabasePDF(
+                      context,
+                      prescriptionPath,
+                      consultation.consultation.consultationId!,
+                    );
+                  }
                   // Check if it's an asset path
-                  if (PDFService.isAssetPath(prescriptionPath)) {
+                  else if (PDFService.isAssetPath(prescriptionPath)) {
                     await _openAssetPDF(context, prescriptionPath);
                   } else {
-                    // It's a stored file path
+                    // It's a stored file path (legacy)
                     await _openStoredPDF(context, prescriptionPath);
                   }
                 } catch (e) {
@@ -278,6 +286,51 @@ class _PrescriptionPageView extends StatelessWidget {
       ),
       bottomNavigationBar: const UserFooter(currentIndex: 2),
     );
+  }
+
+  /// Open PDF from Supabase Storage URL
+  Future<void> _openSupabasePDF(
+    BuildContext context,
+    String publicUrl,
+    int consultationId,
+  ) async {
+    try {
+      // Show loading indicator
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.downloadingPdf),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+
+      // Check if already cached locally
+      File? pdfFile = await PDFService.getCachedPDF(consultationId);
+
+      // If not cached, download from Supabase
+      if (pdfFile == null || !await pdfFile.exists()) {
+        pdfFile = await PDFService.downloadFromSupabase(
+          publicUrl,
+          consultationId,
+        );
+      }
+
+      // Open the file
+      final result = await OpenFilex.open(pdfFile.path);
+      if (result.type != ResultType.done) {
+        if (context.mounted) {
+          _showError(context, AppLocalizations.of(context)!.pdfOpenFailed(''));
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        _showError(
+          context,
+          AppLocalizations.of(context)!.pdfOpenFailed(e.toString()),
+        );
+      }
+    }
   }
 
   /// Open PDF from assets
