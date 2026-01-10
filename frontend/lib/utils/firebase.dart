@@ -28,20 +28,35 @@ Future<void> firebase_initialize_local_plugin() async {
   await flutterLocalNotificationsPlugin.initialize(initSettings, 
     onDidReceiveNotificationResponse: (response) {
       if (response.payload != null) {
-        final message = RemoteMessage.fromMap(jsonDecode(response.payload!));
-        _handleFirebaseMessage(message);
+        try {
+          final message = RemoteMessage.fromMap(jsonDecode(response.payload!));
+          // Wait a bit to ensure context is available
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _handleFirebaseMessage(message);
+          });
+        } catch (e) {
+          print('Error parsing notification payload: $e');
+        }
       }
     }
   );
 }
 
 Future<bool> init_firebase_messaging() async {
- await FirebaseMessaging.instance.getInitialMessage();
  await firebase_requestPermission();
  await firebase_initialize_local_plugin();
  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
  FirebaseMessaging.onMessage.listen(_handleFirebaseWhenActive);
  FirebaseMessaging.onMessageOpenedApp.listen(_handleFirebaseMessage);
+
+ // Handle notification when app is opened from terminated state
+ final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+ if (initialMessage != null) {
+   // Wait a bit for the app to fully initialize before navigating
+   Future.delayed(const Duration(milliseconds: 1000), () {
+     _handleFirebaseMessage(initialMessage);
+   });
+ }
 
  await FirebaseMessaging.instance.getToken().then((token) {
    print("Firebase  token is :  $token");
@@ -174,33 +189,57 @@ Future<bool> _handleFirebaseWhenActive(RemoteMessage message) async {
 }
 
 Future<bool> _handleFirebaseMessage(RemoteMessage message) async {
+  // Wait a bit to ensure navigator is ready
+  await Future.delayed(const Duration(milliseconds: 300));
+  
   final context = navigatorKey.currentContext;
-  if (context == null) return false;
-
-  final authState = context.read<AuthCubit>().state;
-  final data = message.data;
-
-  final bool isDoctorCase = _isDoctorNewBooking(authState, data);
-  final bool isPatientCase = _isPatientBookingConfirmed(authState, data);
-
-  if (!isDoctorCase && !isPatientCase) {
-    print('Navigation ignored: message not for the logged-in user.');
+  if (context == null) {
+    print('Navigation failed: no context available');
+    // Retry after a longer delay
+    Future.delayed(const Duration(seconds: 1), () {
+      final retryContext = navigatorKey.currentContext;
+      if (retryContext != null) {
+        _navigateToAppointmentScreen(retryContext, message);
+      }
+    });
     return false;
   }
 
-  if (isDoctorCase) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SchedulePage(),
-      ),
-    );
-  } else if (isPatientCase) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => UpcomingAppointmentsPage(),
-      ),
-    );
-  }
+  return _navigateToAppointmentScreen(context, message);
+}
 
-  return true;
+bool _navigateToAppointmentScreen(BuildContext context, RemoteMessage message) {
+  try {
+    final authState = context.read<AuthCubit>().state;
+    final data = message.data;
+
+    final bool isDoctorCase = _isDoctorNewBooking(authState, data);
+    final bool isPatientCase = _isPatientBookingConfirmed(authState, data);
+
+    if (!isDoctorCase && !isPatientCase) {
+      print('Navigation ignored: message not for the logged-in user.');
+      return false;
+    }
+
+    if (isDoctorCase) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const SchedulePage(),
+        ),
+      );
+      print('Navigated to SchedulePage (manage_appointments.dart)');
+    } else if (isPatientCase) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const UpcomingAppointmentsPage(),
+        ),
+      );
+      print('Navigated to UpcomingAppointmentsPage (user_appointments.dart)');
+    }
+
+    return true;
+  } catch (e) {
+    print('Error navigating to appointment screen: $e');
+    return false;
+  }
 }
