@@ -490,6 +490,29 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get cameraPermissionRequired => 'إذن الكاميرا مطلوب';
+
+  @override
+  String get cameraPermissionDenied => 'تم رفض إذن الكاميرا';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'يحتاج هذا التطبيق إلى الوصول إلى الكاميرا لالتقاط صور الملف الشخصي. يرجى تفعيل إذن الكاميرا في الإعدادات.';
+
+  @override
+  String get storagePermissionRequired => 'إذن التخزين مطلوب';
+
+  @override
+  String get storagePermissionDenied => 'تم رفض إذن التخزين';
+
+  @override
+  String get storagePermissionDeniedMessage =>
+      'يحتاج هذا التطبيق إلى الوصول إلى مكتبة الصور لاختيار صور الملف الشخصي. يرجى تفعيل إذن مكتبة الصور في الإعدادات.';
+
+  @override
+  String get openSettings => 'فتح الإعدادات';
+
+  @override
   String get errorEmailEmpty => 'البريد الإلكتروني لا يمكن أن يكون فارغًا';
 
   @override

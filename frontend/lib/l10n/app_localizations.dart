@@ -1018,6 +1018,48 @@ abstract class AppLocalizations {
   /// **'Error uploading profile picture: {error}'**
   String errorUploadingProfilePicture(String error);
 
+  /// Title for camera permission dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Camera Permission Required'**
+  String get cameraPermissionRequired;
+
+  /// Message when camera permission is denied
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission denied'**
+  String get cameraPermissionDenied;
+
+  /// Message explaining why camera permission is needed
+  ///
+  /// In en, this message translates to:
+  /// **'This app needs access to your camera to take profile pictures. Please enable camera permission in settings.'**
+  String get cameraPermissionDeniedMessage;
+
+  /// Title for storage permission dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Permission Required'**
+  String get storagePermissionRequired;
+
+  /// Message when storage permission is denied
+  ///
+  /// In en, this message translates to:
+  /// **'Storage permission denied'**
+  String get storagePermissionDenied;
+
+  /// Message explaining why storage permission is needed
+  ///
+  /// In en, this message translates to:
+  /// **'This app needs access to your photo library to select profile pictures. Please enable photo library permission in settings.'**
+  String get storagePermissionDeniedMessage;
+
+  /// Button text to open app settings
+  ///
+  /// In en, this message translates to:
+  /// **'Open Settings'**
+  String get openSettings;
+
   /// Shown when email field is empty
   ///
   /// In en, this message translates to:

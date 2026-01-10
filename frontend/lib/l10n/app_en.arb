@@ -640,6 +640,34 @@
       }
     }
   },
+  "cameraPermissionRequired": "Camera Permission Required",
+  "@cameraPermissionRequired": {
+    "description": "Title for camera permission dialog"
+  },
+  "cameraPermissionDenied": "Camera permission denied",
+  "@cameraPermissionDenied": {
+    "description": "Message when camera permission is denied"
+  },
+  "cameraPermissionDeniedMessage": "This app needs access to your camera to take profile pictures. Please enable camera permission in settings.",
+  "@cameraPermissionDeniedMessage": {
+    "description": "Message explaining why camera permission is needed"
+  },
+  "storagePermissionRequired": "Storage Permission Required",
+  "@storagePermissionRequired": {
+    "description": "Title for storage permission dialog"
+  },
+  "storagePermissionDenied": "Storage permission denied",
+  "@storagePermissionDenied": {
+    "description": "Message when storage permission is denied"
+  },
+  "storagePermissionDeniedMessage": "This app needs access to your photo library to select profile pictures. Please enable photo library permission in settings.",
+  "@storagePermissionDeniedMessage": {
+    "description": "Message explaining why storage permission is needed"
+  },
+  "openSettings": "Open Settings",
+  "@openSettings": {
+    "description": "Button text to open app settings"
+  },
   "errorEmailEmpty": "Email cannot be empty",
   "@errorEmailEmpty": {"description":"Shown when email field is empty"},
   "errorEmailInvalid": "Enter a valid email",

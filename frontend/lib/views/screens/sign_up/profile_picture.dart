@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
@@ -106,8 +107,113 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     );
   }
 
+  Future<bool> _requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.cameraPermissionRequired),
+            content: Text(AppLocalizations.of(context)!.cameraPermissionDeniedMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
+                child: Text(AppLocalizations.of(context)!.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.cameraPermissionDenied),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<bool> _requestStoragePermission() async {
+    // For Android 13+ (API 33+), use photos permission
+    // For older versions, use storage permission
+    Permission permission;
+    if (Platform.isAndroid) {
+      // Use photos permission for Android 13+ (handles both READ_MEDIA_IMAGES and legacy storage)
+      permission = Permission.photos;
+    } else {
+      // iOS uses photos permission
+      permission = Permission.photos;
+    }
+
+    final status = await permission.request();
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.storagePermissionRequired),
+            content: Text(AppLocalizations.of(context)!.storagePermissionDeniedMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
+                child: Text(AppLocalizations.of(context)!.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.storagePermissionDenied),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     try {
+      // Request appropriate permission based on source
+      bool hasPermission = false;
+      if (source == ImageSource.camera) {
+        hasPermission = await _requestCameraPermission();
+      } else {
+        hasPermission = await _requestStoragePermission();
+      }
+
+      if (!hasPermission) {
+        return; // Permission denied, exit early
+      }
+
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
         setState(() {

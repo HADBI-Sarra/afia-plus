@@ -497,6 +497,29 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get cameraPermissionRequired => 'Camera Permission Required';
+
+  @override
+  String get cameraPermissionDenied => 'Camera permission denied';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'This app needs access to your camera to take profile pictures. Please enable camera permission in settings.';
+
+  @override
+  String get storagePermissionRequired => 'Storage Permission Required';
+
+  @override
+  String get storagePermissionDenied => 'Storage permission denied';
+
+  @override
+  String get storagePermissionDeniedMessage =>
+      'This app needs access to your photo library to select profile pictures. Please enable photo library permission in settings.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
   String get errorEmailEmpty => 'Email cannot be empty';
 
   @override
