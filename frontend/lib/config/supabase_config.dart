@@ -13,6 +13,9 @@ class SupabaseConfig {
   /// Prescription storage bucket name
   static const String prescriptionsBucket = 'prescriptions';
 
+  /// Singleton instance of service role client for storage
+  static SupabaseClient? _serviceClient;
+
   /// Initialize Supabase
   static Future<void> initialize() async {
     await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
@@ -22,9 +25,9 @@ class SupabaseConfig {
   static SupabaseClient get client => Supabase.instance.client;
 
   /// Get Storage client with service role (for uploads - bypasses RLS)
+  /// Uses singleton pattern to avoid creating multiple clients
   static SupabaseStorageClient get storage {
-    // Create a client with service role key for storage operations
-    final serviceClient = SupabaseClient(supabaseUrl, supabaseServiceKey);
-    return serviceClient.storage;
+    _serviceClient ??= SupabaseClient(supabaseUrl, supabaseServiceKey);
+    return _serviceClient!.storage;
   }
 }
