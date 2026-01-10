@@ -323,7 +323,7 @@ describe('Consultations Integration Tests', () => {
 
     describe('POST /consultations/:id/prescription - Add Prescription', () => {
         it('should add prescription to consultation', async () => {
-            const prescription = 'Take medication twice daily for 7 days';
+            const prescription = 'https://your-supabase-url.supabase.co/storage/v1/object/public/prescriptions/consultation_123.pdf';
 
             const response = await request(app)
                 .post(`/consultations/${consultationId}/prescription`)
