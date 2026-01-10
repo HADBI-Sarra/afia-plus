@@ -1,6 +1,7 @@
 import 'user.dart';
 
 class Doctor extends User {
+  final String? emailConfirmedAt;
   final int? specialityId;
   final String? bio;
   final String? locationOfWork;
@@ -27,6 +28,7 @@ class Doctor extends User {
     required String phoneNumber,
     required String nin,
     String? profilePicture,
+    this.emailConfirmedAt,
     this.specialityId,
     this.bio,
     this.locationOfWork,
@@ -93,6 +95,7 @@ class Doctor extends User {
       phoneNumber: map['phone_number'] ?? '',
       nin: map['nin'] ?? '',
       profilePicture: map['profile_picture'],
+      emailConfirmedAt: map['email_confirmed_at']?.toString(),
       specialityId: parseSpecialityId(map['speciality_id']),
       bio: map['bio'],
       locationOfWork: map['location_of_work'],
@@ -132,4 +135,7 @@ class Doctor extends User {
       'reviews_count': reviewsCount,
     };
   }
+
+  /// Returns true if email is verified (email_confirmed_at is not null)
+  bool get isEmailVerified => emailConfirmedAt != null && emailConfirmedAt!.isNotEmpty;
 }

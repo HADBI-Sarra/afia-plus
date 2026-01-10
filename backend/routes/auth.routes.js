@@ -6,6 +6,8 @@ import {
   me,
   logout,
   uploadProfilePicture,
+  verifyOtp,
+  resendOtp,
 } from '../controllers/auth.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
@@ -67,6 +69,8 @@ const uploadWithErrorHandling = (req, res, next) => {
 
 router.post('/signup', signup);
 router.post('/login', login);
+router.post('/verify-otp', verifyOtp);
+router.post('/resend-otp', resendOtp);
 router.get('/me', authMiddleware, me);
 router.post('/logout', authMiddleware, logout);
 router.post('/upload-profile-picture', authMiddleware, uploadWithErrorHandling, uploadProfilePicture);

@@ -8,6 +8,7 @@ import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../homescreen/patient_home_screen.dart';
 import '../profile_picture.dart';
+import '../../auth/otp_verification_screen.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
 import 'package:afia_plus_app/utils/localization_helper.dart';
 
@@ -89,11 +90,29 @@ class _PatientPersonalDataScreenState extends State<PatientPersonalDataScreen> {
           final authCubit = context.read<AuthCubit>();
           await authCubit.checkLoginStatus();
 
-          // Navigate to profile picture screen instead of directly to home
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const ProfilePictureScreen()),
-          );
+          // Check if email is verified
+          final authState = authCubit.state;
+          final bool isEmailVerified = (authState is AuthenticatedPatient && authState.patient.isEmailVerified) ||
+              (authState is AuthenticatedDoctor && authState.doctor.isEmailVerified);
+
+          if (!isEmailVerified) {
+            // Email not verified - navigate to OTP verification screen
+            if (mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => OtpVerificationScreen(email: state.email, password: state.password)),
+                (route) => false,
+              );
+            }
+          } else {
+            // Email is verified - proceed to profile picture screen
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePictureScreen()),
+              );
+            }
+          }
         }
       },
       child: BlocBuilder<SignupCubit, SignupState>(
