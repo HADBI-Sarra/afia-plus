@@ -7,6 +7,14 @@ import '../../models/result.dart';
 import 'auth_repository.dart';
 
 class DbAuthRepository implements AuthRepository {
+  @override
+  Future<ReturnResult<User>> verifyOtp(String email, String otp, String password) async {
+    throw UnimplementedError('verifyOtp is not supported in local DB authentication.');
+  }
+  @override
+  Future<ReturnResult> resendOtp(String email) async {
+    throw UnimplementedError('resendOtp is not supported in local DB authentication.');
+  }
   final Database db;
 
   DbAuthRepository(this.db);

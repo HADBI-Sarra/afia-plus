@@ -189,19 +189,58 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
       }
     }
 
-    // Navigate to home screen
-    if (state.isPatient) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
-        (route) => false,
-      );
-    } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
-        (route) => false,
-      );
+    // Check email verification before navigating to home
+    final authCubit = context.read<AuthCubit>();
+    await authCubit.checkLoginStatus();
+    
+    if (!mounted) return;
+    
+    final authState = authCubit.state;
+    final bool isEmailVerified = (authState is AuthenticatedPatient && authState.patient.isEmailVerified) ||
+        (authState is AuthenticatedDoctor && authState.doctor.isEmailVerified);
+
+    if (!isEmailVerified) {
+      // Email not verified - show message and block navigation
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text('Email Verification Required'),
+            content: const Text(
+              'Please verify your email before accessing the app. Check your email inbox for the verification link.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  // Refresh auth status in case user verified
+                  authCubit.checkLoginStatus();
+                },
+                child: const Text('I\'ve Verified My Email'),
+              ),
+            ],
+          ),
+        );
+      }
+      return; // Don't navigate
+    }
+
+    // Email is verified - navigate to home screen
+    if (mounted) {
+      if (state.isPatient) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 

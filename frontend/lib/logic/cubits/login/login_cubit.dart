@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/repo/auth/auth_repository.dart';
+import '../../../data/models/patient.dart';
+import '../../../data/models/doctor.dart';
 import '../auth/auth_cubit.dart';
 import 'login_state.dart';
 
@@ -72,9 +74,23 @@ class LoginCubit extends Cubit<LoginState> {
 
     final result = await authRepo.login(trimmedEmail, trimmedPassword);
 
-    if (result.state) {
-      print('Login successful, setting user in LoginCubit: ${result.data?.email}');
-      emit(state.copyWith(isLoading: false, user: result.data, message: ''));
+    if (result.state && result.data != null) {
+      // Check if email is verified
+      final user = result.data!;
+      final bool isEmailVerified = (user is Patient && user.isEmailVerified) ||
+          (user is Doctor && user.isEmailVerified);
+
+      if (!isEmailVerified) {
+        // Email not verified - block login
+        emit(state.copyWith(
+          isLoading: false,
+          message: 'Please verify your email before logging in',
+        ));
+        return;
+      }
+
+      print('Login successful, setting user in LoginCubit: ${user.email}');
+      emit(state.copyWith(isLoading: false, user: user, message: ''));
       // Refresh AuthCubit to update the authentication state
       // Navigation will be handled by listener in login screen
       if (authCubit != null) {
