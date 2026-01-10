@@ -1431,6 +1431,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hello, I would like to discuss our appointment on {dateTime}.'**
   String whatsappMessageDoctorToPatient(String dateTime);
+
+  /// Title for selecting available hours
+  ///
+  /// In en, this message translates to:
+  /// **'Select Available Hours'**
+  String get selectAvailableHours;
+
+  /// Button to add time slots
+  ///
+  /// In en, this message translates to:
+  /// **'Add Times'**
+  String get addTimes;
+
+  /// Delete slot dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Slot'**
+  String get deleteSlot;
+
+  /// Delete slot confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this time slot?'**
+  String get deleteSlotMessage;
+
+  /// Error message for past date availability
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot set availability for past dates'**
+  String get cannotSetPastAvailability;
+
+  /// Available slots title for date
+  ///
+  /// In en, this message translates to:
+  /// **'Available slots for {date}'**
+  String availableSlotsFor(String date);
+
+  /// Message when no times are set
+  ///
+  /// In en, this message translates to:
+  /// **'No times added for this day'**
+  String get noTimesForDay;
+
+  /// Message to select future date
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a future date to set availability'**
+  String get selectFutureDateAvailability;
+
+  /// Doctor profile title
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor Profile'**
+  String get doctorProfile;
+
+  /// Book tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get book;
+
+  /// About tab label
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// Reviews tab label
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviews;
+
+  /// Success message for booking
+  ///
+  /// In en, this message translates to:
+  /// **'Your appointment has been booked successfully!'**
+  String get bookingSuccessMessage;
+
+  /// Book appointment button
+  ///
+  /// In en, this message translates to:
+  /// **'Book Appointment'**
+  String get bookAppointment;
+
+  /// Error message to select time
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a time slot'**
+  String get pleaseSelectTime;
+
+  /// Error message for past date booking
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book appointments for past dates'**
+  String get cannotBookPastDate;
+
+  /// Error message for past time booking
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot book appointments for past times'**
+  String get cannotBookPastTime;
+
+  /// Error message for unavailable slot
+  ///
+  /// In en, this message translates to:
+  /// **'No available slot for the selected time'**
+  String get noAvailableSlot;
+
+  /// Error message for non-patient users
+  ///
+  /// In en, this message translates to:
+  /// **'You must be logged in as a patient to book appointments'**
+  String get mustBeLoggedInAsPatient;
+
+  /// Loading message while downloading PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading PDF...'**
+  String get downloadingPdf;
+
+  /// Logout button text
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// Logout confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmation;
+
+  /// Profile page title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// Date of birth not set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get dobNotSet;
+
+  /// Favorite doctors menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Doctors'**
+  String get favoriteDoctors;
+
+  /// Booked appointments menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Booked Appointments'**
+  String get bookedAppointments;
+
+  /// Notification settings menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettings;
+
+  /// Policies menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Policies'**
+  String get policies;
+
+  /// Change email menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Change Email'**
+  String get changeEmail;
+
+  /// Security settings menu item
+  ///
+  /// In en, this message translates to:
+  /// **'Security Settings'**
+  String get securitySettings;
+
+  /// About me menu item
+  ///
+  /// In en, this message translates to:
+  /// **'About Me'**
+  String get aboutMe;
+
+  /// Not specified text
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// Patient profile title
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Profile'**
+  String get patientProfile;
+
+  /// Address label
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// Health information label
+  ///
+  /// In en, this message translates to:
+  /// **'Health Information'**
+  String get healthInfo;
+
+  /// Send message button
+  ///
+  /// In en, this message translates to:
+  /// **'Send Message'**
+  String get sendMessage;
+
+  /// Phone label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// Year singular
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get year;
+
+  /// Years plural
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get years;
+
+  /// Over prefix for years
+  ///
+  /// In en, this message translates to:
+  /// **'Over'**
+  String get over;
+
+  /// Of experience suffix
+  ///
+  /// In en, this message translates to:
+  /// **'of experience'**
+  String get ofExperience;
+
+  /// Specializing in prefix
+  ///
+  /// In en, this message translates to:
+  /// **'specializing in'**
+  String get specializingIn;
+
+  /// No availability message
+  ///
+  /// In en, this message translates to:
+  /// **'No availability information'**
+  String get noAvailability;
+
+  /// No upcoming availability message
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming availability'**
+  String get noUpcomingAvailability;
+
+  /// Price label
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// One hour consultation text
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour consultation'**
+  String get oneHourConsultation;
+
+  /// Select time label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Time'**
+  String get selectTime;
+
+  /// No available times message
+  ///
+  /// In en, this message translates to:
+  /// **'No available times for this day'**
+  String get noAvailableTimesForDay;
+
+  /// Single review text
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// Multiple reviews text
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get reviewsPlural;
+
+  /// Leave review button
+  ///
+  /// In en, this message translates to:
+  /// **'Leave a Review'**
+  String get leaveReview;
+
+  /// No reviews message
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get noReviewsYet;
+
+  /// Anonymous user text
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
 }
 
 class _AppLocalizationsDelegate

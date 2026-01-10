@@ -739,4 +739,170 @@ class AppLocalizationsEn extends AppLocalizations {
   String whatsappMessageDoctorToPatient(String dateTime) {
     return 'Hello, I would like to discuss our appointment on $dateTime.';
   }
+
+  @override
+  String get selectAvailableHours => 'Select Available Hours';
+
+  @override
+  String get addTimes => 'Add Times';
+
+  @override
+  String get deleteSlot => 'Delete Slot';
+
+  @override
+  String get deleteSlotMessage =>
+      'Are you sure you want to delete this time slot?';
+
+  @override
+  String get cannotSetPastAvailability =>
+      'Cannot set availability for past dates';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'Available slots for $date';
+  }
+
+  @override
+  String get noTimesForDay => 'No times added for this day';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'Please select a future date to set availability';
+
+  @override
+  String get doctorProfile => 'Doctor Profile';
+
+  @override
+  String get book => 'Book';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get reviews => 'Reviews';
+
+  @override
+  String get bookingSuccessMessage =>
+      'Your appointment has been booked successfully!';
+
+  @override
+  String get bookAppointment => 'Book Appointment';
+
+  @override
+  String get pleaseSelectTime => 'Please select a time slot';
+
+  @override
+  String get cannotBookPastDate => 'Cannot book appointments for past dates';
+
+  @override
+  String get cannotBookPastTime => 'Cannot book appointments for past times';
+
+  @override
+  String get noAvailableSlot => 'No available slot for the selected time';
+
+  @override
+  String get mustBeLoggedInAsPatient =>
+      'You must be logged in as a patient to book appointments';
+
+  @override
+  String get downloadingPdf => 'Downloading PDF...';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutConfirmation => 'Are you sure you want to logout?';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get dobNotSet => 'Not set';
+
+  @override
+  String get favoriteDoctors => 'Favorite Doctors';
+
+  @override
+  String get bookedAppointments => 'Booked Appointments';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get policies => 'Policies';
+
+  @override
+  String get changeEmail => 'Change Email';
+
+  @override
+  String get securitySettings => 'Security Settings';
+
+  @override
+  String get aboutMe => 'About Me';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get patientProfile => 'Patient Profile';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get healthInfo => 'Health Information';
+
+  @override
+  String get sendMessage => 'Send Message';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get year => 'year';
+
+  @override
+  String get years => 'years';
+
+  @override
+  String get over => 'Over';
+
+  @override
+  String get ofExperience => 'of experience';
+
+  @override
+  String get specializingIn => 'specializing in';
+
+  @override
+  String get noAvailability => 'No availability information';
+
+  @override
+  String get noUpcomingAvailability => 'No upcoming availability';
+
+  @override
+  String get price => 'Price';
+
+  @override
+  String get oneHourConsultation => '1 hour consultation';
+
+  @override
+  String get selectTime => 'Select Time';
+
+  @override
+  String get noAvailableTimesForDay => 'No available times for this day';
+
+  @override
+  String get review => 'Review';
+
+  @override
+  String get reviewsPlural => 'Reviews';
+
+  @override
+  String get leaveReview => 'Leave a Review';
+
+  @override
+  String get noReviewsYet => 'No reviews yet';
+
+  @override
+  String get anonymous => 'Anonymous';
 }

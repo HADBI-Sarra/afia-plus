@@ -916,6 +916,233 @@
         "type": "String"
       }
     }
-  }
+  },
+  "selectAvailableHours": "Select Available Hours",
+  "@selectAvailableHours": {
+    "description": "Title for selecting available hours"
+  },
+  "addTimes": "Add Times",
+  "@addTimes": {
+    "description": "Button to add time slots"
+  },
+  "deleteSlot": "Delete Slot",
+  "@deleteSlot": {
+    "description": "Delete slot dialog title"
+  },
+  "deleteSlotMessage": "Are you sure you want to delete this time slot?",
+  "@deleteSlotMessage": {
+    "description": "Delete slot confirmation message"
+  },
+  "cannotSetPastAvailability": "Cannot set availability for past dates",
+  "@cannotSetPastAvailability": {
+    "description": "Error message for past date availability"
+  },
+  "availableSlotsFor": "Available slots for {date}",
+  "@availableSlotsFor": {
+    "description": "Available slots title for date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "noTimesForDay": "No times added for this day",
+  "@noTimesForDay": {
+    "description": "Message when no times are set"
+  },
+  "selectFutureDateAvailability": "Please select a future date to set availability",
+  "@selectFutureDateAvailability": {
+    "description": "Message to select future date"
+  },
+  "doctorProfile": "Doctor Profile",
+  "@doctorProfile": {
+    "description": "Doctor profile title"
+  },
+  "book": "Book",
+  "@book": {
+    "description": "Book tab label"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About tab label"
+  },
+  "reviews": "Reviews",
+  "@reviews": {
+    "description": "Reviews tab label"
+  },
+  "bookingSuccessMessage": "Your appointment has been booked successfully!",
+  "@bookingSuccessMessage": {
+    "description": "Success message for booking"
+  },
+  "bookAppointment": "Book Appointment",
+  "@bookAppointment": {
+    "description": "Book appointment button"
+  },
+  "pleaseSelectTime": "Please select a time slot",
+  "@pleaseSelectTime": {
+    "description": "Error message to select time"
+  },
+  "cannotBookPastDate": "Cannot book appointments for past dates",
+  "@cannotBookPastDate": {
+    "description": "Error message for past date booking"
+  },
+  "cannotBookPastTime": "Cannot book appointments for past times",
+  "@cannotBookPastTime": {
+    "description": "Error message for past time booking"
+  },
+  "noAvailableSlot": "No available slot for the selected time",
+  "@noAvailableSlot": {
+    "description": "Error message for unavailable slot"
+  },
+  "mustBeLoggedInAsPatient": "You must be logged in as a patient to book appointments",
+  "@mustBeLoggedInAsPatient": {
+    "description": "Error message for non-patient users"
+  },
+  "downloadingPdf": "Downloading PDF...",
+  "@downloadingPdf": {
+    "description": "Loading message while downloading PDF"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "@logoutConfirmation": {
+    "description": "Logout confirmation message"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
+  },
+  "dobNotSet": "Not set",
+  "@dobNotSet": {
+    "description": "Date of birth not set"
+  },
+  "favoriteDoctors": "Favorite Doctors",
+  "@favoriteDoctors": {
+    "description": "Favorite doctors menu item"
+  },
+  "bookedAppointments": "Booked Appointments",
+  "@bookedAppointments": {
+    "description": "Booked appointments menu item"
+  },
+  "notificationSettings": "Notification Settings",
+  "@notificationSettings": {
+    "description": "Notification settings menu item"
+  },
+  "policies": "Policies",
+  "@policies": {
+    "description": "Policies menu item"
+  },
+  "changeEmail": "Change Email",
+  "@changeEmail": {
+    "description": "Change email menu item"
+  },
+  "securitySettings": "Security Settings",
+  "@securitySettings": {
+    "description": "Security settings menu item"
+  },
+  "aboutMe": "About Me",
+  "@aboutMe": {
+    "description": "About me menu item"
+  },
+  "notSpecified": "Not specified",
+  "@notSpecified": {
+    "description": "Not specified text"
+  },
+  "patientProfile": "Patient Profile",
+  "@patientProfile": {
+    "description": "Patient profile title"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Address label"
+  },
+  "healthInfo": "Health Information",
+  "@healthInfo": {
+    "description": "Health information label"
+  },
+  "sendMessage": "Send Message",
+  "@sendMessage": {
+    "description": "Send message button"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "year": "year",
+  "@year": {
+    "description": "Year singular"
+  },
+  "years": "years",
+  "@years": {
+    "description": "Years plural"
+  },
+  "over": "Over",
+  "@over": {
+    "description": "Over prefix for years"
+  },
+  "ofExperience": "of experience",
+  "@ofExperience": {
+    "description": "Of experience suffix"
+  },
+  "specializingIn": "specializing in",
+  "@specializingIn": {
+    "description": "Specializing in prefix"
+  },
+  "training": "Training",
+  "@training": {
+    "description": "Training section label"
+  },
+  "licensure": "Licensure",
+  "@licensure": {
+    "description": "Licensure section label"
+  },
+  "experience": "Experience",
+  "@experience": {
+    "description": "Experience section label"
+  },
+  "noAvailability": "No availability information",
+  "@noAvailability": {
+    "description": "No availability message"
+  },
+  "noUpcomingAvailability": "No upcoming availability",
+  "@noUpcomingAvailability": {
+    "description": "No upcoming availability message"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Price label"
+  },
+  "oneHourConsultation": "1 hour consultation",
+  "@oneHourConsultation": {
+    "description": "One hour consultation text"
+  },
+  "selectTime": "Select Time",
+  "@selectTime": {
+    "description": "Select time label"
+  },
+  "noAvailableTimesForDay": "No available times for this day",
+  "@noAvailableTimesForDay": {
+    "description": "No available times message"
+  },
+  "review": "Review",
+  "@review": {
+    "description": "Single review text"
+  },
+  "reviewsPlural": "Reviews",
+  "@reviewsPlural": {
+    "description": "Multiple reviews text"
+  },
+  "leaveReview": "Leave a Review",
+  "@leaveReview": {
+    "description": "Leave review button"
+  },
+  "noReviewsYet": "No reviews yet",
+  "@noReviewsYet": {
+    "description": "No reviews message"
+  },
+  "anonymous": "Anonymous",
+  "@anonymous": {
+    "description": "Anonymous user text"  }
 }
-

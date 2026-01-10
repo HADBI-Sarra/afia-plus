@@ -416,7 +416,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'ex. Résidence en médecine interne, Fellowship en cardiologie';
 
   @override
-  String get licensure => 'Autorisation d\'exercer';
+  String get licensure => 'Licence';
 
   @override
   String get licenseNumber => 'Numéro de licence';
@@ -745,4 +745,174 @@ class AppLocalizationsFr extends AppLocalizations {
   String whatsappMessageDoctorToPatient(String dateTime) {
     return 'Bonjour, je souhaite discuter de notre rendez-vous le $dateTime.';
   }
+
+  @override
+  String get selectAvailableHours => 'Sélectionner les heures disponibles';
+
+  @override
+  String get addTimes => 'Ajouter des horaires';
+
+  @override
+  String get deleteSlot => 'Supprimer le créneau';
+
+  @override
+  String get deleteSlotMessage =>
+      'Êtes-vous sûr de vouloir supprimer ce créneau horaire ?';
+
+  @override
+  String get cannotSetPastAvailability =>
+      'Impossible de définir la disponibilité pour des dates passées';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'Créneaux disponibles pour $date';
+  }
+
+  @override
+  String get noTimesForDay => 'Aucun horaire ajouté pour ce jour';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'Veuillez sélectionner une date future pour définir la disponibilité';
+
+  @override
+  String get doctorProfile => 'Profil du médecin';
+
+  @override
+  String get book => 'Réserver';
+
+  @override
+  String get about => 'À propos';
+
+  @override
+  String get reviews => 'Avis';
+
+  @override
+  String get bookingSuccessMessage =>
+      'Votre rendez-vous a été réservé avec succès !';
+
+  @override
+  String get bookAppointment => 'Réserver un rendez-vous';
+
+  @override
+  String get pleaseSelectTime => 'Veuillez sélectionner un créneau horaire';
+
+  @override
+  String get cannotBookPastDate =>
+      'Impossible de réserver des rendez-vous pour des dates passées';
+
+  @override
+  String get cannotBookPastTime =>
+      'Impossible de réserver des rendez-vous pour des horaires passés';
+
+  @override
+  String get noAvailableSlot =>
+      'Aucun créneau disponible pour l\'heure sélectionnée';
+
+  @override
+  String get mustBeLoggedInAsPatient =>
+      'Vous devez être connecté en tant que patient pour réserver des rendez-vous';
+
+  @override
+  String get downloadingPdf => 'Téléchargement du PDF...';
+
+  @override
+  String get logout => 'Déconnexion';
+
+  @override
+  String get logoutConfirmation =>
+      'Êtes-vous sûr de vouloir vous déconnecter ?';
+
+  @override
+  String get profile => 'Profil';
+
+  @override
+  String get dobNotSet => 'Non défini';
+
+  @override
+  String get favoriteDoctors => 'Médecins favoris';
+
+  @override
+  String get bookedAppointments => 'Rendez-vous réservés';
+
+  @override
+  String get notificationSettings => 'Paramètres de notification';
+
+  @override
+  String get policies => 'Politiques';
+
+  @override
+  String get changeEmail => 'Changer l\'e-mail';
+
+  @override
+  String get securitySettings => 'Paramètres de sécurité';
+
+  @override
+  String get aboutMe => 'À propos de moi';
+
+  @override
+  String get notSpecified => 'Non spécifié';
+
+  @override
+  String get patientProfile => 'Profil du patient';
+
+  @override
+  String get address => 'Adresse';
+
+  @override
+  String get healthInfo => 'Informations de santé';
+
+  @override
+  String get sendMessage => 'Envoyer un message';
+
+  @override
+  String get phone => 'Téléphone';
+
+  @override
+  String get year => 'an';
+
+  @override
+  String get years => 'ans';
+
+  @override
+  String get over => 'Plus de';
+
+  @override
+  String get ofExperience => 'd\'expérience';
+
+  @override
+  String get specializingIn => 'spécialisé en';
+
+  @override
+  String get noAvailability => 'Aucune information de disponibilité';
+
+  @override
+  String get noUpcomingAvailability => 'Aucune disponibilité à venir';
+
+  @override
+  String get price => 'Prix';
+
+  @override
+  String get oneHourConsultation => 'Consultation d\'une heure';
+
+  @override
+  String get selectTime => 'Sélectionner l\'heure';
+
+  @override
+  String get noAvailableTimesForDay => 'Aucun horaire disponible pour ce jour';
+
+  @override
+  String get review => 'Avis';
+
+  @override
+  String get reviewsPlural => 'Avis';
+
+  @override
+  String get leaveReview => 'Laisser un avis';
+
+  @override
+  String get noReviewsYet => 'Aucun avis pour le moment';
+
+  @override
+  String get anonymous => 'Anonyme';
 }

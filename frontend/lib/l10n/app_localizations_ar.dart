@@ -726,4 +726,167 @@ class AppLocalizationsAr extends AppLocalizations {
   String whatsappMessageDoctorToPatient(String dateTime) {
     return 'مرحباً، أود مناقشة موعدنا في $dateTime.';
   }
+
+  @override
+  String get selectAvailableHours => 'اختر الساعات المتاحة';
+
+  @override
+  String get addTimes => 'إضافة أوقات';
+
+  @override
+  String get deleteSlot => 'حذف الفترة';
+
+  @override
+  String get deleteSlotMessage => 'هل أنت متأكد من حذف هذه الفترة الزمنية؟';
+
+  @override
+  String get cannotSetPastAvailability =>
+      'لا يمكن تحديد التوفر للتواريخ الماضية';
+
+  @override
+  String availableSlotsFor(String date) {
+    return 'الفترات المتاحة لـ $date';
+  }
+
+  @override
+  String get noTimesForDay => 'لم تتم إضافة أوقات لهذا اليوم';
+
+  @override
+  String get selectFutureDateAvailability =>
+      'يرجى اختيار تاريخ مستقبلي لتحديد التوفر';
+
+  @override
+  String get doctorProfile => 'ملف الطبيب';
+
+  @override
+  String get book => 'حجز';
+
+  @override
+  String get about => 'حول';
+
+  @override
+  String get reviews => 'التقييمات';
+
+  @override
+  String get bookingSuccessMessage => 'تم حجز موعدك بنجاح!';
+
+  @override
+  String get bookAppointment => 'حجز موعد';
+
+  @override
+  String get pleaseSelectTime => 'يرجى اختيار فترة زمنية';
+
+  @override
+  String get cannotBookPastDate => 'لا يمكن حجز مواعيد للتواريخ الماضية';
+
+  @override
+  String get cannotBookPastTime => 'لا يمكن حجز مواعيد للأوقات الماضية';
+
+  @override
+  String get noAvailableSlot => 'لا توجد فترة متاحة للوقت المحدد';
+
+  @override
+  String get mustBeLoggedInAsPatient => 'يجب تسجيل الدخول كمريض لحجز المواعيد';
+
+  @override
+  String get downloadingPdf => 'جاري تحميل PDF...';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get logoutConfirmation => 'هل أنت متأكد من تسجيل الخروج؟';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get dobNotSet => 'غير محدد';
+
+  @override
+  String get favoriteDoctors => 'الأطباء المفضلون';
+
+  @override
+  String get bookedAppointments => 'المواعيد المحجوزة';
+
+  @override
+  String get notificationSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get policies => 'السياسات';
+
+  @override
+  String get changeEmail => 'تغيير البريد الإلكتروني';
+
+  @override
+  String get securitySettings => 'إعدادات الأمان';
+
+  @override
+  String get aboutMe => 'عني';
+
+  @override
+  String get notSpecified => 'غير محدد';
+
+  @override
+  String get patientProfile => 'ملف المريض';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get healthInfo => 'المعلومات الصحية';
+
+  @override
+  String get sendMessage => 'إرسال رسالة';
+
+  @override
+  String get phone => 'الهاتف';
+
+  @override
+  String get year => 'سنة';
+
+  @override
+  String get years => 'سنوات';
+
+  @override
+  String get over => 'أكثر من';
+
+  @override
+  String get ofExperience => 'من الخبرة';
+
+  @override
+  String get specializingIn => 'متخصص في';
+
+  @override
+  String get noAvailability => 'لا توجد معلومات عن التوفر';
+
+  @override
+  String get noUpcomingAvailability => 'لا توجد مواعيد قادمة';
+
+  @override
+  String get price => 'السعر';
+
+  @override
+  String get oneHourConsultation => 'استشارة لمدة ساعة';
+
+  @override
+  String get selectTime => 'اختر الوقت';
+
+  @override
+  String get noAvailableTimesForDay => 'لا توجد أوقات متاحة لهذا اليوم';
+
+  @override
+  String get review => 'مراجعة';
+
+  @override
+  String get reviewsPlural => 'المراجعات';
+
+  @override
+  String get leaveReview => 'اترك مراجعة';
+
+  @override
+  String get noReviewsYet => 'لا توجد مراجعات بعد';
+
+  @override
+  String get anonymous => 'مجهول';
 }
