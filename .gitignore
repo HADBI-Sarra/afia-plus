@@ -86,3 +86,4 @@ desktop.ini
 # GIT
 ############################
 .git-rewrite/
+backend/firebase_credentials/service_account.json

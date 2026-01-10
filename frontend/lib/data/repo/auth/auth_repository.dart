@@ -10,4 +10,6 @@ abstract class AuthRepository {
   Future<ReturnResult<User?>> getCurrentUser();
   Future<bool> emailExists(String email);
   Future<ReturnResult<String>> uploadProfilePicture(String imagePath);
+  Future<ReturnResult<User>> verifyOtp(String email, String otp, String password);
+  Future<ReturnResult> resendOtp(String email);
 }

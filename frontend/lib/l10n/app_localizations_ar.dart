@@ -123,9 +123,6 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get downloadingPdf => 'جاري تحميل الوصفة...';
-
-  @override
   String get whatsappNotInstalled =>
       'تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.';
 
@@ -179,13 +176,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'قدم بياناتك الشخصية لحجز الزيارات ببضع نقرات فقط.';
 
   @override
-  String get firstName => 'الاسم الأول';
+  String get firstName => 'الاسم (بالفرنسية)';
 
   @override
   String get enterYourFirstName => 'أدخل اسمك الأول';
 
   @override
-  String get lastName => 'اسم العائلة';
+  String get lastName => 'اللقب (بالفرنسية)';
 
   @override
   String get enterYourLastName => 'أدخل اسم العائلة';
@@ -239,9 +236,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get arabic => 'العربية';
 
   @override
-  String get french => 'الفرنسية';
-
-  @override
   String get whatsappError => 'تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.';
 
   @override
@@ -250,206 +244,486 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get doctorProfile => 'ملف الطبيب';
+  String get forgotPassword => 'نسيت كلمة المرور؟';
 
   @override
-  String get book => 'حجز';
+  String get areYouNewHere => 'هل أنت جديد هنا؟ ';
 
   @override
-  String get about => 'حول';
+  String get createAccount => 'إنشاء حساب';
 
   @override
-  String get reviews => 'التقييمات';
+  String get createAnAccount => 'إنشاء حساب';
 
   @override
-  String get bookAppointment => 'حجز موعد';
+  String get excitedToHaveYouOnBoard => 'نحن سعداء بانضمامك!';
 
   @override
-  String get doctorNotFound => 'الطبيب غير موجود';
+  String get registerAs => 'التسجيل كـ';
 
   @override
-  String get bookingSuccessMessage =>
-      'تم الحجز بنجاح ويجب تأكيده من قبل الطبيب.';
+  String get doctor => 'طبيب';
 
   @override
-  String get pleaseSelectTime => 'يرجى اختيار وقت لاستشارتك.';
+  String get patient => 'مريض';
 
   @override
-  String get cannotBookPastDate =>
-      'لا يمكنك حجز مواعيد للتواريخ السابقة. يرجى اختيار تاريخ حالي أو مستقبلي.';
+  String get createPassword => 'إنشاء كلمة مرور';
 
   @override
-  String get cannotBookPastTime =>
-      'لا يمكنك حجز مواعيد للأوقات السابقة. يرجى اختيار وقت مستقبلي.';
+  String get strongPassword => 'كلمة مرور قوية';
 
   @override
-  String get noAvailableSlot =>
-      'لم يتم العثور على موعد متاح للتاريخ/الوقت المحدد.';
+  String get min8CharactersLength => 'الحد الأدنى 8 أحرف';
 
   @override
-  String get mustBeLoggedInAsPatient => 'يجب أن تكون مسجلاً كـ مريض.';
+  String get min1LowercaseLetter => 'الحد الأدنى حرف صغير واحد';
 
   @override
-  String get profile => 'الملف الشخصي';
+  String get min1UppercaseLetter => 'الحد الأدنى حرف كبير واحد';
 
   @override
-  String get bookedAppointments => 'المواعيد المحجوزة';
+  String get min1Digit => 'الحد الأدنى رقم واحد';
 
   @override
-  String get myPatients => 'مرضاي';
+  String get min1SpecialCharacter => 'الحد الأدنى حرف خاص واحد';
 
   @override
-  String get availability => 'التوفر';
+  String get confirmPassword => 'تأكيد كلمة المرور';
 
   @override
-  String get notificationSettings => 'إعدادات الإشعارات';
+  String get repeatPassword => 'أعد إدخال كلمة المرور';
 
   @override
-  String get policies => 'السياسات';
+  String get next => 'التالي';
 
   @override
-  String get changeEmail => 'تغيير البريد الإلكتروني';
+  String get alreadyHaveAnAccount => 'هل لديك حساب بالفعل؟ ';
 
   @override
-  String get securitySettings => 'إعدادات الأمان';
+  String get french => 'الفرنسية';
 
   @override
-  String get aboutMe => 'نبذة عني';
+  String get dateFormatHint => 'يوم/شهر/سنة';
 
   @override
-  String get logout => 'تسجيل الخروج';
+  String get phoneNumber => 'رقم الهاتف';
 
   @override
-  String get logoutConfirmation => 'هل أنت متأكد من أنك تريد تسجيل الخروج؟';
+  String get phoneNumberExample => 'مثال: 05123456789';
 
   @override
-  String get specialtyNotSet => 'التخصص غير محدد';
+  String get nationalIdentificationNumber => 'الرقم الوطني للتعريف (NIN)';
 
   @override
-  String get loadingSpecialty => 'جاري تحميل التخصص...';
+  String get ninExample => 'مثال: 198012345678901234';
 
   @override
-  String get favoriteDoctors => 'الأطباء المفضلون';
+  String get iAgreeToTermsAndConditions => 'أوافق على الشروط والأحكام';
 
   @override
-  String get dobNotSet => 'تاريخ الميلاد غير محدد';
+  String get providePersonalDataDoctor =>
+      'قدم بياناتك الشخصية لتقديم الاستشارات عبر الإنترنت بسرعة وأمان.';
 
   @override
-  String get patientProfile => 'ملف المريض';
+  String get professionalInfo => 'المعلومات المهنية';
 
   @override
-  String get phone => 'الهاتف';
+  String get provideProfessionalDetails =>
+      'قدم تفاصيلك المهنية لمساعدة المرضى على التعرف على مؤهلاتك وخبرتك.';
 
   @override
-  String get address => 'العنوان';
+  String get mainSpeciality => 'التخصص الرئيسي';
 
   @override
-  String get healthInfo => 'المعلومات الصحية';
+  String get speciality => 'التخصص';
 
   @override
-  String get sendMessage => 'إرسال رسالة';
+  String get selectYourSpeciality => 'اختر تخصصك';
+
+  @override
+  String get noSpecialitiesFound => 'لا توجد تخصصات';
+
+  @override
+  String get failedToLoadSpecialities => 'فشل تحميل التخصصات';
 
   @override
   String get generalInformation => 'المعلومات العامة';
 
   @override
+  String get bioSpecialization => 'السيرة الذاتية / التخصص';
+
+  @override
+  String get describeMedicalBackground =>
+      'اوصف خلفيتك الطبية وتخصصاتك وفلسفة الرعاية الخاصة بك';
+
+  @override
   String get currentWorkingPlace => 'مكان العمل الحالي';
+
+  @override
+  String get nameAddress => 'الاسم / العنوان';
+
+  @override
+  String get workingPlaceExample => 'مثال: عيادة النور، حيدرة، الجزائر';
 
   @override
   String get education => 'التعليم';
 
   @override
+  String get degree => 'الدرجة العلمية';
+
+  @override
+  String get degreeExample => 'مثال: دكتور في الطب (MD)';
+
+  @override
+  String get university => 'الجامعة';
+
+  @override
+  String get universityExample => 'مثال: جامعة الجزائر 1';
+
+  @override
   String get certification => 'الشهادات';
+
+  @override
+  String get certificationOptional => 'الشهادة (اختياري)';
+
+  @override
+  String get certificationExample => 'مثال: أخصائي في أمراض القلب';
+
+  @override
+  String get institutionOptional => 'المؤسسة (اختياري)';
+
+  @override
+  String get institutionExample => 'مثال: جامعة وهران 1';
 
   @override
   String get training => 'التدريب';
 
   @override
+  String get residencyFellowshipOptional =>
+      'تفاصيل الإقامة / الزمالة (اختياري)';
+
+  @override
+  String get trainingExample =>
+      'مثال: إقامة في الطب الباطني، زمالة في أمراض القلب';
+
+  @override
   String get licensure => 'الترخيص';
+
+  @override
+  String get licenseNumber => 'رقم الترخيص';
+
+  @override
+  String get licenseNumberExample => 'مثال: 12345';
+
+  @override
+  String get descriptionOptional => 'الوصف (اختياري)';
+
+  @override
+  String get licenseDescriptionExample => 'مثال: مخول لممارسة الطب في الجزائر';
 
   @override
   String get experience => 'الخبرة';
 
   @override
-  String get notSpecified => 'غير محدد';
+  String get yearsOfPractice => 'سنوات الممارسة';
 
   @override
-  String get licenseNumber => 'رقم الترخيص:';
+  String get yearsOfPracticeExample => 'مثال: 16';
 
   @override
-  String get over => 'أكثر من';
+  String get specificAreasOfExpertise => 'مجالات الخبرة المحددة';
 
   @override
-  String get year => 'سنة';
+  String get areasOfExpertiseExample =>
+      'مثال: تصوير القلب، ارتفاع ضغط الدم، إدارة قصور القلب';
 
   @override
-  String get years => 'سنوات';
+  String get consultationFees => 'رسوم الاستشارة';
 
   @override
-  String get ofExperience => 'من الخبرة';
+  String get priceForOneHourConsultation => 'سعر الاستشارة لمدة ساعة واحدة';
 
   @override
-  String get specializingIn => 'متخصص في';
+  String get consultationPriceExample => 'مثال: 1000 دج';
 
   @override
-  String get price => 'السعر';
+  String get profilePicture => 'صورة الملف الشخصي';
 
   @override
-  String get oneHourConsultation => 'استشارة لمدة ساعة واحدة';
+  String get helpPeopleRecognizeYou =>
+      'ساعد الناس على التعرف عليك من خلال صورة شخصية احترافية.';
 
   @override
-  String get selectTime => 'اختر الوقت';
+  String get helpPatientsRecognizeYou =>
+      'ساعد المرضى على التعرف عليك من خلال صورة شخصية احترافية.';
 
   @override
-  String get noAvailableTimesForDay => 'لا توجد أوقات متاحة لهذا اليوم';
+  String get moreOptions => 'خيارات أخرى';
 
   @override
-  String get noUpcomingAvailability =>
-      'لا يوجد توفر قادم. هذا الطبيب ليس لديه أوقات متاحة للحجز.';
+  String get uploadFromGallery => 'رفع من المعرض';
 
   @override
-  String get noAvailability => 'لا يوجد توفر';
+  String get takePhoto => 'التقط صورة';
 
   @override
-  String get review => 'تقييم';
+  String get skip => 'تخطي';
 
   @override
-  String get reviewsPlural => 'تقييمات';
+  String get addAProfilePicture => 'إضافة صورة ملف شخصي';
 
   @override
-  String get leaveReview => 'اترك تقييماً';
+  String get continueButton => 'متابعة';
 
   @override
-  String get noReviewsYet => 'لا توجد تقييمات بعد. كن أول من يقيم!';
+  String get changePhoto => 'تغيير الصورة';
 
   @override
-  String get anonymous => 'مجهول';
-
-  @override
-  String get selectAvailableHours => 'اختر الساعات المتاحة';
-
-  @override
-  String get addTimes => 'إضافة أوقات';
-
-  @override
-  String get deleteSlot => 'حذف الفترة؟';
-
-  @override
-  String get deleteSlotMessage => 'هل أنت متأكد من حذف هذه الفترة الزمنية؟';
-
-  @override
-  String availableSlotsFor(String date) {
-    return 'الفترات المتاحة لـ $date';
+  String errorPickingImage(String error) {
+    return 'خطأ في اختيار الصورة: $error';
   }
 
   @override
-  String get noTimesForDay =>
-      'لا توجد أوقات لهذا اليوم. أضف بعضها باستخدام + .';
+  String errorUploadingProfilePicture(String error) {
+    return 'خطأ في رفع صورة الملف الشخصي: $error';
+  }
 
   @override
-  String get cannotSetPastAvailability => 'لا يمكنك تحديد التوفر في الماضي.';
+  String get cameraPermissionRequired => 'إذن الكاميرا مطلوب';
 
   @override
-  String get selectFutureDateAvailability =>
-      'اختر اليوم أو تاريخًا مستقبليًا لإضافة التوفر.';
+  String get cameraPermissionDenied => 'تم رفض إذن الكاميرا';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'يحتاج هذا التطبيق إلى الوصول إلى الكاميرا لالتقاط صور الملف الشخصي. يرجى تفعيل إذن الكاميرا في الإعدادات.';
+
+  @override
+  String get storagePermissionRequired => 'إذن التخزين مطلوب';
+
+  @override
+  String get storagePermissionDenied => 'تم رفض إذن التخزين';
+
+  @override
+  String get storagePermissionDeniedMessage =>
+      'يحتاج هذا التطبيق إلى الوصول إلى مكتبة الصور لاختيار صور الملف الشخصي. يرجى تفعيل إذن مكتبة الصور في الإعدادات.';
+
+  @override
+  String get openSettings => 'فتح الإعدادات';
+
+  @override
+  String get errorEmailEmpty => 'البريد الإلكتروني لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorEmailInvalid => 'أدخل بريدًا إلكترونيًا صالحًا';
+
+  @override
+  String get errorPasswordEmpty => 'كلمة المرور لا يمكن أن تكون فارغة';
+
+  @override
+  String get errorPasswordShort => 'يجب ألا تقل كلمة المرور عن 8 أحرف';
+
+  @override
+  String get errorPasswordWeak => 'كلمة مرور ضعيفة';
+
+  @override
+  String get errorPasswordConfirmationEmpty =>
+      'تأكيد كلمة المرور لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorPasswordsDoNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get errorEmailTaken => 'البريد الإلكتروني مستخدم بالفعل';
+
+  @override
+  String get errorFirstNameEmpty => 'الاسم لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorFirstNameInvalid => 'أدخل اسمًا صحيحًا';
+
+  @override
+  String get errorLastNameEmpty => 'اللقب لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorLastNameInvalid => 'أدخل لقبًا صحيحًا';
+
+  @override
+  String get errorDobEmpty => 'تاريخ الميلاد لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorDobMinor => 'يجب ألا يقل عمرك عن 16 عامًا لإنشاء حساب';
+
+  @override
+  String get errorDobFormat => 'تنسيق التاريخ غير صالح (استخدم يوم/شهر/سنة)';
+
+  @override
+  String get errorPhoneEmpty => 'رقم الهاتف لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorPhoneInvalid => 'أدخل رقم هاتف صحيح بالصيغة +213XXXXXXXXX';
+
+  @override
+  String get errorNinEmpty => 'رقم التعريف الوطني لا يمكن أن يكون فارغًا';
+
+  @override
+  String get errorNinInvalid => 'أدخل رقم تعريف وطني صالحًا';
+
+  @override
+  String get errorFieldEmpty => 'هذا الحقل مطلوب';
+
+  @override
+  String errorMinCharacters(int num) {
+    return 'أدخل على الأقل $num أحرف';
+  }
+
+  @override
+  String get errorSpecialityNotSelected => 'يرجى اختيار التخصص';
+
+  @override
+  String get errorLicenceInvalid => 'أدخل رقم ترخيص صالحًا';
+
+  @override
+  String get errorYearsInvalid => 'أدخل عدد سنوات صالح';
+
+  @override
+  String get errorPriceInvalid => 'أدخل سعرًا صحيحًا بالدينار الجزائري';
+
+  @override
+  String get errorTimeout =>
+      'انتهت المهلة. يرجى التحقق من الاتصال وحاول مرة أخرى.';
+
+  @override
+  String get errorEmailCheckFailed =>
+      'فشل في التحقق من البريد الإلكتروني. حاول مجددًا.';
+
+  @override
+  String get errorSignupFailed => 'فشل في إنشاء الحساب';
+
+  @override
+  String errorOccurred(String error) {
+    return 'حدث خطأ: $error';
+  }
+
+  @override
+  String get doctorNotFound => 'الطبيب غير موجود';
+
+  @override
+  String helloPatient(String name) {
+    return 'مرحباً $name!';
+  }
+
+  @override
+  String helloDoctor(String name) {
+    return 'مرحباً د. $name!';
+  }
+
+  @override
+  String doctorsCount(int count) {
+    return '$count طبيب';
+  }
+
+  @override
+  String doctorsForSpeciality(String speciality) {
+    return 'الأطباء - $speciality';
+  }
+
+  @override
+  String get userNotLoggedIn => 'المستخدم غير مسجل الدخول';
+
+  @override
+  String get pleaseLogInAsDoctor =>
+      'يرجى تسجيل الدخول كطبيب لعرض الشاشة الرئيسية.';
+
+  @override
+  String get noUpcomingConsultations => 'لا توجد استشارات قادمة';
+
+  @override
+  String get noPendingConsultations => 'لا توجد استشارات معلقة';
+
+  @override
+  String get popularSpecializations => 'التخصصات الشائعة';
+
+  @override
+  String get allSpecialities => 'جميع التخصصات';
+
+  @override
+  String get popularDoctors => 'الأطباء الشائعون';
+
+  @override
+  String get services => 'الخدمات';
+
+  @override
+  String get appointments => 'المواعيد';
+
+  @override
+  String get availability => 'التوفر';
+
+  @override
+  String get faq => 'الأسئلة الشائعة';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get pendingRequests => 'الطلبات المعلقة';
+
+  @override
+  String get totalPatients => 'إجمالي المرضى';
+
+  @override
+  String appointmentsCount(int count) {
+    return '$count موعد';
+  }
+
+  @override
+  String requestsCount(int count) {
+    return '$count طلب';
+  }
+
+  @override
+  String requestsCountPlural(int count) {
+    return '$count طلبات';
+  }
+
+  @override
+  String patientsCount(int count) {
+    return '$count مريض';
+  }
+
+  @override
+  String get addressNotAvailable => 'العنوان غير متاح';
+
+  @override
+  String get whatsappErrorDoctor =>
+      'تعذر فتح واتساب. يرجى التأكد من تثبيت واتساب.';
+
+  @override
+  String get phoneNumberNotAvailableDoctor => 'رقم الهاتف غير متاح';
+
+  @override
+  String get appointmentAcceptedSuccessfully => 'تم قبول الموعد بنجاح';
+
+  @override
+  String get appointmentRejectedSuccessfully => 'تم رفض الموعد بنجاح';
+
+  @override
+  String get areYouSureRejectAppointment => 'هل أنت متأكد من رفض هذا الموعد؟';
+
+  @override
+  String get patientWillBeNotified => 'سيتم إخطار المريض بالرفض.';
+
+  @override
+  String get quickOverview => 'نظرة سريعة';
+
+  @override
+  String atTime(String date, String time) {
+    return '$date في $time';
+  }
+
+  @override
+  String whatsappMessageDoctorToPatient(String dateTime) {
+    return 'مرحباً، أود مناقشة موعدنا في $dateTime.';
+  }
 }

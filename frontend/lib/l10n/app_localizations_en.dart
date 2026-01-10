@@ -124,9 +124,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get downloadingPdf => 'Downloading prescription...';
-
-  @override
   String get whatsappNotInstalled =>
       'Could not open WhatsApp. Please make sure WhatsApp is installed.';
 
@@ -242,9 +239,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get arabic => 'Arabic';
 
   @override
-  String get french => 'French';
-
-  @override
   String get whatsappError =>
       'Could not open WhatsApp. Please make sure WhatsApp is installed.';
 
@@ -254,207 +248,495 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get doctorProfile => 'Doctor Profile';
+  String get forgotPassword => 'Forgot password?';
 
   @override
-  String get book => 'Book';
+  String get areYouNewHere => 'Are you new here? ';
 
   @override
-  String get about => 'About';
+  String get createAccount => 'Create account';
 
   @override
-  String get reviews => 'Reviews';
+  String get createAnAccount => 'Create an account';
 
   @override
-  String get bookAppointment => 'Book appointment';
+  String get excitedToHaveYouOnBoard => 'Excited to have you on board!';
 
   @override
-  String get doctorNotFound => 'Doctor not found';
+  String get registerAs => 'Register as';
 
   @override
-  String get bookingSuccessMessage =>
-      'Booking was successful and must be confirmed by the doctor.';
+  String get doctor => 'Doctor';
 
   @override
-  String get pleaseSelectTime => 'Please select a time for your consultation.';
+  String get patient => 'Patient';
 
   @override
-  String get cannotBookPastDate =>
-      'You cannot book appointments for past dates. Please select a current or future date.';
+  String get createPassword => 'Create password';
 
   @override
-  String get cannotBookPastTime =>
-      'You cannot book appointments for past times. Please select a future time slot.';
+  String get strongPassword => 'Strong password';
 
   @override
-  String get noAvailableSlot =>
-      'No available slot found for the selected date/time.';
+  String get min8CharactersLength => 'Min 8 characters length';
 
   @override
-  String get mustBeLoggedInAsPatient => 'You must be logged in as a patient.';
+  String get min1LowercaseLetter => 'Min 1 lowercase letter';
 
   @override
-  String get profile => 'Profile';
+  String get min1UppercaseLetter => 'Min 1 uppercase letter';
 
   @override
-  String get bookedAppointments => 'Booked appointments';
+  String get min1Digit => 'Min 1 digit';
 
   @override
-  String get myPatients => 'My patients';
+  String get min1SpecialCharacter => 'Min 1 special character';
 
   @override
-  String get availability => 'Availability';
+  String get confirmPassword => 'Confirm Password';
 
   @override
-  String get notificationSettings => 'Notification settings';
+  String get repeatPassword => 'Repeat password';
 
   @override
-  String get policies => 'Policies';
+  String get next => 'Next';
 
   @override
-  String get changeEmail => 'Change email';
+  String get alreadyHaveAnAccount => 'Already have an account? ';
 
   @override
-  String get securitySettings => 'Security settings';
+  String get french => 'French';
 
   @override
-  String get aboutMe => 'About me';
+  String get dateFormatHint => 'DD/MM/YYYY';
 
   @override
-  String get logout => 'Logout';
+  String get phoneNumber => 'Phone number';
 
   @override
-  String get logoutConfirmation => 'Are you sure you want to logout?';
+  String get phoneNumberExample => 'e.g. 05123 45 67 89';
 
   @override
-  String get specialtyNotSet => 'Specialty not set';
+  String get nationalIdentificationNumber =>
+      'National Identification Number (NIN)';
 
   @override
-  String get loadingSpecialty => 'Loading specialty...';
+  String get ninExample => 'e.g. 198012345678901234';
 
   @override
-  String get favoriteDoctors => 'Favorite doctors';
+  String get iAgreeToTermsAndConditions =>
+      'I agree to the Terms and Conditions';
 
   @override
-  String get dobNotSet => 'DOB not set';
+  String get providePersonalDataDoctor =>
+      'Provide your personal data to offer online consultations quickly and securely.';
 
   @override
-  String get patientProfile => 'Patient Profile';
+  String get professionalInfo => 'Professional info';
 
   @override
-  String get phone => 'Phone';
+  String get provideProfessionalDetails =>
+      'Provide your professional details to help patients learn about your qualifications and expertise.';
 
   @override
-  String get address => 'Address';
+  String get mainSpeciality => 'Main speciality';
 
   @override
-  String get healthInfo => 'Health Info';
+  String get speciality => 'Speciality';
 
   @override
-  String get sendMessage => 'Send Message';
+  String get selectYourSpeciality => 'Select your speciality';
 
   @override
-  String get generalInformation => 'General Information';
+  String get noSpecialitiesFound => 'No specialities found';
 
   @override
-  String get currentWorkingPlace => 'Current Working Place';
+  String get failedToLoadSpecialities => 'Failed to load specialities';
+
+  @override
+  String get generalInformation => 'General information';
+
+  @override
+  String get bioSpecialization => 'Bio / Specialization';
+
+  @override
+  String get describeMedicalBackground =>
+      'Describe your medical background, specialties, and philosophy of care';
+
+  @override
+  String get currentWorkingPlace => 'Current working place';
+
+  @override
+  String get nameAddress => 'Name / Address';
+
+  @override
+  String get workingPlaceExample => 'e.g. Nour Clinic, Hydra, Algiers';
 
   @override
   String get education => 'Education';
 
   @override
+  String get degree => 'Degree';
+
+  @override
+  String get degreeExample => 'e.g. Doctor of Medicine (MD)';
+
+  @override
+  String get university => 'University';
+
+  @override
+  String get universityExample => 'e.g. University of Algiers 1';
+
+  @override
   String get certification => 'Certification';
+
+  @override
+  String get certificationOptional => 'Certification (Optional)';
+
+  @override
+  String get certificationExample => 'e.g. Specialist in Cardiology';
+
+  @override
+  String get institutionOptional => 'Institution (Optional)';
+
+  @override
+  String get institutionExample => 'e.g. University of Oran 1';
 
   @override
   String get training => 'Training';
 
   @override
+  String get residencyFellowshipOptional =>
+      'Residency / Fellowship details (Optional)';
+
+  @override
+  String get trainingExample =>
+      'e.g. Residency in internal Medicine, Fellowship in Cardiology';
+
+  @override
   String get licensure => 'Licensure';
+
+  @override
+  String get licenseNumber => 'License number';
+
+  @override
+  String get licenseNumberExample => 'e.g. 12345';
+
+  @override
+  String get descriptionOptional => 'Description (Optional)';
+
+  @override
+  String get licenseDescriptionExample =>
+      'e.g. Authorized to practice medicine in Algeria';
 
   @override
   String get experience => 'Experience';
 
   @override
-  String get notSpecified => 'Not specified';
+  String get yearsOfPractice => 'Years of practice';
 
   @override
-  String get licenseNumber => 'License number:';
+  String get yearsOfPracticeExample => 'e.g. 16';
 
   @override
-  String get over => 'Over';
+  String get specificAreasOfExpertise => 'Specific areas of expertise';
 
   @override
-  String get year => 'year';
+  String get areasOfExpertiseExample =>
+      'e.g. Cardiac imaging, hypertension, heart failure management';
 
   @override
-  String get years => 'years';
+  String get consultationFees => 'Consultation fees';
 
   @override
-  String get ofExperience => 'of experience';
+  String get priceForOneHourConsultation => 'Price for 1-hour consultation';
 
   @override
-  String get specializingIn => 'specializing in';
+  String get consultationPriceExample => 'e.g. 1000 DA';
 
   @override
-  String get price => 'Price';
+  String get profilePicture => 'Profile picture';
 
   @override
-  String get oneHourConsultation => '1 hour consultation';
+  String get helpPeopleRecognizeYou =>
+      'Help people recognize you with a professional headshot.';
 
   @override
-  String get selectTime => 'Select time';
+  String get helpPatientsRecognizeYou =>
+      'Help patients recognize you with a professional headshot.';
 
   @override
-  String get noAvailableTimesForDay => 'No available times for this day';
+  String get moreOptions => 'More options';
 
   @override
-  String get noUpcomingAvailability =>
-      'No upcoming availability. This doctor has no available time slots for booking.';
+  String get uploadFromGallery => 'Upload from Gallery';
 
   @override
-  String get noAvailability => 'No availability';
+  String get takePhoto => 'Take photo';
 
   @override
-  String get review => 'review';
+  String get skip => 'Skip';
 
   @override
-  String get reviewsPlural => 'reviews';
+  String get addAProfilePicture => 'Add a profile picture';
 
   @override
-  String get leaveReview => 'Leave a review';
+  String get continueButton => 'Continue';
 
   @override
-  String get noReviewsYet => 'No reviews yet. Be the first to review!';
+  String get changePhoto => 'Change photo';
 
   @override
-  String get anonymous => 'Anonymous';
-
-  @override
-  String get selectAvailableHours => 'Select available hours';
-
-  @override
-  String get addTimes => 'Add times';
-
-  @override
-  String get deleteSlot => 'Delete slot?';
-
-  @override
-  String get deleteSlotMessage =>
-      'Are you sure you want to delete this time slot?';
-
-  @override
-  String availableSlotsFor(String date) {
-    return 'Available slots for $date';
+  String errorPickingImage(String error) {
+    return 'Error picking image: $error';
   }
 
   @override
-  String get noTimesForDay => 'No times for this day. Add some with + .';
+  String errorUploadingProfilePicture(String error) {
+    return 'Error uploading profile picture: $error';
+  }
 
   @override
-  String get cannotSetPastAvailability =>
-      'You cannot set availability in the past.';
+  String get cameraPermissionRequired => 'Camera Permission Required';
 
   @override
-  String get selectFutureDateAvailability =>
-      'Select today or a future date to add availability.';
+  String get cameraPermissionDenied => 'Camera permission denied';
+
+  @override
+  String get cameraPermissionDeniedMessage =>
+      'This app needs access to your camera to take profile pictures. Please enable camera permission in settings.';
+
+  @override
+  String get storagePermissionRequired => 'Storage Permission Required';
+
+  @override
+  String get storagePermissionDenied => 'Storage permission denied';
+
+  @override
+  String get storagePermissionDeniedMessage =>
+      'This app needs access to your photo library to select profile pictures. Please enable photo library permission in settings.';
+
+  @override
+  String get openSettings => 'Open Settings';
+
+  @override
+  String get errorEmailEmpty => 'Email cannot be empty';
+
+  @override
+  String get errorEmailInvalid => 'Enter a valid email';
+
+  @override
+  String get errorPasswordEmpty => 'Password cannot be empty';
+
+  @override
+  String get errorPasswordShort => 'Password must be at least 8 characters';
+
+  @override
+  String get errorPasswordWeak => 'Weak password';
+
+  @override
+  String get errorPasswordConfirmationEmpty =>
+      'Password confirmation cannot be empty';
+
+  @override
+  String get errorPasswordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get errorEmailTaken => 'Email already in use';
+
+  @override
+  String get errorFirstNameEmpty => 'First name cannot be empty';
+
+  @override
+  String get errorFirstNameInvalid => 'Enter a valid first name';
+
+  @override
+  String get errorLastNameEmpty => 'Last name cannot be empty';
+
+  @override
+  String get errorLastNameInvalid => 'Enter a valid last name';
+
+  @override
+  String get errorDobEmpty => 'Date of birth cannot be empty';
+
+  @override
+  String get errorDobMinor =>
+      'You must be at least 16 years old to create an account';
+
+  @override
+  String get errorDobFormat => 'Invalid date format (use DD/MM/YYYY)';
+
+  @override
+  String get errorPhoneEmpty => 'Phone number cannot be empty';
+
+  @override
+  String get errorPhoneInvalid =>
+      'Enter a valid phone number in the format +213XXXXXXXXX';
+
+  @override
+  String get errorNinEmpty => 'NIN cannot be empty';
+
+  @override
+  String get errorNinInvalid => 'Enter a valid NIN';
+
+  @override
+  String get errorFieldEmpty => 'Field cannot be empty';
+
+  @override
+  String errorMinCharacters(int num) {
+    return 'Enter at least $num characters';
+  }
+
+  @override
+  String get errorSpecialityNotSelected => 'Please select your speciality';
+
+  @override
+  String get errorLicenceInvalid => 'Enter a valid licence number';
+
+  @override
+  String get errorYearsInvalid => 'Enter a valid number of years';
+
+  @override
+  String get errorPriceInvalid => 'Enter a valid price in DA';
+
+  @override
+  String get errorTimeout =>
+      'Request timeout. Please check your connection and try again.';
+
+  @override
+  String get errorEmailCheckFailed =>
+      'Failed to check email. Please try again.';
+
+  @override
+  String get errorSignupFailed => 'Signup failed';
+
+  @override
+  String errorOccurred(String error) {
+    return 'An error occurred: $error';
+  }
+
+  @override
+  String get doctorNotFound => 'Doctor not found';
+
+  @override
+  String helloPatient(String name) {
+    return 'Hello $name!';
+  }
+
+  @override
+  String helloDoctor(String name) {
+    return 'Hello Dr. $name!';
+  }
+
+  @override
+  String doctorsCount(int count) {
+    return '$count doctors';
+  }
+
+  @override
+  String doctorsForSpeciality(String speciality) {
+    return 'Doctors - $speciality';
+  }
+
+  @override
+  String get userNotLoggedIn => 'User not logged in';
+
+  @override
+  String get pleaseLogInAsDoctor =>
+      'Please log in as a doctor to view your home screen.';
+
+  @override
+  String get noUpcomingConsultations => 'No upcoming consultations';
+
+  @override
+  String get noPendingConsultations => 'No pending consultations';
+
+  @override
+  String get popularSpecializations => 'Popular specializations';
+
+  @override
+  String get allSpecialities => 'All specialities';
+
+  @override
+  String get popularDoctors => 'Popular doctors';
+
+  @override
+  String get services => 'Services';
+
+  @override
+  String get appointments => 'Appointments';
+
+  @override
+  String get availability => 'Availability';
+
+  @override
+  String get faq => 'FAQ';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get pendingRequests => 'Pending Requests';
+
+  @override
+  String get totalPatients => 'Total patients';
+
+  @override
+  String appointmentsCount(int count) {
+    return '$count appointments';
+  }
+
+  @override
+  String requestsCount(int count) {
+    return '$count request';
+  }
+
+  @override
+  String requestsCountPlural(int count) {
+    return '$count requests';
+  }
+
+  @override
+  String patientsCount(int count) {
+    return '$count patients';
+  }
+
+  @override
+  String get addressNotAvailable => 'Address not available';
+
+  @override
+  String get whatsappErrorDoctor =>
+      'Could not open WhatsApp. Please make sure WhatsApp is installed.';
+
+  @override
+  String get phoneNumberNotAvailableDoctor => 'Phone number not available';
+
+  @override
+  String get appointmentAcceptedSuccessfully =>
+      'Appointment accepted successfully';
+
+  @override
+  String get appointmentRejectedSuccessfully =>
+      'Appointment rejected successfully';
+
+  @override
+  String get areYouSureRejectAppointment =>
+      'Are you sure you want to reject this appointment?';
+
+  @override
+  String get patientWillBeNotified =>
+      'The patient will be notified of the rejection.';
+
+  @override
+  String get quickOverview => 'Quick overview';
+
+  @override
+  String atTime(String date, String time) {
+    return '$date at $time';
+  }
+
+  @override
+  String whatsappMessageDoctorToPatient(String dateTime) {
+    return 'Hello, I would like to discuss our appointment on $dateTime.';
+  }
 }

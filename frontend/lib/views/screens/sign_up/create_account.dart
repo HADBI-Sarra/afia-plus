@@ -14,6 +14,8 @@ import '../../../logic/cubits/signup/signup_state.dart';
 import 'package:afia_plus_app/views/screens/login/login.dart';
 import 'package:afia_plus_app/views/screens/sign_up/patient/patient_personal_data.dart';
 import 'package:afia_plus_app/views/screens/sign_up/doctor/doctor_personal_data.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -56,7 +58,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(getLocalizedError(state.message, context) ?? state.message),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 4),
             ),
@@ -102,14 +104,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Create an account',
+                      Text(AppLocalizations.of(context)!.createAnAccount,
                           style: Theme.of(context).textTheme.titleLarge),
                       const SizedBox(height: 10),
-                      const Text('Excited to have you on board!'),
+                      Text(AppLocalizations.of(context)!.excitedToHaveYouOnBoard),
                       const SizedBox(height: 20),
 
                       /// ROLE SELECTOR
-                      Text('Register as', style: Theme.of(context).textTheme.labelMedium),
+                      Text(AppLocalizations.of(context)!.registerAs, style: Theme.of(context).textTheme.labelMedium),
                       const SizedBox(height: 8),
                       Row(
                         children: [
@@ -117,7 +119,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             child: ElevatedButton(
                               style: state.isPatient ? whiteButtonStyle : greenButtonStyle,
                               onPressed: () => cubit.setRole(false),
-                              child: Text('Doctor', style: state.isPatient ? greyButtonText : whiteButtonText),
+                              child: Text(AppLocalizations.of(context)!.doctor, style: state.isPatient ? greyButtonText : whiteButtonText),
                             ),
                           ),
                           const SizedBox(width: 15),
@@ -125,7 +127,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             child: ElevatedButton(
                               style: state.isPatient ? greenButtonStyle : whiteButtonStyle,
                               onPressed: () => cubit.setRole(true),
-                              child: Text('Patient', style: state.isPatient ? whiteButtonText : greyButtonText),
+                              child: Text(AppLocalizations.of(context)!.patient, style: state.isPatient ? whiteButtonText : greyButtonText),
                             ),
                           ),
                         ],
@@ -134,23 +136,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                       /// EMAIL
                       LabeledTextFormField(
-                        label: 'Email',
-                        hint: 'Enter your email',
+                        label: AppLocalizations.of(context)!.email,
+                        hint: AppLocalizations.of(context)!.enterYourEmail,
                         controller: _emailController,
                         onChanged: cubit.setEmail,
-                        errorText: state.emailError,
+                        errorText: getLocalizedError(state.emailError, context),
                       ),
                       const SizedBox(height: 12),
 
                       /// PASSWORD
                       LabeledTextFormField(
-                        label: 'Password',
-                        hint: 'Create password',
+                        label: AppLocalizations.of(context)!.password,
+                        hint: AppLocalizations.of(context)!.createPassword,
                         isPassword: true,
                         controller: _passwordController,
                         onChanged: cubit.setPassword,
                         // Never show an error when the password is strong.
-                        errorText: state.strongPassword ? null : state.passwordError,
+                        errorText: state.strongPassword ? null : getLocalizedError(state.passwordError, context),
                       ),
                       // Show criteria once the user has attempted the password at least once.
                       // They remain visible (weak or strong) until the user presses "Next"
@@ -167,7 +169,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                               // to avoid showing two weak-password messages.
                               if (state.strongPassword) ...[
                                 Text(
-                                  'Strong password',
+                                  AppLocalizations.of(context)!.strongPassword,
                                   style: TextStyle(
                                     color: greenColor,
                                     fontSize: 12,
@@ -176,11 +178,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 ),
                                 const SizedBox(height: 4),
                               ],
-                              PasswordErrorText(text: 'Min 8 characters length', control: state.long),
-                              PasswordErrorText(text: 'Min 1 lowercase letter', control: state.hasLowercase),
-                              PasswordErrorText(text: 'Min 1 uppercase letter', control: state.hasUppercase),
-                              PasswordErrorText(text: 'Min 1 digit', control: state.hasNumber),
-                              PasswordErrorText(text: 'Min 1 special character', control: state.hasSpecial),
+                              PasswordErrorText(text: AppLocalizations.of(context)!.min8CharactersLength, control: state.long),
+                              PasswordErrorText(text: AppLocalizations.of(context)!.min1LowercaseLetter, control: state.hasLowercase),
+                              PasswordErrorText(text: AppLocalizations.of(context)!.min1UppercaseLetter, control: state.hasUppercase),
+                              PasswordErrorText(text: AppLocalizations.of(context)!.min1Digit, control: state.hasNumber),
+                              PasswordErrorText(text: AppLocalizations.of(context)!.min1SpecialCharacter, control: state.hasSpecial),
                             ],
                           ),
                         ),
@@ -189,12 +191,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                       /// CONFIRM PASSWORD
                       LabeledTextFormField(
-                        label: 'Confirm Password',
-                        hint: 'Repeat password',
+                        label: AppLocalizations.of(context)!.confirmPassword,
+                        hint: AppLocalizations.of(context)!.repeatPassword,
                         isPassword: true,
                         controller: _confirmPasswordController,
                         onChanged: cubit.setConfirmPassword,
-                        errorText: state.confirmPasswordError,
+                        errorText: getLocalizedError(state.confirmPasswordError, context),
                       ),
                       const SizedBox(height: 30),
 
@@ -212,20 +214,20 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         style: greenButtonStyle,
                         child: state.isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : Text('Next', style: whiteButtonText),
+                            : Text(AppLocalizations.of(context)!.next, style: whiteButtonText),
                       ),
 
                       const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Already have an account? '),
+                          Text(AppLocalizations.of(context)!.alreadyHaveAnAccount),
                           GestureDetector(
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => const LoginScreen()),
                             ),
-                            child: Text('Log in', style: greenLink),
+                            child: Text(AppLocalizations.of(context)!.logIn, style: greenLink),
                           ),
                         ],
                       ),

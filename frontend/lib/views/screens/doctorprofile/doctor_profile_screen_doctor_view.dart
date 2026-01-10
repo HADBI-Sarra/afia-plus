@@ -10,6 +10,7 @@ import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../../../../logic/cubits/signup/signup_cubit.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
 import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class DoctorViewDoctorProfileScreen extends StatefulWidget {
   static const routename = "/doctorViewDoctorProfile";
@@ -54,48 +55,46 @@ class _DoctorViewDoctorProfileScreenState
       if (mounted) {
         setState(() {
           _loadingSpecialities = false;
-          _specialityError = 'Failed to load specialities';
+          _specialityError = 'failedToLoadSpecialities';
         });
       }
     }
   }
 
   // Helper method to get speciality name by ID
-  String _getSpecialityNameById(int? specialityId, BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  String _getSpecialityNameById(int? specialityId) {
     if (specialityId == null || specialityId == 0) {
-      return l10n.specialtyNotSet;
+      return "Specialty not set";
     }
     
     try {
       final speciality = _dbSpecialities.firstWhere(
         (s) => s.id == specialityId,
-        orElse: () => Speciality(id: 0, name: l10n.loadingSpecialty),
+        orElse: () => Speciality(id: 0, name: "Loading..."),
       );
       return speciality.name;
     } catch (e) {
-      return l10n.specialtyNotSet;
+      return "Unknown Specialty";
     }
   }
 
   // Show logout confirmation dialog
   void _showLogoutConfirmationDialog(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(
-            l10n.logout,
-            style: const TextStyle(
+          title: const Text(
+            "Logout",
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: darkGreenColor,
             ),
           ),
-          content: Text(
-            l10n.logoutConfirmation,
-            style: const TextStyle(
+          content: const Text(
+            "Are you sure you want to logout?",
+            style: TextStyle(
               fontSize: 16,
               color: blackColor,
             ),
@@ -108,9 +107,9 @@ class _DoctorViewDoctorProfileScreenState
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Close dialog
               },
-              child: Text(
-                l10n.cancel,
-                style: const TextStyle(
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
                   fontSize: 16,
                   color: darkGreenColor,
                 ),
@@ -127,9 +126,9 @@ class _DoctorViewDoctorProfileScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
-                l10n.logout,
-                style: const TextStyle(
+              child: const Text(
+                "Logout",
+                style: TextStyle(
                   fontSize: 16,
                   color: whiteColor,
                 ),
@@ -143,7 +142,6 @@ class _DoctorViewDoctorProfileScreenState
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: gradientBackgroundDecoration,
       child: Scaffold(
@@ -154,7 +152,7 @@ class _DoctorViewDoctorProfileScreenState
           elevation: 0,
           centerTitle: false,
           title: Text(
-            l10n.profile,
+            "Profile",
             style: Theme.of(context)
                 .textTheme
                 .titleLarge
@@ -176,9 +174,8 @@ class _DoctorViewDoctorProfileScreenState
             },
             child: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
-                final l10n = AppLocalizations.of(context)!;
                 String fullName = "Doctor";
-                String subtitle = l10n.specialtyNotSet;
+                String subtitle = "Specialty not set";
                 Widget profilePic = CircleAvatar(
                   radius: 50,
                   backgroundColor: greyColor.withOpacity(0.3),
@@ -191,9 +188,9 @@ class _DoctorViewDoctorProfileScreenState
 
                   // Get speciality name
                   if (_loadingSpecialities) {
-                    subtitle = l10n.loadingSpecialty;
+                    subtitle = "Loading specialty...";
                   } else {
-                    subtitle = _getSpecialityNameById(doctor.specialityId, context);
+                    subtitle = _getSpecialityNameById(doctor.specialityId);
                   }
 
                   // Display profile picture if available
@@ -297,7 +294,7 @@ class _DoctorViewDoctorProfileScreenState
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         child: Text(
-                          _specialityError!,
+                          getLocalizedError(_specialityError, context) ?? '',
                           style: const TextStyle(color: Colors.red, fontSize: 12),
                         ),
                       ),
@@ -308,25 +305,25 @@ class _DoctorViewDoctorProfileScreenState
                         children: [
                           _buildMenuItem(
                               icon: Icons.calendar_today_outlined,
-                              title: l10n.bookedAppointments),
+                              title: "Booked appointments"),
                           _buildMenuItem(
-                              icon: Icons.person_outline, title: l10n.myPatients),
+                              icon: Icons.person_outline, title: "My patients"),
                           _buildMenuItem(
-                              icon: Icons.av_timer_outlined, title: l10n.availability),
+                              icon: Icons.av_timer_outlined, title: "Availability"),
                           _buildMenuItem(
                               icon: Icons.notifications_outlined,
-                              title: l10n.notificationSettings),
+                              title: "Notification settings"),
                           _buildMenuItem(
-                              icon: Icons.policy_outlined, title: l10n.policies),
+                              icon: Icons.policy_outlined, title: "Policies"),
                           _buildMenuItem(
-                              icon: Icons.email_outlined, title: l10n.changeEmail),
+                              icon: Icons.email_outlined, title: "Change email"),
                           _buildMenuItem(
-                              icon: Icons.security_outlined, title: l10n.securitySettings),
+                              icon: Icons.security_outlined, title: "Security settings"),
                           _buildMenuItem(
-                              icon: Icons.badge_outlined, title: l10n.aboutMe),
+                              icon: Icons.badge_outlined, title: "About me"),
                           _buildMenuItem(
                               icon: Icons.logout_outlined,
-                              title: l10n.logout,
+                              title: "Logout",
                               showTrailing: false),
 
                           const SizedBox(height: 20),
@@ -367,8 +364,7 @@ class _DoctorViewDoctorProfileScreenState
                 : null,
             onTap: () {
               // Handle menu actions
-              final l10n = AppLocalizations.of(context)!;
-              if (title == l10n.logout) {
+              if (title == "Logout") {
                 _showLogoutConfirmationDialog(context);
               } else {
                 // Navigate to other screens

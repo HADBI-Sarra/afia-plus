@@ -10,6 +10,8 @@ import '../../../logic/cubits/login/login_cubit.dart';
 import '../../../logic/cubits/login/login_state.dart';
 import '../../../logic/cubits/auth/auth_cubit.dart';
 import 'package:afia_plus_app/views/screens/sign_up/create_account.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (state.message.isNotEmpty && !state.message.contains('authenticated')) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.message),
+                    content: Text(getLocalizedError(state.message, context) ?? state.message),
                     backgroundColor: Colors.red,
                     duration: const Duration(seconds: 3),
                   ),
@@ -145,28 +147,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Log in', style: Theme.of(context).textTheme.titleLarge),
+                      Text(AppLocalizations.of(context)!.logIn, style: Theme.of(context).textTheme.titleLarge),
                       const SizedBox(height: 10),
-                      const Text('Nice to have you back!'),
+                      Text(AppLocalizations.of(context)!.niceToHaveYouBack),
                       const SizedBox(height: 20),
                       LabeledTextFormField(
-                        label: 'Email',
-                        hint: 'Enter your email',
+                        label: AppLocalizations.of(context)!.email,
+                        hint: AppLocalizations.of(context)!.enterYourEmail,
                         controller: _emailController,
-                        errorText: state.emailError,
+                        errorText: getLocalizedError(state.emailError, context),
                       ),
                       const SizedBox(height: 12),
                       LabeledTextFormField(
-                        label: 'Password',
-                        hint: 'Enter your password',
+                        label: AppLocalizations.of(context)!.password,
+                        hint: AppLocalizations.of(context)!.enterYourPassword,
                         isPassword: true,
                         controller: _passwordController,
-                        errorText: state.passwordError,
+                        errorText: getLocalizedError(state.passwordError, context),
                       ),
                       const SizedBox(height: 12),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text('Forgot password?', style: greenLink),
+                        child: Text(AppLocalizations.of(context)!.forgotPassword, style: greenLink),
                       ),
                       const SizedBox(height: 30),
                       ElevatedButton(
@@ -176,13 +178,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: greenButtonStyle,
                         child: state.isLoading
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : Text('Log in', style: whiteButtonText),
+                            : Text(AppLocalizations.of(context)!.logIn, style: whiteButtonText),
                       ),
                       const SizedBox(height: 30),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Are you new here? '),
+                          Text(AppLocalizations.of(context)!.areYouNewHere),
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -192,7 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               );
                             },
-                            child: Text('Create account', style: greenLink),
+                            child: Text(AppLocalizations.of(context)!.createAccount, style: greenLink),
                           ),
                         ],
                       ),

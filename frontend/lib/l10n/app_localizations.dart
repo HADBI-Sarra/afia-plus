@@ -316,12 +316,6 @@ abstract class AppLocalizations {
   /// **'Failed to open PDF: {error}'**
   String pdfOpenFailed(String error);
 
-  /// Message shown while downloading PDF from cloud
-  ///
-  /// In en, this message translates to:
-  /// **'Downloading prescription...'**
-  String get downloadingPdf;
-
   /// Error message when WhatsApp is not installed
   ///
   /// In en, this message translates to:
@@ -502,7 +496,7 @@ abstract class AppLocalizations {
   /// **'Cancel Appointment'**
   String get cancelAppointment;
 
-  /// Button to keep/cancel deletion of appointment
+  /// Button to keep/not cancel appointment
   ///
   /// In en, this message translates to:
   /// **'Keep Appointment'**
@@ -544,12 +538,6 @@ abstract class AppLocalizations {
   /// **'Arabic'**
   String get arabic;
 
-  /// French language label
-  ///
-  /// In en, this message translates to:
-  /// **'French'**
-  String get french;
-
   /// Error message when WhatsApp cannot be opened
   ///
   /// In en, this message translates to:
@@ -562,395 +550,887 @@ abstract class AppLocalizations {
   /// **'Hello Dr. {doctorName}, I have a question about my appointment on {date}.'**
   String whatsappMessageDoctor(String doctorName, String date);
 
-  /// Title for doctor profile screen
+  /// Forgot password link text
   ///
   /// In en, this message translates to:
-  /// **'Doctor Profile'**
-  String get doctorProfile;
+  /// **'Forgot password?'**
+  String get forgotPassword;
 
-  /// Book tab label
+  /// Text asking if user is new, shown before create account link
   ///
   /// In en, this message translates to:
-  /// **'Book'**
-  String get book;
+  /// **'Are you new here? '**
+  String get areYouNewHere;
 
-  /// About tab label
+  /// Create account link text
   ///
   /// In en, this message translates to:
-  /// **'About'**
-  String get about;
+  /// **'Create account'**
+  String get createAccount;
 
-  /// Reviews tab label
+  /// Create account screen title
   ///
   /// In en, this message translates to:
-  /// **'Reviews'**
-  String get reviews;
+  /// **'Create an account'**
+  String get createAnAccount;
 
-  /// Book appointment button text
+  /// Welcome message on signup screen
   ///
   /// In en, this message translates to:
-  /// **'Book appointment'**
-  String get bookAppointment;
+  /// **'Excited to have you on board!'**
+  String get excitedToHaveYouOnBoard;
 
-  /// Error message when doctor is not found
+  /// Label for role selection on signup
   ///
   /// In en, this message translates to:
-  /// **'Doctor not found'**
-  String get doctorNotFound;
+  /// **'Register as'**
+  String get registerAs;
 
-  /// Success message after booking appointment
+  /// Doctor role label
   ///
   /// In en, this message translates to:
-  /// **'Booking was successful and must be confirmed by the doctor.'**
-  String get bookingSuccessMessage;
+  /// **'Doctor'**
+  String get doctor;
 
-  /// Message when time is not selected for booking
+  /// Patient role label
   ///
   /// In en, this message translates to:
-  /// **'Please select a time for your consultation.'**
-  String get pleaseSelectTime;
+  /// **'Patient'**
+  String get patient;
 
-  /// Error message when trying to book past date
+  /// Password creation hint text
   ///
   /// In en, this message translates to:
-  /// **'You cannot book appointments for past dates. Please select a current or future date.'**
-  String get cannotBookPastDate;
+  /// **'Create password'**
+  String get createPassword;
 
-  /// Error message when trying to book past time
+  /// Message shown when password meets all criteria
   ///
   /// In en, this message translates to:
-  /// **'You cannot book appointments for past times. Please select a future time slot.'**
-  String get cannotBookPastTime;
+  /// **'Strong password'**
+  String get strongPassword;
 
-  /// Error message when no slot is available
+  /// Password requirement: minimum 8 characters
   ///
   /// In en, this message translates to:
-  /// **'No available slot found for the selected date/time.'**
-  String get noAvailableSlot;
+  /// **'Min 8 characters length'**
+  String get min8CharactersLength;
 
-  /// Error message when user is not logged in as patient
+  /// Password requirement: minimum 1 lowercase letter
   ///
   /// In en, this message translates to:
-  /// **'You must be logged in as a patient.'**
-  String get mustBeLoggedInAsPatient;
+  /// **'Min 1 lowercase letter'**
+  String get min1LowercaseLetter;
 
-  /// Profile screen title
+  /// Password requirement: minimum 1 uppercase letter
   ///
   /// In en, this message translates to:
-  /// **'Profile'**
-  String get profile;
+  /// **'Min 1 uppercase letter'**
+  String get min1UppercaseLetter;
 
-  /// Booked appointments menu item
+  /// Password requirement: minimum 1 digit
   ///
   /// In en, this message translates to:
-  /// **'Booked appointments'**
-  String get bookedAppointments;
+  /// **'Min 1 digit'**
+  String get min1Digit;
 
-  /// My patients menu item
+  /// Password requirement: minimum 1 special character
   ///
   /// In en, this message translates to:
-  /// **'My patients'**
-  String get myPatients;
+  /// **'Min 1 special character'**
+  String get min1SpecialCharacter;
 
-  /// Availability menu item
+  /// Confirm password field label
   ///
   /// In en, this message translates to:
-  /// **'Availability'**
-  String get availability;
+  /// **'Confirm Password'**
+  String get confirmPassword;
 
-  /// Notification settings menu item
+  /// Confirm password field hint
   ///
   /// In en, this message translates to:
-  /// **'Notification settings'**
-  String get notificationSettings;
+  /// **'Repeat password'**
+  String get repeatPassword;
 
-  /// Policies menu item
+  /// Next button text
   ///
   /// In en, this message translates to:
-  /// **'Policies'**
-  String get policies;
+  /// **'Next'**
+  String get next;
 
-  /// Change email menu item
+  /// Text asking if user already has account, shown before login link
   ///
   /// In en, this message translates to:
-  /// **'Change email'**
-  String get changeEmail;
+  /// **'Already have an account? '**
+  String get alreadyHaveAnAccount;
 
-  /// Security settings menu item
+  /// French language label
   ///
   /// In en, this message translates to:
-  /// **'Security settings'**
-  String get securitySettings;
+  /// **'French'**
+  String get french;
 
-  /// About me menu item
+  /// Date format hint for date of birth
   ///
   /// In en, this message translates to:
-  /// **'About me'**
-  String get aboutMe;
+  /// **'DD/MM/YYYY'**
+  String get dateFormatHint;
 
-  /// Logout menu item and button
+  /// Phone number field label
   ///
   /// In en, this message translates to:
-  /// **'Logout'**
-  String get logout;
+  /// **'Phone number'**
+  String get phoneNumber;
 
-  /// Logout confirmation dialog message
+  /// Phone number input hint example
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to logout?'**
-  String get logoutConfirmation;
+  /// **'e.g. 05123 45 67 89'**
+  String get phoneNumberExample;
 
-  /// Message when specialty is not set
+  /// NIN field label
   ///
   /// In en, this message translates to:
-  /// **'Specialty not set'**
-  String get specialtyNotSet;
+  /// **'National Identification Number (NIN)'**
+  String get nationalIdentificationNumber;
 
-  /// Loading message for specialty
+  /// NIN input hint example
   ///
   /// In en, this message translates to:
-  /// **'Loading specialty...'**
-  String get loadingSpecialty;
+  /// **'e.g. 198012345678901234'**
+  String get ninExample;
 
-  /// Favorite doctors menu item
+  /// Terms and conditions agreement checkbox text
   ///
   /// In en, this message translates to:
-  /// **'Favorite doctors'**
-  String get favoriteDoctors;
+  /// **'I agree to the Terms and Conditions'**
+  String get iAgreeToTermsAndConditions;
 
-  /// Message when date of birth is not set
+  /// Description for doctor personal data form
   ///
   /// In en, this message translates to:
-  /// **'DOB not set'**
-  String get dobNotSet;
+  /// **'Provide your personal data to offer online consultations quickly and securely.'**
+  String get providePersonalDataDoctor;
 
-  /// Title for patient profile screen from doctor view
+  /// Professional info screen title
   ///
   /// In en, this message translates to:
-  /// **'Patient Profile'**
-  String get patientProfile;
+  /// **'Professional info'**
+  String get professionalInfo;
 
-  /// Phone label
+  /// Description for professional info form
   ///
   /// In en, this message translates to:
-  /// **'Phone'**
-  String get phone;
+  /// **'Provide your professional details to help patients learn about your qualifications and expertise.'**
+  String get provideProfessionalDetails;
 
-  /// Address label
+  /// Main speciality section label
   ///
   /// In en, this message translates to:
-  /// **'Address'**
-  String get address;
+  /// **'Main speciality'**
+  String get mainSpeciality;
 
-  /// Health info label
+  /// Speciality dropdown label
   ///
   /// In en, this message translates to:
-  /// **'Health Info'**
-  String get healthInfo;
+  /// **'Speciality'**
+  String get speciality;
 
-  /// Send message button text
+  /// Speciality dropdown hint
   ///
   /// In en, this message translates to:
-  /// **'Send Message'**
-  String get sendMessage;
+  /// **'Select your speciality'**
+  String get selectYourSpeciality;
 
-  /// General information section title
+  /// Message when no specialities are available
   ///
   /// In en, this message translates to:
-  /// **'General Information'**
+  /// **'No specialities found'**
+  String get noSpecialitiesFound;
+
+  /// Error message when specialities fail to load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load specialities'**
+  String get failedToLoadSpecialities;
+
+  /// General information section label
+  ///
+  /// In en, this message translates to:
+  /// **'General information'**
   String get generalInformation;
 
-  /// Current working place section title
+  /// Bio field label
   ///
   /// In en, this message translates to:
-  /// **'Current Working Place'**
+  /// **'Bio / Specialization'**
+  String get bioSpecialization;
+
+  /// Bio field hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your medical background, specialties, and philosophy of care'**
+  String get describeMedicalBackground;
+
+  /// Current working place section label
+  ///
+  /// In en, this message translates to:
+  /// **'Current working place'**
   String get currentWorkingPlace;
 
-  /// Education section title
+  /// Working place field label
+  ///
+  /// In en, this message translates to:
+  /// **'Name / Address'**
+  String get nameAddress;
+
+  /// Working place input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Nour Clinic, Hydra, Algiers'**
+  String get workingPlaceExample;
+
+  /// Education section label
   ///
   /// In en, this message translates to:
   /// **'Education'**
   String get education;
 
-  /// Certification section title
+  /// Degree field label
+  ///
+  /// In en, this message translates to:
+  /// **'Degree'**
+  String get degree;
+
+  /// Degree input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Doctor of Medicine (MD)'**
+  String get degreeExample;
+
+  /// University field label
+  ///
+  /// In en, this message translates to:
+  /// **'University'**
+  String get university;
+
+  /// University input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. University of Algiers 1'**
+  String get universityExample;
+
+  /// Certification section label
   ///
   /// In en, this message translates to:
   /// **'Certification'**
   String get certification;
 
-  /// Training section title
+  /// Certification field label
+  ///
+  /// In en, this message translates to:
+  /// **'Certification (Optional)'**
+  String get certificationOptional;
+
+  /// Certification input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Specialist in Cardiology'**
+  String get certificationExample;
+
+  /// Certification institution field label
+  ///
+  /// In en, this message translates to:
+  /// **'Institution (Optional)'**
+  String get institutionOptional;
+
+  /// Institution input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. University of Oran 1'**
+  String get institutionExample;
+
+  /// Training section label
   ///
   /// In en, this message translates to:
   /// **'Training'**
   String get training;
 
-  /// Licensure section title
+  /// Training field label
+  ///
+  /// In en, this message translates to:
+  /// **'Residency / Fellowship details (Optional)'**
+  String get residencyFellowshipOptional;
+
+  /// Training input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Residency in internal Medicine, Fellowship in Cardiology'**
+  String get trainingExample;
+
+  /// Licensure section label
   ///
   /// In en, this message translates to:
   /// **'Licensure'**
   String get licensure;
 
-  /// Experience section title
+  /// License number field label
+  ///
+  /// In en, this message translates to:
+  /// **'License number'**
+  String get licenseNumber;
+
+  /// License number input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 12345'**
+  String get licenseNumberExample;
+
+  /// License description field label
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Optional)'**
+  String get descriptionOptional;
+
+  /// License description input hint example
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Authorized to practice medicine in Algeria'**
+  String get licenseDescriptionExample;
+
+  /// Experience section label
   ///
   /// In en, this message translates to:
   /// **'Experience'**
   String get experience;
 
-  /// Default text when information is not specified
+  /// Years of experience field label
   ///
   /// In en, this message translates to:
-  /// **'Not specified'**
-  String get notSpecified;
+  /// **'Years of practice'**
+  String get yearsOfPractice;
 
-  /// License number label
+  /// Years of practice input hint example
   ///
   /// In en, this message translates to:
-  /// **'License number:'**
-  String get licenseNumber;
+  /// **'e.g. 16'**
+  String get yearsOfPracticeExample;
 
-  /// Prefix for years of experience
+  /// Areas of experience field label
   ///
   /// In en, this message translates to:
-  /// **'Over'**
-  String get over;
+  /// **'Specific areas of expertise'**
+  String get specificAreasOfExpertise;
 
-  /// Singular year
+  /// Areas of expertise input hint example
   ///
   /// In en, this message translates to:
-  /// **'year'**
-  String get year;
+  /// **'e.g. Cardiac imaging, hypertension, heart failure management'**
+  String get areasOfExpertiseExample;
 
-  /// Plural years
+  /// Consultation fees section label
   ///
   /// In en, this message translates to:
-  /// **'years'**
-  String get years;
+  /// **'Consultation fees'**
+  String get consultationFees;
 
-  /// Suffix for years of experience
+  /// Consultation price field label
   ///
   /// In en, this message translates to:
-  /// **'of experience'**
-  String get ofExperience;
+  /// **'Price for 1-hour consultation'**
+  String get priceForOneHourConsultation;
 
-  /// Prefix for areas of expertise
+  /// Consultation price input hint example
   ///
   /// In en, this message translates to:
-  /// **'specializing in'**
-  String get specializingIn;
+  /// **'e.g. 1000 DA'**
+  String get consultationPriceExample;
 
-  /// Price label
+  /// Profile picture screen title
   ///
   /// In en, this message translates to:
-  /// **'Price'**
-  String get price;
+  /// **'Profile picture'**
+  String get profilePicture;
 
-  /// One hour consultation label
+  /// Profile picture subtitle for patients
   ///
   /// In en, this message translates to:
-  /// **'1 hour consultation'**
-  String get oneHourConsultation;
+  /// **'Help people recognize you with a professional headshot.'**
+  String get helpPeopleRecognizeYou;
 
-  /// Select time label
+  /// Profile picture subtitle for doctors
   ///
   /// In en, this message translates to:
-  /// **'Select time'**
-  String get selectTime;
+  /// **'Help patients recognize you with a professional headshot.'**
+  String get helpPatientsRecognizeYou;
 
-  /// Message when no times available for selected day
+  /// Image source modal title
   ///
   /// In en, this message translates to:
-  /// **'No available times for this day'**
-  String get noAvailableTimesForDay;
+  /// **'More options'**
+  String get moreOptions;
 
-  /// Message when doctor has no upcoming availability
+  /// Upload from gallery option
   ///
   /// In en, this message translates to:
-  /// **'No upcoming availability. This doctor has no available time slots for booking.'**
-  String get noUpcomingAvailability;
+  /// **'Upload from Gallery'**
+  String get uploadFromGallery;
 
-  /// Message when availability cannot be loaded
+  /// Take photo option
   ///
   /// In en, this message translates to:
-  /// **'No availability'**
-  String get noAvailability;
+  /// **'Take photo'**
+  String get takePhoto;
 
-  /// Singular review
+  /// Skip button text
   ///
   /// In en, this message translates to:
-  /// **'review'**
-  String get review;
+  /// **'Skip'**
+  String get skip;
 
-  /// Plural reviews
+  /// Add profile picture button text
   ///
   /// In en, this message translates to:
-  /// **'reviews'**
-  String get reviewsPlural;
+  /// **'Add a profile picture'**
+  String get addAProfilePicture;
 
-  /// Leave a review button text
+  /// Continue button text
   ///
   /// In en, this message translates to:
-  /// **'Leave a review'**
-  String get leaveReview;
+  /// **'Continue'**
+  String get continueButton;
 
-  /// Message when there are no reviews
+  /// Change photo button text
   ///
   /// In en, this message translates to:
-  /// **'No reviews yet. Be the first to review!'**
-  String get noReviewsYet;
+  /// **'Change photo'**
+  String get changePhoto;
 
-  /// Default name when patient name is not available
+  /// Error message when image picking fails
   ///
   /// In en, this message translates to:
-  /// **'Anonymous'**
-  String get anonymous;
+  /// **'Error picking image: {error}'**
+  String errorPickingImage(String error);
 
-  /// Title for selecting available hours
+  /// Error message when profile picture upload fails
   ///
   /// In en, this message translates to:
-  /// **'Select available hours'**
-  String get selectAvailableHours;
+  /// **'Error uploading profile picture: {error}'**
+  String errorUploadingProfilePicture(String error);
 
-  /// Button text to add time slots
+  /// Title for camera permission dialog
   ///
   /// In en, this message translates to:
-  /// **'Add times'**
-  String get addTimes;
+  /// **'Camera Permission Required'**
+  String get cameraPermissionRequired;
 
-  /// Confirmation dialog title for deleting time slot
+  /// Message when camera permission is denied
   ///
   /// In en, this message translates to:
-  /// **'Delete slot?'**
-  String get deleteSlot;
+  /// **'Camera permission denied'**
+  String get cameraPermissionDenied;
 
-  /// Confirmation message for deleting time slot
+  /// Message explaining why camera permission is needed
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete this time slot?'**
-  String get deleteSlotMessage;
+  /// **'This app needs access to your camera to take profile pictures. Please enable camera permission in settings.'**
+  String get cameraPermissionDeniedMessage;
 
-  /// Title showing available slots for a specific date
+  /// Title for storage permission dialog
   ///
   /// In en, this message translates to:
-  /// **'Available slots for {date}'**
-  String availableSlotsFor(String date);
+  /// **'Storage Permission Required'**
+  String get storagePermissionRequired;
 
-  /// Message when no time slots exist for selected day
+  /// Message when storage permission is denied
   ///
   /// In en, this message translates to:
-  /// **'No times for this day. Add some with + .'**
-  String get noTimesForDay;
+  /// **'Storage permission denied'**
+  String get storagePermissionDenied;
 
-  /// Error message when trying to set availability in the past
+  /// Message explaining why storage permission is needed
   ///
   /// In en, this message translates to:
-  /// **'You cannot set availability in the past.'**
-  String get cannotSetPastAvailability;
+  /// **'This app needs access to your photo library to select profile pictures. Please enable photo library permission in settings.'**
+  String get storagePermissionDeniedMessage;
 
-  /// Message to select a future date for availability
+  /// Button text to open app settings
   ///
   /// In en, this message translates to:
-  /// **'Select today or a future date to add availability.'**
-  String get selectFutureDateAvailability;
+  /// **'Open Settings'**
+  String get openSettings;
+
+  /// Shown when email field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Email cannot be empty'**
+  String get errorEmailEmpty;
+
+  /// Shown when email field has invalid format
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get errorEmailInvalid;
+
+  /// Shown when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password cannot be empty'**
+  String get errorPasswordEmpty;
+
+  /// Shown when password length is less than 8
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get errorPasswordShort;
+
+  /// Shown when password doesn't pass strength requirements
+  ///
+  /// In en, this message translates to:
+  /// **'Weak password'**
+  String get errorPasswordWeak;
+
+  /// Shown when password confirmation field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Password confirmation cannot be empty'**
+  String get errorPasswordConfirmationEmpty;
+
+  /// Shown when password and confirmation do not match
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get errorPasswordsDoNotMatch;
+
+  /// Shown when an email is already registered
+  ///
+  /// In en, this message translates to:
+  /// **'Email already in use'**
+  String get errorEmailTaken;
+
+  /// First name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'First name cannot be empty'**
+  String get errorFirstNameEmpty;
+
+  /// First name field is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid first name'**
+  String get errorFirstNameInvalid;
+
+  /// Last name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Last name cannot be empty'**
+  String get errorLastNameEmpty;
+
+  /// Last name field is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid last name'**
+  String get errorLastNameInvalid;
+
+  /// DOB field empty
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth cannot be empty'**
+  String get errorDobEmpty;
+
+  /// User under 16
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 16 years old to create an account'**
+  String get errorDobMinor;
+
+  /// Date is in wrong format
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid date format (use DD/MM/YYYY)'**
+  String get errorDobFormat;
+
+  /// Phone field empty
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number cannot be empty'**
+  String get errorPhoneEmpty;
+
+  /// Phone field invalid format/message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number in the format +213XXXXXXXXX'**
+  String get errorPhoneInvalid;
+
+  /// NIN field empty
+  ///
+  /// In en, this message translates to:
+  /// **'NIN cannot be empty'**
+  String get errorNinEmpty;
+
+  /// NIN validation failed
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid NIN'**
+  String get errorNinInvalid;
+
+  /// General empty field error
+  ///
+  /// In en, this message translates to:
+  /// **'Field cannot be empty'**
+  String get errorFieldEmpty;
+
+  /// Require N min chars
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least {num} characters'**
+  String errorMinCharacters(int num);
+
+  /// When speciality is not selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your speciality'**
+  String get errorSpecialityNotSelected;
+
+  /// Licence number is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid licence number'**
+  String get errorLicenceInvalid;
+
+  /// Years field is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number of years'**
+  String get errorYearsInvalid;
+
+  /// Consultation price field is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid price in DA'**
+  String get errorPriceInvalid;
+
+  /// General timeout error
+  ///
+  /// In en, this message translates to:
+  /// **'Request timeout. Please check your connection and try again.'**
+  String get errorTimeout;
+
+  /// Email async check failed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to check email. Please try again.'**
+  String get errorEmailCheckFailed;
+
+  /// General signup failure
+  ///
+  /// In en, this message translates to:
+  /// **'Signup failed'**
+  String get errorSignupFailed;
+
+  /// General error with details
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {error}'**
+  String errorOccurred(String error);
+
+  /// Error message when doctor profile cannot be found
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor not found'**
+  String get doctorNotFound;
+
+  /// Greeting message for patient
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {name}!'**
+  String helloPatient(String name);
+
+  /// Greeting message for doctor
+  ///
+  /// In en, this message translates to:
+  /// **'Hello Dr. {name}!'**
+  String helloDoctor(String name);
+
+  /// Number of doctors
+  ///
+  /// In en, this message translates to:
+  /// **'{count} doctors'**
+  String doctorsCount(int count);
+
+  /// Title for doctors by speciality overlay
+  ///
+  /// In en, this message translates to:
+  /// **'Doctors - {speciality}'**
+  String doctorsForSpeciality(String speciality);
+
+  /// Message when user is not authenticated
+  ///
+  /// In en, this message translates to:
+  /// **'User not logged in'**
+  String get userNotLoggedIn;
+
+  /// Message when doctor authentication is required
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in as a doctor to view your home screen.'**
+  String get pleaseLogInAsDoctor;
+
+  /// Message when there are no upcoming consultations
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming consultations'**
+  String get noUpcomingConsultations;
+
+  /// Message when there are no pending consultations
+  ///
+  /// In en, this message translates to:
+  /// **'No pending consultations'**
+  String get noPendingConsultations;
+
+  /// Title for popular specializations section
+  ///
+  /// In en, this message translates to:
+  /// **'Popular specializations'**
+  String get popularSpecializations;
+
+  /// Header for list of all specialities overlay
+  ///
+  /// In en, this message translates to:
+  /// **'All specialities'**
+  String get allSpecialities;
+
+  /// Title for popular doctors section
+  ///
+  /// In en, this message translates to:
+  /// **'Popular doctors'**
+  String get popularDoctors;
+
+  /// Title for services section
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get services;
+
+  /// Appointments service link
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments'**
+  String get appointments;
+
+  /// Availability service link
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get availability;
+
+  /// FAQ service link
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faq;
+
+  /// Today label
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Pending requests label
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Requests'**
+  String get pendingRequests;
+
+  /// Total patients label
+  ///
+  /// In en, this message translates to:
+  /// **'Total patients'**
+  String get totalPatients;
+
+  /// Number of appointments
+  ///
+  /// In en, this message translates to:
+  /// **'{count} appointments'**
+  String appointmentsCount(int count);
+
+  /// Number of requests (singular)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} request'**
+  String requestsCount(int count);
+
+  /// Number of requests (plural)
+  ///
+  /// In en, this message translates to:
+  /// **'{count} requests'**
+  String requestsCountPlural(int count);
+
+  /// Number of patients
+  ///
+  /// In en, this message translates to:
+  /// **'{count} patients'**
+  String patientsCount(int count);
+
+  /// Message when address is not available
+  ///
+  /// In en, this message translates to:
+  /// **'Address not available'**
+  String get addressNotAvailable;
+
+  /// Error message when WhatsApp cannot be opened for doctor
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open WhatsApp. Please make sure WhatsApp is installed.'**
+  String get whatsappErrorDoctor;
+
+  /// Message when phone number is not available for doctor
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number not available'**
+  String get phoneNumberNotAvailableDoctor;
+
+  /// Success message when appointment is accepted
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment accepted successfully'**
+  String get appointmentAcceptedSuccessfully;
+
+  /// Success message when appointment is rejected
+  ///
+  /// In en, this message translates to:
+  /// **'Appointment rejected successfully'**
+  String get appointmentRejectedSuccessfully;
+
+  /// Confirmation message for rejecting appointment
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to reject this appointment?'**
+  String get areYouSureRejectAppointment;
+
+  /// Message that patient will be notified of rejection
+  ///
+  /// In en, this message translates to:
+  /// **'The patient will be notified of the rejection.'**
+  String get patientWillBeNotified;
+
+  /// Quick overview section title
+  ///
+  /// In en, this message translates to:
+  /// **'Quick overview'**
+  String get quickOverview;
+
+  /// Date and time format
+  ///
+  /// In en, this message translates to:
+  /// **'{date} at {time}'**
+  String atTime(String date, String time);
+
+  /// WhatsApp message from doctor to patient
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, I would like to discuss our appointment on {dateTime}.'**
+  String whatsappMessageDoctorToPatient(String dateTime);
 }
 
 class _AppLocalizationsDelegate

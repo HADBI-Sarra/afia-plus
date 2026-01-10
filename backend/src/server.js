@@ -11,9 +11,18 @@ dotenv.config({ path: envPath });
 console.log('ENV PATH:', envPath);
 console.log('SUPABASE_URL:', process.env.SUPABASE_URL);
 
-import('./app.js').then(module => {
+import('./app.js').then(async module => {
   const app = module.default;
   const PORT = process.env.PORT || 3000;
+
+  // Start reminder service for consultation reminders
+  try {
+    const { ReminderService } = await import('../services/reminder.service.js');
+    ReminderService.start();
+  } catch (error) {
+    console.error('⚠️ Failed to start reminder service:', error.message);
+    // Don't exit - server can still run without reminders
+  }
 
   const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);

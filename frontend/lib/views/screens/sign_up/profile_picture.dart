@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 import 'package:afia_plus_app/views/themes/style_simple/colors.dart';
@@ -10,6 +11,7 @@ import '../../../../logic/cubits/signup/signup_state.dart';
 import '../../../../logic/cubits/auth/auth_cubit.dart';
 import '../homescreen/doctor_home_screen.dart';
 import '../homescreen/patient_home_screen.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 
 class ProfilePictureScreen extends StatefulWidget {
   const ProfilePictureScreen({super.key});
@@ -58,17 +60,20 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'More options',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  AppLocalizations.of(context)!.moreOptions,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.photo_library, color: darkGreenColor),
-                title: const Text('Upload from Gallery'),
+                title: Text(AppLocalizations.of(context)!.uploadFromGallery),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () async {
                   Navigator.pop(context);
@@ -77,7 +82,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: darkGreenColor),
-                title: const Text('Take photo'),
+                title: Text(AppLocalizations.of(context)!.takePhoto),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: () async {
                   Navigator.pop(context);
@@ -86,7 +91,10 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.cancel, color: redColor),
-                title: const Text('Cancel', style: TextStyle(color: redColor)),
+                title: Text(
+                  AppLocalizations.of(context)!.cancel,
+                  style: const TextStyle(color: redColor),
+                ),
                 onTap: () {
                   Navigator.pop(context);
                 },
@@ -99,8 +107,113 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
     );
   }
 
+  Future<bool> _requestCameraPermission() async {
+    final status = await Permission.camera.request();
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.cameraPermissionRequired),
+            content: Text(AppLocalizations.of(context)!.cameraPermissionDeniedMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
+                child: Text(AppLocalizations.of(context)!.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.cameraPermissionDenied),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  Future<bool> _requestStoragePermission() async {
+    // For Android 13+ (API 33+), use photos permission
+    // For older versions, use storage permission
+    Permission permission;
+    if (Platform.isAndroid) {
+      // Use photos permission for Android 13+ (handles both READ_MEDIA_IMAGES and legacy storage)
+      permission = Permission.photos;
+    } else {
+      // iOS uses photos permission
+      permission = Permission.photos;
+    }
+
+    final status = await permission.request();
+    if (status.isGranted) {
+      return true;
+    } else if (status.isPermanentlyDenied) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(AppLocalizations.of(context)!.storagePermissionRequired),
+            content: Text(AppLocalizations.of(context)!.storagePermissionDeniedMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(AppLocalizations.of(context)!.cancel),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  openAppSettings();
+                },
+                child: Text(AppLocalizations.of(context)!.openSettings),
+              ),
+            ],
+          ),
+        );
+      }
+      return false;
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.storagePermissionDenied),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     try {
+      // Request appropriate permission based on source
+      bool hasPermission = false;
+      if (source == ImageSource.camera) {
+        hasPermission = await _requestCameraPermission();
+      } else {
+        hasPermission = await _requestStoragePermission();
+      }
+
+      if (!hasPermission) {
+        return; // Permission denied, exit early
+      }
+
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
         setState(() {
@@ -114,7 +227,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking image: $e'),
+            content: Text(AppLocalizations.of(context)!.errorPickingImage(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -167,7 +280,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error uploading profile picture: $e'),
+              content: Text(AppLocalizations.of(context)!.errorUploadingProfilePicture(e.toString())),
               backgroundColor: Colors.orange,
               duration: const Duration(seconds: 3),
             ),
@@ -182,19 +295,58 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
       }
     }
 
-    // Navigate to home screen
-    if (state.isPatient) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
-        (route) => false,
-      );
-    } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
-        (route) => false,
-      );
+    // Check email verification before navigating to home
+    final authCubit = context.read<AuthCubit>();
+    await authCubit.checkLoginStatus();
+    
+    if (!mounted) return;
+    
+    final authState = authCubit.state;
+    final bool isEmailVerified = (authState is AuthenticatedPatient && authState.patient.isEmailVerified) ||
+        (authState is AuthenticatedDoctor && authState.doctor.isEmailVerified);
+
+    if (!isEmailVerified) {
+      // Email not verified - show message and block navigation
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => AlertDialog(
+            title: const Text('Email Verification Required'),
+            content: const Text(
+              'Please verify your email before accessing the app. Check your email inbox for the verification link.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                  // Refresh auth status in case user verified
+                  authCubit.checkLoginStatus();
+                },
+                child: const Text('I\'ve Verified My Email'),
+              ),
+            ],
+          ),
+        );
+      }
+      return; // Don't navigate
+    }
+
+    // Email is verified - navigate to home screen
+    if (mounted) {
+      if (state.isPatient) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const DoctorHomeScreen()),
+          (route) => false,
+        );
+      }
     }
   }
 
@@ -254,7 +406,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                 TextButton(
                   onPressed: _skipProfilePicture,
                   child: Text(
-                    'Skip',
+                    AppLocalizations.of(context)!.skip,
                     style: TextStyle(
                       color: greyColor,
                       fontSize: 16,
@@ -275,15 +427,15 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                       children: [
                         // Title
                         Text(
-                          'Profile picture',
+                          AppLocalizations.of(context)!.profilePicture,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(height: 10),
                         // Subtitle - changes based on role
                         Text(
                           isPatient
-                              ? 'Help people recognize you with a professional headshot.'
-                              : 'Help patients recognize you with a professional headshot.',
+                              ? AppLocalizations.of(context)!.helpPeopleRecognizeYou
+                              : AppLocalizations.of(context)!.helpPatientsRecognizeYou,
                         ),
                       ],
                     ),
@@ -327,10 +479,8 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                             onPressed: _isUploading ? null : _completeSignup,
                             style: greenButtonStyle,
                             child: _isUploading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : Text('Continue', style: whiteButtonText),
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : Text(AppLocalizations.of(context)!.continueButton, style: whiteButtonText),
                           ),
                           const SizedBox(height: 12),
                           TextButton(
@@ -340,7 +490,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                               });
                             },
                             child: Text(
-                              'Change photo',
+                              AppLocalizations.of(context)!.changePhoto,
                               style: TextStyle(
                                 color: darkGreenColor,
                                 fontSize: 16,
@@ -352,10 +502,7 @@ class _ProfilePictureScreenState extends State<ProfilePictureScreen> {
                           ElevatedButton(
                             onPressed: _showImageSourceModal,
                             style: greenButtonStyle,
-                            child: Text(
-                              'Add a profile picture',
-                              style: whiteButtonText,
-                            ),
+                            child: Text(AppLocalizations.of(context)!.addAProfilePicture, style: whiteButtonText),
                           ),
                       ],
                     ),

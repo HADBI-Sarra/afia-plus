@@ -6,6 +6,8 @@ import 'package:afia_plus_app/views/widgets/labeled_text_form_field.dart';
 import '../../../../logic/cubits/signup/signup_cubit.dart';
 import '../../../../logic/cubits/signup/signup_state.dart';
 import 'professional_info.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
+import 'package:afia_plus_app/utils/localization_helper.dart';
 
 class DoctorPersonalDataScreen extends StatefulWidget {
   const DoctorPersonalDataScreen({super.key});
@@ -58,7 +60,7 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
           if (state.message.isNotEmpty && state.message != 'Success' && state.message != 'NextStep') {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(getLocalizedError(state.message, context) ?? state.message),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 4),
               ),
@@ -69,10 +71,10 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
         }
         
         // Show snackbar for error messages
-        if (state.message.isNotEmpty && state.message != 'NextStep' && state.message != 'Email already in use') {
+        if (state.message.isNotEmpty && state.message != 'NextStep' && state.message != 'errorEmailTaken') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(getLocalizedError(state.message, context) ?? state.message),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
@@ -116,41 +118,41 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Personal data', style: Theme.of(context).textTheme.titleLarge),
+                        Text(AppLocalizations.of(context)!.personalData, style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: 10),
-                        const Text(
-                          'Provide your personal data to offer online consultations quickly and securely.',
+                        Text(
+                          AppLocalizations.of(context)!.providePersonalDataDoctor,
                         ),
                         const SizedBox(height: 20),
                         LabeledTextFormField(
-                          label: 'First name',
-                          hint: 'Enter your first name',
+                          label: AppLocalizations.of(context)!.firstName,
+                          hint: AppLocalizations.of(context)!.enterYourFirstName,
                           controller: _firstNameController,
-                          errorText: state.firstNameError,
+                          errorText: getLocalizedError(state.firstNameError, context),
                           textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 12),
                         LabeledTextFormField(
-                          label: 'Last name',
-                          hint: 'Enter your last name',
+                          label: AppLocalizations.of(context)!.lastName,
+                          hint: AppLocalizations.of(context)!.enterYourLastName,
                           controller: _lastNameController,
-                          errorText: state.lastNameError,
+                          errorText: getLocalizedError(state.lastNameError, context),
                           textCapitalization: TextCapitalization.words,
                         ),
                         const SizedBox(height: 12),
                         LabeledTextFormField(
-                          label: 'Phone number',
-                          hint: 'e.g. 05123 45 67 89',
+                          label: AppLocalizations.of(context)!.phoneNumber,
+                          hint: AppLocalizations.of(context)!.phoneNumberExample,
                           controller: _phoneNumberController,
-                          errorText: state.phoneError,
+                          errorText: getLocalizedError(state.phoneError, context),
                           keyboardType: TextInputType.phone,
                         ),
                         const SizedBox(height: 12),
                         LabeledTextFormField(
-                          label: 'National Identification Number (NIN)',
-                          hint: 'e.g. 198012345678901234',
+                          label: AppLocalizations.of(context)!.nationalIdentificationNumber,
+                          hint: AppLocalizations.of(context)!.ninExample,
                           controller: _ninController,
-                          errorText: state.ninError,
+                          errorText: getLocalizedError(state.ninError, context),
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 40),
@@ -168,7 +170,7 @@ class _DoctorPersonalDataScreenState extends State<DoctorPersonalDataScreen> {
                           style: greenButtonStyle,
                           child: state.isLoading
                               ? const CircularProgressIndicator(color: Colors.white)
-                              : Text('Next', style: whiteButtonText),
+                              : Text(AppLocalizations.of(context)!.next, style: whiteButtonText),
                         ),
                       ],
                     ),

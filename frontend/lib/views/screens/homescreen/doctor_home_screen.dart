@@ -7,8 +7,8 @@ import 'package:afia_plus_app/cubits/doctor_home_cubit.dart';
 import 'package:afia_plus_app/models/consultation_with_details.dart';
 import 'package:afia_plus_app/utils/whatsapp_service.dart';
 import 'package:afia_plus_app/views/widgets/language_switcher.dart';
+import 'package:afia_plus_app/l10n/app_localizations.dart';
 import 'package:afia_plus_app/logic/cubits/auth/auth_cubit.dart';
-import 'package:afia_plus_app/views/widgets/profile_image_widget.dart';
 
 class DoctorHomeScreen extends StatelessWidget {
   const DoctorHomeScreen({super.key});
@@ -18,9 +18,15 @@ class DoctorHomeScreen extends StatelessWidget {
   Widget sectionTitle(BuildContext context, String title) {
     return Row(
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const Spacer(),
-        Text('See all', style: greenLink),
+        Text(
+          AppLocalizations.of(context)!.seeAll,
+          style: greenLink,
+        ),
       ],
     );
   }
@@ -34,7 +40,6 @@ class DoctorHomeScreen extends StatelessWidget {
       time: consultation.consultation.startTime,
       date: consultation.consultation.consultationDate,
       phoneNumber: consultation.patientPhoneNumber,
-      imageUrl: consultation.patientImagePath,
       context: context,
     );
   }
@@ -44,7 +49,6 @@ class DoctorHomeScreen extends StatelessWidget {
     required String time,
     required String date,
     String? phoneNumber,
-    String? imageUrl,
     required BuildContext context,
   }) {
     return Container(
@@ -64,7 +68,11 @@ class DoctorHomeScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          NetworkProfileAvatar(imageUrl: imageUrl, isDoctor: false, radius: 24),
+          const CircleAvatar(
+            backgroundColor: darkGreenColor,
+            radius: 24,
+            child: Icon(Icons.person, color: whiteColor),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -97,27 +105,24 @@ class DoctorHomeScreen extends StatelessWidget {
               if (phoneNumber != null && phoneNumber.isNotEmpty) {
                 final success = await WhatsAppService.openWhatsApp(
                   phoneNumber: phoneNumber,
-                  message:
-                      'Hello, I would like to discuss our appointment on $date at $time.',
+                  message: AppLocalizations.of(context)!.whatsappMessageDoctorToPatient(AppLocalizations.of(context)!.atTime(date, time)),
                 );
-                if (!success && context.mounted) {
+                  if (!success && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Could not open WhatsApp. Please make sure WhatsApp is installed.',
-                      ),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.whatsappErrorDoctor),
                       backgroundColor: Colors.red,
-                      duration: Duration(seconds: 2),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                 }
               } else {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Phone number not available'),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.phoneNumberNotAvailableDoctor),
                       backgroundColor: Colors.orange,
-                      duration: Duration(seconds: 2),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                 }
@@ -130,10 +135,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'WhatsApp',
-              style: TextStyle(color: whiteColor, fontSize: 13),
-            ),
+            child: Text(
+                            AppLocalizations.of(context)!.whatsapp,
+                            style: const TextStyle(color: whiteColor, fontSize: 13),
+                          ),
           ),
         ],
       ),
@@ -150,7 +155,6 @@ class DoctorHomeScreen extends StatelessWidget {
       time: consultation.consultation.startTime,
       date: consultation.consultation.consultationDate,
       consultationId: consultation.consultation.consultationId,
-      imageUrl: consultation.patientImagePath,
       context: context,
       doctorId: doctorId,
     );
@@ -161,7 +165,6 @@ class DoctorHomeScreen extends StatelessWidget {
     required String time,
     required String date,
     required int? consultationId,
-    String? imageUrl,
     required BuildContext context,
     required int doctorId,
   }) {
@@ -182,7 +185,11 @@ class DoctorHomeScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          NetworkProfileAvatar(imageUrl: imageUrl, isDoctor: false, radius: 24),
+          const CircleAvatar(
+            backgroundColor: darkGreenColor,
+            radius: 24,
+            child: Icon(Icons.person, color: whiteColor),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -212,28 +219,25 @@ class DoctorHomeScreen extends StatelessWidget {
           const SizedBox(width: 8),
           BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
             builder: (context, state) {
-              final isProcessing =
-                  consultationId != null &&
+              final isProcessing = consultationId != null &&
                   state.processingConsultationIds.contains(consultationId);
-
+              
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: isProcessing
-                        ? null
-                        : () {
-                            if (consultationId != null) {
-                              _showAcceptConfirmationDialog(
-                                context: context,
-                                consultationId: consultationId,
-                                patientName: name,
-                                date: date,
-                                time: time,
-                                doctorId: doctorId,
-                              );
-                            }
-                          },
+                    onPressed: isProcessing ? null : () {
+                      if (consultationId != null) {
+                        _showAcceptConfirmationDialog(
+                          context: context,
+                          consultationId: consultationId,
+                          patientName: name,
+                          date: date,
+                          time: time,
+                          doctorId: doctorId,
+                        );
+                      }
+                    },
                     icon: const Icon(
                       Icons.check_circle_outline,
                       size: 18,
@@ -245,14 +249,12 @@ class DoctorHomeScreen extends StatelessWidget {
                             height: 12,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                whiteColor,
-                              ),
+                              valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                             ),
                           )
-                        : const Text(
-                            'Accept',
-                            style: TextStyle(color: whiteColor, fontSize: 12),
+                        : Text(
+                            AppLocalizations.of(context)!.accept,
+                            style: const TextStyle(color: whiteColor, fontSize: 12),
                           ),
                     style: greenButtonStyle.copyWith(
                       minimumSize: WidgetStateProperty.all(const Size(120, 32)),
@@ -265,20 +267,18 @@ class DoctorHomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   OutlinedButton.icon(
-                    onPressed: isProcessing
-                        ? null
-                        : () {
-                            if (consultationId != null) {
-                              _showRejectConfirmationDialog(
-                                context: context,
-                                consultationId: consultationId,
-                                patientName: name,
-                                date: date,
-                                time: time,
-                                doctorId: doctorId,
-                              );
-                            }
-                          },
+                    onPressed: isProcessing ? null : () {
+                      if (consultationId != null) {
+                        _showRejectConfirmationDialog(
+                          context: context,
+                          consultationId: consultationId,
+                          patientName: name,
+                          date: date,
+                          time: time,
+                          doctorId: doctorId,
+                        );
+                      }
+                    },
                     icon: const Icon(
                       Icons.delete_outline,
                       size: 18,
@@ -290,17 +290,12 @@ class DoctorHomeScreen extends StatelessWidget {
                             height: 12,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                darkGreenColor,
-                              ),
+                              valueColor: AlwaysStoppedAnimation<Color>(darkGreenColor),
                             ),
                           )
-                        : const Text(
-                            'Reject',
-                            style: TextStyle(
-                              color: darkGreenColor,
-                              fontSize: 12,
-                            ),
+                        : Text(
+                            AppLocalizations.of(context)!.reject,
+                            style: const TextStyle(color: darkGreenColor, fontSize: 12),
                           ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
@@ -354,17 +349,11 @@ class DoctorHomeScreen extends StatelessWidget {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, authState) {
         if (authState is AuthLoading) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (authState is! AuthenticatedDoctor) {
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                'Please log in as a doctor to view your home screen.',
-              ),
-            ),
+          return Scaffold(
+            body: Center(child: Text(AppLocalizations.of(context)!.pleaseLogInAsDoctor)),
           );
         }
 
@@ -373,8 +362,7 @@ class DoctorHomeScreen extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) =>
-                  DoctorHomeCubit()..loadConsultations(doctorId),
+          create: (context) => DoctorHomeCubit()..loadConsultations(doctorId),
             ),
           ],
           child: Container(
@@ -386,194 +374,162 @@ class DoctorHomeScreen extends StatelessWidget {
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
                 leading: const Icon(Icons.arrow_back_ios_new, color: greyColor),
-                actions: const [LanguageSwitcher(), SizedBox(width: 8)],
+                actions: const [
+                  LanguageSwitcher(),
+                  SizedBox(width: 8),
+                ],
               ),
               body: SafeArea(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     return SingleChildScrollView(
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 10, 20, 40),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Hello Dr. ${authState.doctor.lastname}!',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                'Quick overview',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 20),
-                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                                builder: (context, state) {
-                                  if (state.isLoading) {
-                                    return Column(
-                                      children: [
-                                        specialityLink(
-                                          context,
-                                          'Today',
-                                          'Loading...',
-                                        ),
-                                        const SizedBox(height: 10),
-                                        specialityLink(
-                                          context,
-                                          'Pending Requests',
-                                          'Loading...',
-                                        ),
-                                        const SizedBox(height: 10),
-                                        specialityLink(
-                                          context,
-                                          'Total patients',
-                                          'Loading...',
-                                        ),
-                                      ],
-                                    );
-                                  }
-
-                                  return Column(
-                                    children: [
-                                      specialityLink(
-                                        context,
-                                        'Today',
-                                        '${state.todayConsultations} appointments',
-                                      ),
-                                      const SizedBox(height: 10),
-                                      specialityLink(
-                                        context,
-                                        'Pending Requests',
-                                        '${state.pendingConsultationsCount} request${state.pendingConsultationsCount != 1 ? 's' : ''}',
-                                      ),
-                                      const SizedBox(height: 10),
-                                      specialityLink(
-                                        context,
-                                        'Total patients',
-                                        '${state.totalPatients} patients',
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              sectionTitle(context, 'Coming consultations'),
-                              const SizedBox(height: 20),
-                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                                builder: (context, state) {
-                                  if (state.isLoading) {
-                                    return const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(20.0),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    );
-                                  }
-
-                                  if (state.error != null) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        'Error loading consultations',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    );
-                                  }
-
-                                  if (state.comingConsultations.isEmpty) {
-                                    return const Padding(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: Text(
-                                        'No upcoming consultations',
-                                        style: TextStyle(color: greyColor),
-                                      ),
-                                    );
-                                  }
-
-                                  // Display coming consultations from database
-                                  return Column(
-                                    children: state.comingConsultations
-                                        .map(
-                                          (consultation) => Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 12.0,
-                                            ),
-                                            child:
-                                                _buildConsultationCardFromData(
-                                                  consultation: consultation,
-                                                  context: context,
-                                                ),
-                                          ),
-                                        )
-                                        .toList(),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              sectionTitle(context, 'Pending consultations'),
-                              const SizedBox(height: 20),
-                              BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
-                                builder: (context, state) {
-                                  if (state.pendingConsultations.isEmpty) {
-                                    return const Padding(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: Text(
-                                        'No pending consultations',
-                                        style: TextStyle(color: greyColor),
-                                      ),
-                                    );
-                                  }
-
-                                  return Column(
-                                    children: state.pendingConsultations
-                                        .map(
-                                          (consultation) => Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 12.0,
-                                            ),
-                                            child:
-                                                _buildAppointmentCardFromData(
-                                                  consultation: consultation,
-                                                  context: context,
-                                                  doctorId: doctorId,
-                                                ),
-                                          ),
-                                        )
-                                        .toList(),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                'Services',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 20),
-                              seviceLink(context, 'Appointments'),
-                              const SizedBox(height: 10),
-                              seviceLink(context, 'Availability'),
-                              const SizedBox(height: 10),
-                              seviceLink(context, 'FAQ'),
-                              const SizedBox(height: 20),
-                              DoctorFooter(currentIndex: 0),
-                            ],
-                          ),
+                        Text(
+                          AppLocalizations.of(context)!.helloDoctor(authState.doctor.lastname),
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
-                      ),
-                    );
-                  },
+                        const SizedBox(height: 20),
+                        Text(
+                          AppLocalizations.of(context)!.quickOverview,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 20),
+                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                                          builder: (context, state) {
+                                            if (state.isLoading) {
+                                              return Column(
+                                                children: [
+                                                  specialityLink(context, AppLocalizations.of(context)!.today, AppLocalizations.of(context)!.loading),
+                                                  const SizedBox(height: 10),
+                                                  specialityLink(context, AppLocalizations.of(context)!.pendingRequests, AppLocalizations.of(context)!.loading),
+                                                  const SizedBox(height: 10),
+                                                  specialityLink(context, AppLocalizations.of(context)!.totalPatients, AppLocalizations.of(context)!.loading),
+                                                ],
+                                              );
+                                            }
+                            
+                                            return Column(
+                                              children: [
+                                                specialityLink(context, AppLocalizations.of(context)!.today, AppLocalizations.of(context)!.appointmentsCount(state.todayConsultations)),
+                                                const SizedBox(height: 10),
+                                                specialityLink(context, AppLocalizations.of(context)!.pendingRequests, state.pendingConsultationsCount != 1 
+                                                    ? AppLocalizations.of(context)!.requestsCountPlural(state.pendingConsultationsCount)
+                                                    : AppLocalizations.of(context)!.requestsCount(state.pendingConsultationsCount)),
+                                                const SizedBox(height: 10),
+                                                specialityLink(context, AppLocalizations.of(context)!.totalPatients, AppLocalizations.of(context)!.patientsCount(state.totalPatients)),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                        const SizedBox(height: 20),
+                        sectionTitle(context, AppLocalizations.of(context)!.comingConsultations),
+                        const SizedBox(height: 20),
+                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                          builder: (context, state) {
+                            if (state.isLoading) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            if (state.error != null) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  AppLocalizations.of(context)!.errorLoadingConsultations,
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              );
+                            }
+
+                            if (state.comingConsultations.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  AppLocalizations.of(context)!.noUpcomingConsultations,
+                                  style: const TextStyle(color: greyColor),
+                                ),
+                              );
+                            }
+
+                            // Display coming consultations from database
+                            return Column(
+                              children: state.comingConsultations
+                                  .map((consultation) => Padding(
+                                        padding: const EdgeInsets.only(bottom: 12.0),
+                                        child: _buildConsultationCardFromData(
+                                          consultation: consultation,
+                                          context: context,
+                                        ),
+                                      ))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        sectionTitle(context, AppLocalizations.of(context)!.pendingConsultations),
+                        const SizedBox(height: 20),
+                        BlocBuilder<DoctorHomeCubit, DoctorHomeState>(
+                          builder: (context, state) {
+                            if (state.pendingConsultations.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  AppLocalizations.of(context)!.noPendingConsultations,
+                                  style: const TextStyle(color: greyColor),
+                                ),
+                              );
+                            }
+
+                            return Column(
+                              children: state.pendingConsultations
+                                  .map((consultation) => Padding(
+                                        padding: const EdgeInsets.only(bottom: 12.0),
+                                        child: _buildAppointmentCardFromData(
+                                          consultation: consultation,
+                                          context: context,
+                                            doctorId: doctorId,
+                                        ),
+                                      ))
+                                  .toList(),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          AppLocalizations.of(context)!.services,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 20),
+                        seviceLink(context, AppLocalizations.of(context)!.appointments),
+                        const SizedBox(height: 10),
+                        seviceLink(context, AppLocalizations.of(context)!.availability),
+                        const SizedBox(height: 10),
+                        seviceLink(context, AppLocalizations.of(context)!.faq),
+                        const SizedBox(height: 20),
+                        DoctorFooter(currentIndex: 0),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              );
+            },
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
-  }
+  });
+}
 
   void _showAcceptConfirmationDialog({
     required BuildContext context,
@@ -605,10 +561,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Accept Appointment',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.confirmAccept,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: blackColor,
@@ -621,9 +577,9 @@ class DoctorHomeScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Are you sure you want to accept this appointment?',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.confirmAcceptMessage,
+                style: const TextStyle(
                   fontSize: 16,
                   color: blackColor,
                   fontWeight: FontWeight.w500,
@@ -641,11 +597,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
-                          Icons.person,
-                          size: 18,
-                          color: darkGreenColor,
-                        ),
+                        const Icon(Icons.person, size: 18, color: darkGreenColor),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -662,14 +614,10 @@ class DoctorHomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 18,
-                          color: darkGreenColor,
-                        ),
+                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
                         const SizedBox(width: 8),
                         Text(
-                          '$date at $time',
+                          AppLocalizations.of(context)!.atTime(date, time),
                           style: const TextStyle(
                             fontSize: 14,
                             color: greyColor,
@@ -685,9 +633,9 @@ class DoctorHomeScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(
                   color: greyColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -698,14 +646,14 @@ class DoctorHomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 context.read<DoctorHomeCubit>().acceptConsultation(
-                  consultationId,
-                  doctorId,
-                );
+                      consultationId,
+                      doctorId,
+                    );
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Appointment accepted successfully'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.appointmentAcceptedSuccessfully),
                     backgroundColor: darkGreenColor,
-                    duration: Duration(seconds: 2),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               },
@@ -714,14 +662,11 @@ class DoctorHomeScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
-              child: const Text(
-                'Accept',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.accept,
+                style: const TextStyle(
                   color: whiteColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -764,10 +709,10 @@ class DoctorHomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Reject Appointment',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.confirmReject,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: blackColor,
@@ -780,9 +725,9 @@ class DoctorHomeScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Are you sure you want to reject this appointment?',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.areYouSureRejectAppointment,
+                style: const TextStyle(
                   fontSize: 16,
                   color: blackColor,
                   fontWeight: FontWeight.w500,
@@ -800,11 +745,7 @@ class DoctorHomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
-                          Icons.person,
-                          size: 18,
-                          color: darkGreenColor,
-                        ),
+                        const Icon(Icons.person, size: 18, color: darkGreenColor),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -821,14 +762,10 @@ class DoctorHomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 18,
-                          color: darkGreenColor,
-                        ),
+                        const Icon(Icons.calendar_today, size: 18, color: darkGreenColor),
                         const SizedBox(width: 8),
                         Text(
-                          '$date at $time',
+                          AppLocalizations.of(context)!.atTime(date, time),
                           style: const TextStyle(
                             fontSize: 14,
                             color: greyColor,
@@ -840,9 +777,9 @@ class DoctorHomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'The patient will be notified of the rejection.',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.patientWillBeNotified,
+                style: const TextStyle(
                   fontSize: 13,
                   color: Colors.red,
                   fontStyle: FontStyle.italic,
@@ -853,9 +790,9 @@ class DoctorHomeScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: const Text(
-                'Keep Appointment',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.keepAppointment,
+                style: const TextStyle(
                   color: greyColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -869,15 +806,15 @@ class DoctorHomeScreen extends StatelessWidget {
                   print('🔴 UI: Rejecting consultation ID: $consultationId');
                   try {
                     await context.read<DoctorHomeCubit>().rejectConsultation(
-                      consultationId,
-                      doctorId,
-                    );
+                          consultationId,
+                          doctorId,
+                        );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Appointment rejected successfully'),
+                        SnackBar(
+                          content: Text(AppLocalizations.of(context)!.appointmentRejectedSuccessfully),
                           backgroundColor: Colors.red,
-                          duration: Duration(seconds: 2),
+                          duration: const Duration(seconds: 2),
                         ),
                       );
                     }
@@ -886,9 +823,7 @@ class DoctorHomeScreen extends StatelessWidget {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            'Error rejecting appointment: ${e.toString()}',
-                          ),
+                          content: Text(AppLocalizations.of(context)!.errorOccurred(e.toString())),
                           backgroundColor: Colors.red,
                           duration: const Duration(seconds: 3),
                         ),
@@ -902,14 +837,11 @@ class DoctorHomeScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
-              child: const Text(
-                'Reject',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.reject,
+                style: const TextStyle(
                   color: whiteColor,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,

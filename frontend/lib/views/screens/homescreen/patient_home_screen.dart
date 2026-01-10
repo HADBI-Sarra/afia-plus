@@ -182,7 +182,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         if (onSeeAll != null)
           GestureDetector(
             onTap: onSeeAll,
-            child: Text('See all', style: greenLink),
+            child: Text(AppLocalizations.of(context)!.seeAll, style: greenLink),
           ),
       ],
     );
@@ -217,7 +217,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           const SizedBox(width: 10),
           Text(name, style: Theme.of(context).textTheme.labelMedium),
           const Spacer(),
-          Text("$number doctors", style: const TextStyle(color: greyColor)),
+          Text(AppLocalizations.of(context)!.doctorsCount(number), style: const TextStyle(color: greyColor)),
         ],
       ),
     );
@@ -483,7 +483,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          'Doctors - ${selectedSpecialityName ?? ''}',
+                          AppLocalizations.of(context)!.doctorsForSpeciality(selectedSpecialityName ?? ''),
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
@@ -500,7 +500,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       final String lastName = doctor['lastname'] ?? '';
                       final String fullName = '$firstName $lastName';
                       final String address =
-                          doctor['location_of_work'] ?? 'Address not available';
+                          doctor['location_of_work'] ?? AppLocalizations.of(context)!.addressNotAvailable;
                       final int doctorId = doctor['doctor_id'];
 
                       return InkWell(
@@ -627,9 +627,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                           });
                         },
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'All specialities',
+                          AppLocalizations.of(context)!.allSpecialities,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: blackColor,
@@ -669,7 +669,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     // Provide PatientHomeCubit with the authenticated patientId
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthenticatedPatient) {
-      return const Scaffold(body: Center(child: Text('User not logged in')));
+      return Scaffold(body: Center(child: Text(AppLocalizations.of(context)!.userNotLoggedIn)));
     }
     final patientId = authState.patient.userId!;
 
@@ -707,14 +707,14 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Hello $patientName!',
+                                AppLocalizations.of(context)!.helloPatient(patientName),
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               const SizedBox(height: 20),
                               SearchTextField(hint: 'Start typing'),
                               const SizedBox(height: 20),
                               // Upcoming consultations (from PatientHomeCubit)
-                              sectionTitle(context, 'Coming consultations'),
+                              sectionTitle(context, AppLocalizations.of(context)!.comingConsultations),
                               const SizedBox(height: 20),
                               BlocBuilder<PatientHomeCubit, PatientHomeState>(
                                 builder: (context, state) {
@@ -731,7 +731,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                     return Padding(
                                       padding: const EdgeInsets.all(20.0),
                                       child: Text(
-                                        'Error loading consultations',
+                                        AppLocalizations.of(context)!.errorLoadingConsultations,
                                         style: const TextStyle(
                                           color: Colors.red,
                                         ),
@@ -740,11 +740,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                   }
 
                                   if (state.upcomingConsultations.isEmpty) {
-                                    return const Padding(
-                                      padding: EdgeInsets.all(20.0),
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
                                       child: Text(
-                                        'No upcoming consultations',
-                                        style: TextStyle(color: greyColor),
+                                        AppLocalizations.of(context)!.noUpcomingConsultations,
+                                        style: const TextStyle(color: greyColor),
                                       ),
                                     );
                                   }
@@ -771,7 +771,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                               const SizedBox(height: 20),
                               sectionTitle(
                                 context,
-                                'Popular specializations',
+                                AppLocalizations.of(context)!.popularSpecializations,
                                 onSeeAll: () {
                                   setState(() {
                                     showAllSpecialities = true;
@@ -805,7 +805,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                                   ),
                               ],
                               const SizedBox(height: 20),
-                              sectionTitle(context, 'Popular doctors'),
+                              sectionTitle(context, AppLocalizations.of(context)!.popularDoctors),
                               const SizedBox(height: 20),
                               // Example popular doctors layout (static cards)
                               Column(
@@ -861,15 +861,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                               ),
                               const SizedBox(height: 20),
                               Text(
-                                'Services',
+                                AppLocalizations.of(context)!.services,
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               const SizedBox(height: 20),
-                              seviceLink('Appointments'),
+                              seviceLink(AppLocalizations.of(context)!.appointments),
                               const SizedBox(height: 10),
-                              seviceLink('Prescriptions'),
+                              seviceLink(AppLocalizations.of(context)!.prescriptions),
                               const SizedBox(height: 10),
-                              seviceLink('FAQ'),
+                              seviceLink(AppLocalizations.of(context)!.faq),
                               const SizedBox(height: 20),
                               const UserFooter(currentIndex: 0),
                             ],

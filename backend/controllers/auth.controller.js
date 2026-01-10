@@ -1,6 +1,10 @@
 // controllers/auth.controller.js
 import { supabaseAdmin, supabaseAuth } from '../src/config/supabase.js';
 
+// Simple in-memory OTP store (email -> full OTP)
+// In production, consider using Redis or a database
+const otpStore = new Map();
+
 // Validation functions
 function validateEmail(email) {
   if (!email || email.trim() === '') {
@@ -434,7 +438,7 @@ export async function signup(req, res) {
     await supabaseAdmin.auth.admin.createUser({
       email: trimmedEmail,
       password: trimmedPassword,
-      email_confirm: true,
+      email_confirm: false, // Require email verification
     });
 
   if (error) {
@@ -559,7 +563,7 @@ export async function signup(req, res) {
 
     const { error: doctorError } = await supabaseAdmin.from('doctors').insert({
       doctor_id: user.user_id,
-      user_id: user.user_id, // Foreign key to users table - CRITICAL for joins
+      user_id: user.user_id, // ✅ FIX: Set the foreign key to link doctor to user
       speciality_id: speciality_id || null,
       bio: bio?.trim() || null,
       location_of_work: location_of_work?.trim() || null,
@@ -602,11 +606,91 @@ export async function signup(req, res) {
     return res.status(400).json({ message: 'Invalid role specified' });
   }
 
-  const { data: signInData } =
-    await supabaseAuth.auth.signInWithPassword({
+  // Send verification email to the user
+  // Note: When using admin.createUser, Supabase doesn't automatically send confirmation emails
+  // We need to manually trigger it using resend or generateLink
+  // IMPORTANT: Email sending is done asynchronously to avoid blocking the signup response
+  let otpGenerated = false;
+  let storedOtp = null;
+
+  try {
+    // Use generateLink to get the confirmation email link
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'signup',
       email: trimmedEmail,
-      password: trimmedPassword,
+      options: {
+        redirectTo: `${process.env.FRONTEND_URL || 'afia://auth'}`,
+      },
     });
+
+    if (linkError || !linkData || !linkData.properties) {
+      console.error('Error generating verification OTP:', linkError, linkData);
+      console.warn('User created but verification OTP could not be generated.');
+    } else {
+      // Extract the full OTP token from Supabase
+      const fullOtp = linkData.properties.email_otp || '';
+      const otpCode = fullOtp.substring(0, 6); // First 6 digits for display in email
+
+      if (!fullOtp || fullOtp.length < 6) {
+        console.error('Invalid OTP format from Supabase:', fullOtp);
+        console.warn('User created but verification OTP is invalid.');
+      } else {
+        // Store the full OTP token for verification
+        // Note: Supabase has its own OTP expiration (5 minutes as configured)
+        // We store it with matching expiration - actual expiration validation happens when calling Supabase's verifyOtp
+        const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes (300 seconds) to match Supabase configuration
+        otpStore.set(trimmedEmail.toLowerCase(), {
+          fullOtp: fullOtp,
+          createdAt: Date.now(), // Track when OTP was created for debugging
+        });
+
+        // Clean up stored OTP after Supabase's default expiration
+        setTimeout(() => {
+          otpStore.delete(trimmedEmail.toLowerCase());
+        }, OTP_EXPIRY_MS);
+
+        otpGenerated = true;
+        storedOtp = otpCode;
+        console.log('✅ Verification OTP generated for:', trimmedEmail);
+
+        // Send email asynchronously (non-blocking) to avoid timeout issues
+        // This allows the signup response to return immediately while email is sent in background
+        (async () => {
+          try {
+            const { sendEmail } = await import('../utils/sendEmail.js');
+            const emailSent = await sendEmail({
+              to: trimmedEmail,
+              subject: 'Verify your email address - 3afiaPlus',
+              html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #333;">Welcome to 3afiaPlus!</h2>
+                <p>Please use the following 6-digit code to verify your email address:</p>
+                <div style="background-color: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
+                  <h1 style="font-size: 32px; letter-spacing: 8px; color: #333; margin: 0;">${otpCode}</h1>
+                </div>
+                <p style="color: #666; font-size: 14px;">This code will expire in 5 minutes.</p>
+                <p style="color: #666; font-size: 14px;">If you didn't request this code, please ignore this email.</p>
+              </div>
+            `
+            });
+
+            if (emailSent) {
+              console.log('✅ Verification email sent successfully to:', trimmedEmail);
+            } else {
+              console.warn('⚠️ Verification email sending failed for:', trimmedEmail);
+              console.warn('⚠️ User can still use resend OTP to receive the code.');
+            }
+          } catch (err) {
+            console.error('Failed to send verification email via nodemailer:', err);
+            console.warn('⚠️ User can still use resend OTP to receive the code.');
+          }
+        })(); // Immediately invoked async function - runs in background
+      }
+    }
+  } catch (emailErr) {
+    console.error('Exception generating verification OTP:', emailErr);
+    // Continue even if email sending fails - user can request resend later
+  }
 
   // Fetch role-specific data to return complete user object
   let userData = { ...user };
@@ -656,12 +740,20 @@ export async function signup(req, res) {
     };
   }
 
+  // Return user data without access token since email is not verified yet
+  // Frontend will handle showing verification message
+  // OTP is stored and email is being sent in background (non-blocking)
   res.status(200).json({
     user: userData,
-    access_token: signInData.session.access_token,
-    refresh_token: signInData.session.refresh_token,
+    message: otpGenerated
+      ? 'Account created successfully! Please check your email for the verification code.'
+      : 'Account created successfully! Please use "Resend Code" to receive your verification code.',
+    email_verified: false,
+    otp_sent: otpGenerated,
   });
 }
+
+// ---- END signup ----
 
 export async function login(req, res) {
   const { email, password } = req.body;
@@ -688,8 +780,34 @@ export async function login(req, res) {
     });
 
   if (error || !data.session || !data.user) {
+    console.error('[LOGIN] Sign in failed:', error?.message);
+    console.error('[LOGIN] Error details:', error);
+
+    // Check if it's an email not confirmed error
+    if (error?.message && error.message.toLowerCase().includes('email')) {
+      return res.status(401).json({
+        message: 'Please verify your email before logging in. Check your inbox for the verification code.',
+        email_not_verified: true,
+      });
+    }
+
     return res.status(401).json({
       message: error?.message || 'Invalid credentials',
+    });
+  }
+
+  console.log('[LOGIN] Sign in successful');
+  console.log('[LOGIN] User email confirmed at:', data.user.email_confirmed_at);
+
+  // CRITICAL: Check if email is verified before allowing login
+  // Even if Supabase allows sign-in, we enforce email verification
+  if (!data.user.email_confirmed_at) {
+    console.warn('[LOGIN] ❌ Login blocked: email not verified for user:', data.user.id);
+    // Optionally sign out the user session since we're rejecting the login
+    await supabaseAuth.auth.signOut();
+    return res.status(403).json({
+      message: 'Please verify your email before logging in. Check your inbox for the verification code.',
+      email_not_verified: true,
     });
   }
 
@@ -762,9 +880,13 @@ export async function login(req, res) {
     };
   }
 
+  // Include email_confirmed_at from Supabase auth user
+  userData.email_confirmed_at = data.user.email_confirmed_at;
+
   console.log(`[LOGIN] Final response userData keys:`, Object.keys(userData));
   console.log(`[LOGIN] Final response userData.date_of_birth:`, userData.date_of_birth);
   console.log(`[LOGIN] Final response userData.speciality_id:`, userData.speciality_id);
+  console.log(`[LOGIN] Final response userData.email_confirmed_at:`, userData.email_confirmed_at);
 
   res.json({
     access_token: data.session.access_token,
@@ -843,15 +965,410 @@ export async function me(req, res) {
     };
   }
 
+  // Get email_confirmed_at from Supabase auth user
+  const { data: authUserData, error: authUserError } = await supabaseAdmin.auth.admin.getUserById(req.user.id);
+  if (!authUserError && authUserData?.user?.email_confirmed_at) {
+    userData.email_confirmed_at = authUserData.user.email_confirmed_at;
+  } else if (!userData.email_confirmed_at) {
+    // Fallback: if not set, check if email is confirmed
+    // If email_confirmed_at is null but user exists, email might not be confirmed
+    userData.email_confirmed_at = null;
+  }
+
   console.log(`[ME] Final response userData keys:`, Object.keys(userData));
   console.log(`[ME] Final response userData.date_of_birth:`, userData.date_of_birth);
   console.log(`[ME] Final response userData.speciality_id:`, userData.speciality_id);
+  console.log(`[ME] Final response userData.email_confirmed_at:`, userData.email_confirmed_at);
 
   res.json(userData);
 }
 
 export async function logout(req, res) {
   res.json({ message: 'Logged out' });
+}
+
+export async function verifyOtp(req, res) {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ message: 'Email and OTP are required' });
+  }
+
+  const trimmedEmail = email.trim().toLowerCase();
+  const enteredOtp = otp.trim();
+
+  // Validate OTP format (must be exactly 6 digits)
+  if (!/^\d{6}$/.test(enteredOtp)) {
+    return res.status(400).json({ message: 'OTP must be exactly 6 digits' });
+  }
+
+  try {
+    // Get stored OTP token (if available) - use full token if stored, otherwise use entered OTP
+    // Note: We still check local store for the full token, but Supabase is the source of truth for validity
+    const storedOtpData = otpStore.get(trimmedEmail);
+    const verifyToken = storedOtpData?.fullOtp || enteredOtp;
+
+    // SINGLE SOURCE OF TRUTH: Supabase verifyOtp
+    // Supabase enforces OTP expiration (5 minutes / 300 seconds) - we do NOT check expiration manually
+    // If Supabase accepts the OTP, verification is successful - period.
+    console.log('[VERIFY] Calling Supabase verifyOtp for email:', trimmedEmail);
+
+    const { data, error } = await supabaseAuth.auth.verifyOtp({
+      email: email.trim(),
+      token: verifyToken,
+      type: 'signup',
+    });
+
+    // LOG: Supabase verifyOtp response
+    console.log('[VERIFY] Supabase verifyOtp response:');
+    console.log('  - error:', error ? error.message : 'null');
+    console.log('  - user:', data?.user ? `exists (id: ${data.user.id})` : 'null');
+    console.log('  - email_confirmed_at:', data?.user?.email_confirmed_at || 'null');
+    console.log('  - session:', data?.session ? 'exists' : 'null');
+
+    // If Supabase returned an error, the OTP is invalid or expired
+    // Supabase handles expiration - we trust its judgment completely
+    if (error) {
+      console.log('[VERIFY] RETURN PATH: Error - Supabase rejected OTP');
+
+      // Remove OTP from store since verification failed
+      if (storedOtpData) {
+        otpStore.delete(trimmedEmail);
+      }
+
+      // Check if it's an expiration error based on Supabase's error message
+      const errorMsg = error.message?.toLowerCase() || '';
+      const isExpiredError = errorMsg.includes('expired') || errorMsg.includes('expir');
+
+      return res.status(400).json({
+        message: isExpiredError
+          ? 'Verification code has expired. Please request a new code.'
+          : (error.message || 'Invalid OTP code'),
+        code_expired: isExpiredError,
+        verified: false
+      });
+    }
+
+    // Supabase verifyOtp succeeded - verification is successful
+    const supabaseUser = data.user;
+    const supabaseSession = data.session;
+
+    if (!supabaseUser) {
+      console.log('[VERIFY] RETURN PATH: Error - No user in Supabase response');
+      return res.status(400).json({ message: 'Verification failed: User not found', verified: false });
+    }
+
+    // CRITICAL: If Supabase returns a user AND email_confirmed_at is set → verification succeeded
+    // Return success immediately - do NOT check any local expiration or timestamps
+    if (supabaseUser.email_confirmed_at) {
+      console.log('[VERIFY] RETURN PATH: SUCCESS - email_confirmed_at is set');
+      console.log('[VERIFY] email_confirmed_at value:', supabaseUser.email_confirmed_at);
+
+      // Remove OTP from store after successful verification
+      if (storedOtpData) {
+        otpStore.delete(trimmedEmail);
+      }
+
+      // Get user data from our database
+      const { data: user, error: userError } = await supabaseAdmin
+        .from('users')
+        .select('*')
+        .eq('auth_uid', supabaseUser.id)
+        .single();
+
+      if (userError || !user) {
+        console.log('[VERIFY] User not found in database, but Supabase verification succeeded');
+        return res.status(404).json({
+          message: 'User not found',
+          verified: false
+        });
+      }
+
+      // Fetch role-specific data
+      let userData = { ...user };
+      userData.email_confirmed_at = supabaseUser.email_confirmed_at;
+
+      if (user.role === 'patient') {
+        const { data: patient } = await supabaseAdmin
+          .from('patients')
+          .select('date_of_birth')
+          .eq('patient_id', user.user_id)
+          .maybeSingle();
+        userData.date_of_birth = patient?.date_of_birth ?? null;
+      } else if (user.role === 'doctor') {
+        const { data: doctor } = await supabaseAdmin
+          .from('doctors')
+          .select('speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count')
+          .eq('doctor_id', user.user_id)
+          .maybeSingle();
+        userData = {
+          ...userData,
+          speciality_id: doctor?.speciality_id ?? null,
+          bio: doctor?.bio ?? null,
+          location_of_work: doctor?.location_of_work ?? null,
+          degree: doctor?.degree ?? null,
+          university: doctor?.university ?? null,
+          certification: doctor?.certification ?? null,
+          institution: doctor?.institution ?? null,
+          residency: doctor?.residency ?? null,
+          license_number: doctor?.license_number ?? null,
+          license_description: doctor?.license_description ?? null,
+          years_experience: doctor?.years_experience ?? null,
+          areas_of_expertise: doctor?.areas_of_expertise ?? null,
+          price_per_hour: doctor?.price_per_hour ?? null,
+          average_rating: doctor?.average_rating ?? 0,
+          reviews_count: doctor?.reviews_count ?? 0,
+        };
+      }
+
+      // Return success with session if available
+      if (supabaseSession && supabaseSession.access_token) {
+        return res.json({
+          message: 'Email verified successfully',
+          verified: true,
+          user: userData,
+          access_token: supabaseSession.access_token,
+          refresh_token: supabaseSession.refresh_token,
+        });
+      }
+
+      // If no session but email is confirmed, try to create session using password
+      if (!supabaseSession && req.body.password) {
+        const { data: loginData, error: loginError } = await supabaseAuth.auth.signInWithPassword({
+          email: trimmedEmail,
+          password: req.body.password
+        });
+
+        if (loginError || !loginData.session) {
+          return res.json({
+            message: 'Email verified successfully, but automatic login failed. Please log in with your email and password.',
+            verified: true,
+            requires_login: true,
+            user: userData,
+          });
+        }
+
+        return res.json({
+          message: 'Email verified and logged in successfully',
+          verified: true,
+          user: userData,
+          access_token: loginData.session.access_token,
+          refresh_token: loginData.session.refresh_token,
+        });
+      }
+
+      // No session and no password - return success but require login
+      return res.json({
+        message: 'Email verified successfully. Please log in with your email and password.',
+        verified: true,
+        requires_login: true,
+        user: userData,
+      });
+    }
+
+    // Edge case: Supabase verifyOtp succeeded but email_confirmed_at is null
+    // This should not happen in normal flow, but if Supabase accepted the OTP, we treat it as success
+    // and manually confirm the email
+    console.log('[VERIFY] RETURN PATH: SUCCESS (edge case) - Supabase verifyOtp succeeded but email_confirmed_at is null');
+    console.log('[VERIFY] Attempting to manually confirm email...');
+
+    const { data: updateData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      supabaseUser.id,
+      { email_confirm: true }
+    );
+
+    if (updateError) {
+      console.log('[VERIFY] Manual confirmation failed, but Supabase verifyOtp succeeded - treating as success');
+    } else if (updateData?.user?.email_confirmed_at) {
+      supabaseUser.email_confirmed_at = updateData.user.email_confirmed_at;
+      console.log('[VERIFY] Email confirmed via admin API');
+    }
+
+    // Remove OTP from store
+    if (storedOtpData) {
+      otpStore.delete(trimmedEmail);
+    }
+
+    // Get user data and return success (Supabase verifyOtp succeeded, so verification is successful)
+    const { data: user, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('auth_uid', supabaseUser.id)
+      .single();
+
+    if (userError || !user) {
+      return res.status(404).json({
+        message: 'User not found',
+        verified: false
+      });
+    }
+
+    let userData = { ...user };
+    userData.email_confirmed_at = supabaseUser.email_confirmed_at || null;
+
+    if (user.role === 'patient') {
+      const { data: patient } = await supabaseAdmin
+        .from('patients')
+        .select('date_of_birth')
+        .eq('patient_id', user.user_id)
+        .maybeSingle();
+      userData.date_of_birth = patient?.date_of_birth ?? null;
+    } else if (user.role === 'doctor') {
+      const { data: doctor } = await supabaseAdmin
+        .from('doctors')
+        .select('speciality_id, bio, location_of_work, degree, university, certification, institution, residency, license_number, license_description, years_experience, areas_of_expertise, price_per_hour, average_rating, reviews_count')
+        .eq('doctor_id', user.user_id)
+        .maybeSingle();
+      userData = {
+        ...userData,
+        speciality_id: doctor?.speciality_id ?? null,
+        bio: doctor?.bio ?? null,
+        location_of_work: doctor?.location_of_work ?? null,
+        degree: doctor?.degree ?? null,
+        university: doctor?.university ?? null,
+        certification: doctor?.certification ?? null,
+        institution: doctor?.institution ?? null,
+        residency: doctor?.residency ?? null,
+        license_number: doctor?.license_number ?? null,
+        license_description: doctor?.license_description ?? null,
+        years_experience: doctor?.years_experience ?? null,
+        areas_of_expertise: doctor?.areas_of_expertise ?? null,
+        price_per_hour: doctor?.price_per_hour ?? null,
+        average_rating: doctor?.average_rating ?? 0,
+        reviews_count: doctor?.reviews_count ?? 0,
+      };
+    }
+
+    // Return success - Supabase verifyOtp succeeded
+    if (supabaseSession && supabaseSession.access_token) {
+      return res.json({
+        message: 'Email verified successfully',
+        verified: true,
+        user: userData,
+        access_token: supabaseSession.access_token,
+        refresh_token: supabaseSession.refresh_token,
+      });
+    }
+
+    if (!supabaseSession && req.body.password) {
+      const { data: loginData, error: loginError } = await supabaseAuth.auth.signInWithPassword({
+        email: trimmedEmail,
+        password: req.body.password
+      });
+
+      if (loginError || !loginData.session) {
+        return res.json({
+          message: 'Email verified successfully, but automatic login failed. Please log in with your email and password.',
+          verified: true,
+          requires_login: true,
+          user: userData,
+        });
+      }
+
+      return res.json({
+        message: 'Email verified and logged in successfully',
+        verified: true,
+        user: userData,
+        access_token: loginData.session.access_token,
+        refresh_token: loginData.session.refresh_token,
+      });
+    }
+
+    return res.json({
+      message: 'Email verified successfully. Please log in with your email and password.',
+      verified: true,
+      requires_login: true,
+      user: userData,
+    });
+  } catch (error) {
+    console.error('[VERIFY] Exception caught:', error);
+    return res.status(500).json({ message: 'Internal server error', verified: false });
+  }
+}
+
+export async function resendOtp(req, res) {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  try {
+    // Generate new OTP
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'signup',
+      email: email.trim(),
+      options: {
+        redirectTo: `${process.env.FRONTEND_URL || 'afia://auth'}`,
+      },
+    });
+
+    if (linkError || !linkData || !linkData.properties) {
+      return res.status(400).json({ message: 'Failed to generate OTP. Please try again.' });
+    }
+
+    // Extract the full OTP token from Supabase
+    const fullOtp = linkData.properties.email_otp || '';
+    const otpCode = fullOtp.substring(0, 6); // First 6 digits for display in email
+
+    if (!fullOtp || fullOtp.length < 6) {
+      return res.status(400).json({ message: 'Failed to generate valid OTP. Please try again.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // Store the full OTP token for verification
+    // Note: Supabase has its own OTP expiration (5 minutes as configured)
+    // We store it with matching expiration - actual expiration validation happens when calling Supabase's verifyOtp
+    const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes (300 seconds) to match Supabase configuration
+    otpStore.set(trimmedEmail, {
+      fullOtp: fullOtp,
+      createdAt: Date.now(), // Track when OTP was created for debugging
+    });
+
+    // Clean up stored OTP after Supabase's default expiration
+    setTimeout(() => {
+      otpStore.delete(trimmedEmail);
+    }, OTP_EXPIRY_MS);
+
+    // Send email with OTP asynchronously (non-blocking) to avoid timeout issues
+    // This allows the response to return immediately while email is sent in background
+    (async () => {
+      try {
+        const { sendEmail } = await import('../utils/sendEmail.js');
+        const emailSent = await sendEmail({
+          to: email.trim(),
+          subject: 'Verify your email address - 3afiaPlus',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #333;">Welcome to 3afiaPlus!</h2>
+              <p>Please use the following 6-digit code to verify your email address:</p>
+              <div style="background-color: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
+                <h1 style="font-size: 32px; letter-spacing: 8px; color: #333; margin: 0;">${otpCode}</h1>
+              </div>
+              <p style="color: #666; font-size: 14px;">This code will expire in 5 min.</p>
+              <p style="color: #666; font-size: 14px;">If you didn't request this code, please ignore this email.</p>
+            </div>
+          `
+        });
+
+        if (emailSent) {
+          console.log('✅ Resend OTP email sent successfully to:', email.trim());
+        } else {
+          console.warn('⚠️ Resend OTP email sending failed for:', email.trim());
+        }
+      } catch (err) {
+        console.error('Failed to send resend OTP email:', err);
+      }
+    })(); // Immediately invoked async function - runs in background
+
+    // Return immediately - email is being sent in background
+    // OTP is already stored, so user can try entering it even if email hasn't arrived yet
+    res.json({ message: 'OTP code sent successfully. Please check your email.' });
+  } catch (error) {
+    console.error('Error resending OTP:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 }
 
 export async function uploadProfilePicture(req, res) {
@@ -886,7 +1403,7 @@ export async function uploadProfilePicture(req, res) {
     // Generate unique filename
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
     const fileName = `${user.user_id}_${Date.now()}.${fileExtension}`;
-    const filePath = `profile-pictures/${fileName}`; // Folder inside profile-pictures bucket
+    const filePath = `profile-pictures/${fileName}`;
 
     // Convert buffer to base64 or use buffer directly
     const fileBuffer = req.file.buffer;

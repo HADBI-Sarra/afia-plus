@@ -1,6 +1,7 @@
 import 'user.dart';
 
 class Patient extends User {
+  final String? emailConfirmedAt;
   final String dateOfBirth;
 
   Patient({
@@ -14,6 +15,7 @@ class Patient extends User {
     required String nin,
     String? profilePicture,
     required this.dateOfBirth,
+    this.emailConfirmedAt,
   }) : super(
           userId: userId,
           role: role,
@@ -27,6 +29,7 @@ class Patient extends User {
         );
 
   factory Patient.fromMap(Map<String, dynamic> map) {
+    // Supports Supabase's email_confirmed_at key, might be null or String ISO8601
     return Patient(
       userId: map['user_id'],
       role: map['role'] ?? 'patient',
@@ -38,6 +41,7 @@ class Patient extends User {
       nin: map['nin'],
       profilePicture: map['profile_picture'],
       dateOfBirth: map['date_of_birth'] ?? '',
+      emailConfirmedAt: map['email_confirmed_at']?.toString(),
     );
   }
 
@@ -48,6 +52,9 @@ class Patient extends User {
       'date_of_birth': dateOfBirth,
     };
   }
+
+  /// Returns true if email is verified (email_confirmed_at is not null)
+  bool get isEmailVerified => emailConfirmedAt != null && emailConfirmedAt!.isNotEmpty;
 
   Patient copyWith({
     int? userId,
@@ -60,6 +67,7 @@ class Patient extends User {
     String? nin,
     String? profilePicture,
     String? dateOfBirth,
+    String? emailConfirmedAt,
   }) {
     return Patient(
       userId: userId ?? this.userId,
@@ -72,6 +80,7 @@ class Patient extends User {
       nin: nin ?? this.nin,
       profilePicture: profilePicture ?? this.profilePicture,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      emailConfirmedAt: emailConfirmedAt ?? this.emailConfirmedAt,
     );
   }
 }
